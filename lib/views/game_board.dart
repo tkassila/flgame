@@ -15,6 +15,21 @@ var loggerNoStack = Logger(
   printer: PrettyPrinter(methodCount: 0),
 );
 
+enum INNERCORNERPOSITION {
+  TOPRIGHTCORNER, TOPLEFTCORNER, BOTTOMLEFTCORNER, BOTTOMRIGHTCORNER
+}
+
+class BorderInnerSquarePosition {
+  INNERCORNERPOSITION? innerCornerPosition;
+  int iInnerSquareBorder = -1;
+  BorderInnerSquarePosition(INNERCORNERPOSITION p_innerCornerPosition,
+      int p_iInnerSquareBorder)
+  {
+    iInnerSquareBorder = p_iInnerSquareBorder;
+    innerCornerPosition = p_innerCornerPosition;
+  }
+}
+
 class LGameBoard extends StatefulWidget {
   const LGameBoard({super.key, required this.lGameSession,
   required this.bScreenReaderIsUsed });
@@ -30,6 +45,9 @@ class _LGameBoardState extends State<LGameBoard> {
   GridView? _gameBoardGrid;
   List<Container> _listBoardSquares = List<Container>.empty(growable: true);
   List<Container> _listBoardPieces = List<Container>.empty(growable: true);
+  List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
+  List<Border?> _listMoveBorders = List<Border>.empty(growable: true);
+  BorderInnerSquarePosition? innerSquarePosition;
   List<Container> _listMoveSquares = List<Container>.empty(growable: true);
   List<String> _iArrScreenReaderSquareText = List<String>.empty(growable: true);
   List<Widget> _listScreenReaderSquares = List<Widget>.empty(
@@ -51,6 +69,9 @@ class _LGameBoardState extends State<LGameBoard> {
     _listBoardSquares = List.generate(16,  (index) {
       return getBoardSquaresContainer(index);
     });
+    _listMoveBorders = List.generate(16,  (index) {
+      return null;
+    });
   }
 
   Border
@@ -59,10 +80,33 @@ class _LGameBoardState extends State<LGameBoard> {
       GameBoardPosition forthLPieceGp,
       Color boxDecorationColor)
   {
-    Border ret = Border.all(
+     Object? objRet = _getPrivateMoveDecorationBorderWithBorderSidesForCol(index,
+               l3SeriesList, forthLPieceGp, boxDecorationColor, false);
+     if (objRet != null)
+       return objRet as Border;
+     else {
+       objRet = Border.all(
+         color: boxDecorationColor,
+         width: 7,
+       );
+     }
+     return objRet as Border;
+  }
+
+  Object?
+  _getPrivateMoveDecorationBorderWithBorderSidesForCol(int index,
+      List<GameBoardPosition>? l3SeriesList,
+      GameBoardPosition forthLPieceGp,
+      Color boxDecorationColor,
+      bool isCalledFromBorderMoveContainer)
+  {
+    Object? ret = Border.all(
       color: Colors.black,
       width: 7,
     );
+    if (isCalledFromBorderMoveContainer)
+       ret = null;
+
     if (l3SeriesList == null) {
       return ret;
     }
@@ -347,10 +391,30 @@ class _LGameBoardState extends State<LGameBoard> {
   Border
   getMoveDecorationBorder(int index, Color boxDecorationColor)
   {
-    Border ret = Border.all(
+    Object? objRet = _getPrivateMoveDecorationBorder(index, boxDecorationColor,
+        false) ;
+    if (objRet != null)
+      return objRet as Border;
+    else {
+      objRet = Border.all(
+        color: boxDecorationColor,
+        width: 7,
+      );
+    }
+    return objRet as Border;
+  }
+
+  Object?
+  _getPrivateMoveDecorationBorder(int index, Color boxDecorationColor,
+      bool isCalledFromBorderMoveContainer)
+  {
+    Object? ret = Border.all(
       color: boxDecorationColor,
       width: 7,
     );
+
+    if (isCalledFromBorderMoveContainer)
+      ret = null;
 
     if (lGameSession.iArrPlayerMovePieces != null
         && lGameSession.iArrPlayerMovePieces!.contains(index))
@@ -439,8 +503,13 @@ class _LGameBoardState extends State<LGameBoard> {
           return ret;
         }
 
-        ret = getMoveDecorationBorderWithBorderSidesForRow(
-            index, rowSeries.series, forthLPieceGp, boxDecorationColor);
+        if (!isCalledFromBorderMoveContainer)
+          ret = getMoveDecorationBorderWithBorderSidesForRow(
+                  index, rowSeries.series, forthLPieceGp, boxDecorationColor);
+        else
+          ret = _getPrivateMoveDecorationBorderWithBorderSidesForRow(
+              index, rowSeries.series, forthLPieceGp, boxDecorationColor, true);
+
       }
       else {
         int? iHorizontalCol = lGameSession.getColNumberInMoveArray(
@@ -499,10 +568,17 @@ class _LGameBoardState extends State<LGameBoard> {
           return ret;
         }
 
-        ret = getMoveDecorationBorderWithBorderSidesForCol(
-            index, colSeries.series, forthLPieceGp, boxDecorationColor);
+        if (!isCalledFromBorderMoveContainer)
+         ret = getMoveDecorationBorderWithBorderSidesForCol(
+                index, colSeries.series, forthLPieceGp, boxDecorationColor);
+        else
+          ret = _getPrivateMoveDecorationBorderWithBorderSidesForCol(
+              index, colSeries.series, forthLPieceGp, boxDecorationColor, true);
       }
     }
+
+    if (isCalledFromBorderMoveContainer && ret != null && ret.runtimeType == Border)
+      ret = null;
 
     return ret;
   }
@@ -513,10 +589,34 @@ class _LGameBoardState extends State<LGameBoard> {
       GameBoardPosition forthLPieceGp,
       Color boxDecorationColor)
   {
-    Border ret = Border.all(
+       Object? objRet = _getPrivateMoveDecorationBorderWithBorderSidesForRow(index,
+           l3SeriesList, forthLPieceGp, boxDecorationColor, false) as Border;
+       if (objRet != null)
+         return objRet as Border;
+       else {
+         objRet = Border.all(
+           color: boxDecorationColor,
+           width: 7,
+         );
+       }
+       return objRet as Border;
+
+  }
+
+  Object?
+  _getPrivateMoveDecorationBorderWithBorderSidesForRow(int index,
+      List<GameBoardPosition>? l3SeriesList,
+      GameBoardPosition forthLPieceGp,
+      Color boxDecorationColor,
+      bool isCalledFromBorderMoveContainer)
+  {
+    Object? ret = Border.all(
       color: Colors.black,
       width: 7,
     );
+    if (isCalledFromBorderMoveContainer)
+      ret = null;;
+
     if (l3SeriesList == null) {
       return ret;
     }
@@ -843,7 +943,116 @@ class _LGameBoardState extends State<LGameBoard> {
     return ret;
   }
 
-  Container getMoveContainer(int index)
+  bool isInnerCornerOfContainer(int index)
+  {
+    bool isInMoveList = lGameSession.iArrPlayerMovePieces == null ? false :
+                        lGameSession.iArrPlayerMovePieces!.contains(index);
+    if (!isInMoveList) {
+      return false;
+    }
+    bool? bValue = lGameSession.moveArrayIsInHorizontal(
+        lGameSession.iArrPlayerMovePieces);
+    if (bValue == null) {
+      return false;
+    }
+
+    return false;
+  }
+
+  Alignment? getCornerContainerAlignment(int index)
+  {
+     var ret = null;
+     /*
+     if (isInnerCornerOfContainer(index)) {
+         ret = _getMoveDecorationBorder(index, boxDecorationColor, true);
+     };
+
+      */
+     return ret;
+  }
+
+  Container getBorderMoveContainer(int index)
+  {
+    // Container ret = _getPrivateMoveContainer(index, true);
+    Widget? modeContainerChild = null;
+    /*
+    if (/* lGameSession.inMovingPiece == LGamePieceInMove.LPiece
+        && */ lGameSession.iArrPlayerMovePieces != null
+        && lGameSession.iArrPlayerMovePieces!.contains(index)) {
+
+     */
+      Object? objAlignment = null; // _getPrivateMoveDecorationBorder(index,
+      // boxDecorationColor, true) as Alignment?;
+      if (innerSquarePosition?.iInnerSquareBorder == index) {
+        if (innerSquarePosition?.innerCornerPosition ==
+            INNERCORNERPOSITION.TOPRIGHTCORNER) {
+          objAlignment = Alignment.topRight;
+        }
+        else if (innerSquarePosition?.innerCornerPosition ==
+            INNERCORNERPOSITION.TOPLEFTCORNER) {
+          objAlignment = Alignment.topLeft;
+        }
+        else if (innerSquarePosition?.innerCornerPosition ==
+            INNERCORNERPOSITION.BOTTOMRIGHTCORNER) {
+          objAlignment = Alignment.bottomRight;
+        }
+        else if (innerSquarePosition?.innerCornerPosition ==
+            INNERCORNERPOSITION.BOTTOMLEFTCORNER) {
+          objAlignment = Alignment.bottomLeft;
+        }
+
+        if (objAlignment !=
+            null /* && objAlignment.runtimeType is Alignment */) {
+          Alignment alignment = objAlignment as Alignment;
+          double dRadius = 0.0;
+          modeContainerChild = Align(
+            alignment: alignment,
+            child: Container(
+              height: 7,
+              width: 7,
+              color: Colors.black /* boxDecorationColor */,
+            ),
+          );
+        }
+      }
+   // }
+
+    Container ret = Container(
+      //  padding: const EdgeInsets.all(8),
+      color: Colors.transparent,
+      width: containerWidth,
+      height: containerHeight,
+      child: modeContainerChild,
+    );
+     /*
+     Container? ret = Container(color: Colors.transparent,);
+     Alignment? alignment = getCornerContainerAlignment(index);
+     if (alignment != null) {
+       double dRadius = 0.0;
+       Color boxDecorationColor = getBoxDecorationColor();
+
+       ret = Container(
+         color: Colors.transparent,
+         child: Align(
+           alignment: alignment!,
+           child: Container(
+             height: 7,
+             width: 7,
+             color: boxDecorationColor,
+           ),
+         ),
+       );
+     }
+      */
+     return ret;
+  }
+
+  Container getMoveContainer(int index) {
+    return _getPrivateMoveContainer(index, false);
+  }
+
+  Container _getPrivateMoveContainer(int index,
+      bool isCalledFromBorderMoveContainer)
   {
     double dRadius = 0.0;
     Widget? modeContainerChild = getMoveChild(index);
@@ -864,12 +1073,20 @@ class _LGameBoardState extends State<LGameBoard> {
           bottomRight: Radius.circular(dRadius /* 30.0 */)),
     );
 
+    if (/* lGameSession.inMovingPiece == LGamePieceInMove.LPiece
+        && */ lGameSession.iArrPlayerMovePieces != null
+        && lGameSession.iArrPlayerMovePieces!.contains(index)) {
+      Border? boxBorder = null;
+      if (!isCalledFromBorderMoveContainer)
+      {
+        boxBorder = getMoveDecorationBorder(index, boxDecorationColor);
+        _listMoveBorders[index] = boxBorder;
+      //  logger.i("_listMoveBorders[" +index.toString() +"]=" +(boxBorder == null ? "null" : "boxBorder" ));
+      }
 
-    if (lGameSession.inMovingPiece == LGamePieceInMove.LPiece
-        &&  lGameSession.iArrPlayerMovePieces != null && lGameSession.iArrPlayerMovePieces!.contains(index)) {
       boxDecoration = BoxDecoration(
         color: modeColor,
-        border: getMoveDecorationBorder(index, boxDecorationColor) /* Border.all(
+        border: boxBorder /* Border.all(
           color: boxDecorationColor,
           width: 7,
         ) */,
@@ -882,9 +1099,12 @@ class _LGameBoardState extends State<LGameBoard> {
     }
 
     double neutralRadius = 45.0;
-    if (lGameSession.inMovingPiece == LGamePieceInMove.neutral && (boxDecorationColor == Colors.white
-        || (lGameSession.iArrPlayerMovePieces != null && lGameSession.iArrPlayerMovePieces!.contains(index)))) {
-      if (lGameSession.iArrPlayerMovePieces != null && lGameSession.iArrPlayerMovePieces!.contains(index)) {
+    if (lGameSession.inMovingPiece == LGamePieceInMove.neutral
+        && (boxDecorationColor == Colors.white
+        || (lGameSession.iArrPlayerMovePieces != null
+                && lGameSession.iArrPlayerMovePieces!.contains(index)))) {
+      if (lGameSession.iArrPlayerMovePieces != null &&
+          lGameSession.iArrPlayerMovePieces!.contains(index)) {
         boxDecorationColor = modeColor; // Colors.white;
       }
       boxDecoration = BoxDecoration(
@@ -903,6 +1123,62 @@ class _LGameBoardState extends State<LGameBoard> {
 
       );
     }
+
+    /*
+    if (isCalledFromBorderMoveContainer) {
+      modeColor = Colors.transparent;
+      modeContainerChild = null;
+
+      if (lGameSession.inMovingPiece == LGamePieceInMove.LPiece
+          && lGameSession.iArrPlayerMovePieces != null
+          && lGameSession.iArrPlayerMovePieces!.contains(index)) {
+        Object? objAlignment = null; // _getPrivateMoveDecorationBorder(index,
+           // boxDecorationColor, true) as Alignment?;
+        if (innerSquarePosition?.iInnerSquareBorder == index) {
+            if (innerSquarePosition?.innerCornerPosition ==
+                INNERCORNERPOSITION.TOPRIGHTCORNER) {
+              objAlignment = Alignment.topRight;
+            }
+            else if (innerSquarePosition?.innerCornerPosition ==
+                INNERCORNERPOSITION.TOPLEFTCORNER) {
+              objAlignment = Alignment.topLeft;
+            }
+            else
+            if (innerSquarePosition?.innerCornerPosition ==
+                INNERCORNERPOSITION.BOTTOMRIGHTCORNER) {
+              objAlignment = Alignment.bottomRight;
+            }
+            else
+            if (innerSquarePosition?.innerCornerPosition ==
+                INNERCORNERPOSITION.BOTTOMLEFTCORNER) {
+              objAlignment = Alignment.bottomLeft;
+            }
+        }
+        if (objAlignment != null ?* && objAlignment.runtimeType is Alignment *?) {
+          Alignment alignment = objAlignment as Alignment;
+          double dRadius = 0.0;
+          modeContainerChild = Align(
+            alignment: alignment,
+            child: Container(
+              height: 7,
+              width: 7,
+              color: Colors.black /* boxDecorationColor */,
+            ),
+          );
+        }
+      }
+
+      container = Container(
+        //  padding: const EdgeInsets.all(8),
+        color: modeColor,
+        width: containerWidth,
+        height: containerHeight,
+        child: modeContainerChild,
+      );
+
+      return container!;
+    }
+     */
 
     if (modeContainerChild == null) {
       container = Container(
@@ -1101,6 +1377,52 @@ class _LGameBoardState extends State<LGameBoard> {
     }
   }
 
+  BorderInnerSquarePosition? _getInnerSquareBorder()
+  {
+    BorderInnerSquarePosition? ret = null;
+    INNERCORNERPOSITION? position;
+    BorderStyle? topColor, bottomColor, leftColor, rightColor;
+    /* const */ BorderStyle TRANSPARENT = BorderStyle.none;
+     Border? border;
+     for (int i = 0; i < _listMoveBorders.length; i++ ) {
+       border = _listMoveBorders[i];
+       if (border == null)
+         continue;
+       topColor = border.top.style;
+       bottomColor = border.bottom.style;
+       leftColor = border.left.style;
+       rightColor = border.right.style;
+       if ((topColor == TRANSPARENT
+           || bottomColor == TRANSPARENT)
+           && (leftColor == TRANSPARENT
+           || rightColor == TRANSPARENT)) {
+
+         if (topColor == TRANSPARENT
+             && rightColor == TRANSPARENT) {
+           position = INNERCORNERPOSITION.TOPRIGHTCORNER;
+         } else
+         if (topColor == TRANSPARENT
+             && leftColor == TRANSPARENT) {
+           position = INNERCORNERPOSITION.TOPLEFTCORNER;
+         }
+         else
+         if (bottomColor == TRANSPARENT
+             && leftColor == TRANSPARENT) {
+           position = INNERCORNERPOSITION.BOTTOMLEFTCORNER;
+         }
+         else
+         if (bottomColor == TRANSPARENT
+             && rightColor == TRANSPARENT) {
+           position = INNERCORNERPOSITION.BOTTOMRIGHTCORNER;
+         }
+         if (position != null)
+            ret = BorderInnerSquarePosition(position!, i);
+       }
+     }
+
+     return ret;
+  }
+
   GridView
   buildGameBoard()
   {
@@ -1131,8 +1453,18 @@ class _LGameBoardState extends State<LGameBoard> {
       );
     });
 
+    _listMoveBorders = List.generate(16,  (index) {
+      return null;
+    });
+
     _listMoveSquares = List.generate(16,  (index) {
       return getMoveContainer(index);
+    });
+
+    innerSquarePosition = _getInnerSquareBorder();
+
+    _listMoveBorderSquares = List.generate(16,  (index) {
+      return getBorderMoveContainer(index);
     });
 
     List<Widget> listBoardStack = List<Widget>.empty(growable: true);
@@ -1222,7 +1554,8 @@ class _LGameBoardState extends State<LGameBoard> {
             //      decoration: listBoxDecoration,
             child: Stack(clipBehavior: Clip.none,
                 children: [_listBoardSquares[i],
-          _listBoardPieces[i], _listMoveSquares[i], _listScreenReaderSquares[i]
+          _listBoardPieces[i], _listMoveBorderSquares[i],
+                  _listScreenReaderSquares[i]
                ]
             /*
             onFocusChange: (hasFocus) {
@@ -1249,7 +1582,8 @@ class _LGameBoardState extends State<LGameBoard> {
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(
           Container( child: Stack(children: [_listBoardSquares[i],
-          _listBoardPieces[i], _listMoveSquares[i]]),));
+          _listBoardPieces[i], _listMoveSquares[i],
+            _listMoveBorderSquares[i]]),));
       }
    }
 

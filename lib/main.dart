@@ -410,7 +410,7 @@ class _LGamePageState extends State<MyHomePage>
         setState(() {
           _buildBoard = buildGameBoard();
         });
-      }
+    }
   }
 
   buttonHelpEnabledPressed()
@@ -455,7 +455,7 @@ class _LGamePageState extends State<MyHomePage>
       setState(() {
         _buildBoard = buildGameBoard();
       });
-    }
+   }
   }
 
   buttonUpPressed()
@@ -470,7 +470,7 @@ class _LGamePageState extends State<MyHomePage>
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+    }
   }
 
   buttonDownPressed()
