@@ -169,7 +169,8 @@ class _LGamePageState extends State<MyHomePage>
   Color player2Color = Colors.blueAccent;
   Color neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
-         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20),
+         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 25,
+             fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
   Future<bool> showStartNewGameDialog() async {

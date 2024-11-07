@@ -19,6 +19,10 @@ enum INNERCORNERPOSITION {
   TOPRIGHTCORNER, TOPLEFTCORNER, BOTTOMLEFTCORNER, BOTTOMRIGHTCORNER
 }
 
+enum SHADOWBOXPOSITION {
+  TOPSHADOWBOX, LEFTSHADOWBOX, BOTTOMSHADOWBOX, RIGHTSHADOWBOX
+}
+
 class BorderInnerSquarePosition {
   INNERCORNERPOSITION? innerCornerPosition;
   int iInnerSquareBorder = -1;
@@ -45,6 +49,7 @@ class _LGameBoardState extends State<LGameBoard> {
   GridView? _gameBoardGrid;
   List<Container> _listBoardSquares = List<Container>.empty(growable: true);
   List<Container> _listBoardPieces = List<Container>.empty(growable: true);
+  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
   List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
   List<Border?> _listMoveBorders = List<Border>.empty(growable: true);
   BorderInnerSquarePosition? innerSquarePosition;
@@ -60,7 +65,8 @@ class _LGameBoardState extends State<LGameBoard> {
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
   final ButtonStyle buttonStyleScreenReader =
-  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 12),
+  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 12,
+      fontWeight: FontWeight.bold),
       backgroundColor: Colors.transparent);
 
   @override
@@ -71,6 +77,16 @@ class _LGameBoardState extends State<LGameBoard> {
     });
     _listMoveBorders = List.generate(16,  (index) {
       return null;
+    });
+
+    _listMovePieceShadowContainers = List.generate(16,  (index) {
+      return Container(
+        //    duration: const Duration(seconds: 1),
+        //  padding: const EdgeInsets.all(8),
+        color: Colors.transparent,
+        width: containerWidth,
+        height: containerHeight,
+      );
     });
   }
 
@@ -930,7 +946,8 @@ class _LGameBoardState extends State<LGameBoard> {
     Widget text = Text(
         "${lGameSession.iPlayerMove}",
         textAlign: TextAlign.left,
-        style: const TextStyle(fontSize: 27, color: Colors.black)
+        style: const TextStyle(fontSize: 27, color: Colors.black,
+            fontWeight: FontWeight.bold)
     );
 
     Widget ret = Container(
@@ -1309,7 +1326,8 @@ class _LGameBoardState extends State<LGameBoard> {
 
     return Center(child: AutoSizeText(strText,
       // This is some text that will resize based on the screen size.,
-      style: TextStyle(fontSize: 30, color: fontColor),
+      style: TextStyle(fontSize: 30, color: fontColor,
+          fontWeight: FontWeight.bold),
       overflow: TextOverflow.ellipsis,));
   }
 
@@ -1331,7 +1349,9 @@ class _LGameBoardState extends State<LGameBoard> {
       },
       child: */ Text(_iArrScreenReaderSquareText[index],
           textAlign: TextAlign.left,
-          style: const TextStyle(fontSize: 12, color: Colors.transparent /* Colors.grey */),
+          style: const TextStyle(fontSize: 12, color: Colors.transparent,
+              fontWeight: FontWeight.bold
+            /* Colors.grey */),
       ),
      // ),
     );
@@ -1423,6 +1443,160 @@ class _LGameBoardState extends State<LGameBoard> {
      return ret;
   }
 
+  Container
+  getMovePieceShadowContainer(int index)
+  {
+      Decoration? decoration =
+           getMovePieceShadowContainerShadowDecoration(index);
+      Container? ret;
+
+      if (decoration != null) {
+        ret = Container(
+        //    duration: const Duration(seconds: 1),
+        //  padding: const EdgeInsets.all(8),
+       // color: Colors.transparent,
+        width: containerWidth,
+        height: containerHeight,
+        decoration: decoration
+          /*
+            decoration: BoxDecoration(
+            color: Colors.orange[200],
+            border: Border.all(
+            color: Colors.black,
+            width: 1,
+        ),
+        ),
+           */
+      );
+      } else {
+        ret = Container(
+          //    duration: const Duration(seconds: 1),
+          //  padding: const EdgeInsets.all(8),
+          color: Colors.transparent,
+          width: containerWidth,
+          height: containerHeight,
+        );
+      }
+      return ret;
+  }
+
+  BoxShadow
+  getBoxShadowOf(BorderStyle bottonStyle, SHADOWBOXPOSITION shadowPosition)
+  {
+    BoxShadow? ret;
+    Offset? offset = Offset(0,5);;
+    Color color = Colors.transparent;
+    if (bottonStyle != BorderStyle.none)
+      {
+        color = Colors.black;
+      }
+      if (shadowPosition == SHADOWBOXPOSITION.BOTTOMSHADOWBOX)
+      {
+        offset = Offset(-5,5);
+      }
+      else
+      if (shadowPosition == SHADOWBOXPOSITION.TOPSHADOWBOX)
+      {
+        offset = Offset(5,0);
+      }
+      else
+      if (shadowPosition == SHADOWBOXPOSITION.LEFTSHADOWBOX)
+      {
+        offset = Offset(0,-5);
+      }
+      else
+      if (shadowPosition == SHADOWBOXPOSITION.RIGHTSHADOWBOX)
+      {
+        offset = Offset(0,5);
+      }
+
+    ret =  BoxShadow(
+      // color: Colors.green,
+      color: color,
+      offset: offset,
+    );
+
+    return ret;
+  }
+
+  Decoration?
+  getMovePieceShadowContainerShadowDecoration(int index)
+  {
+    Decoration? ret;
+    INNERCORNERPOSITION? position;
+    BorderStyle? topStyle, bottomStyle, leftStyle, rightStyle;
+    /* const */ BorderStyle BORDERSTYLE_NONE = BorderStyle.none;
+    Border? border;
+    for (int i = 0; i < _listMoveBorders.length; i++ ) {
+      border = _listMoveBorders[i];
+      if (border == null)
+        continue;
+      if (i != index)
+        continue;
+
+      topStyle = border.top.style;
+      bottomStyle = border.bottom.style;
+      leftStyle = border.left.style;
+      rightStyle = border.right.style;
+      if (topStyle != BORDERSTYLE_NONE && bottomStyle != BORDERSTYLE_NONE
+          && leftStyle != BORDERSTYLE_NONE && rightStyle != BORDERSTYLE_NONE) {
+        continue;
+      }
+
+      Border? lborder = _listMoveBorders[index];
+      if (lborder == null) {
+        return null;
+      }
+
+      double dRadius = 0.0;
+      ret = BoxDecoration(
+        color: Colors.greenAccent,
+        border: lborder,
+        /*
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(dRadius /* 30.0 */),
+            topRight: Radius.circular(dRadius /* 30.0 */),
+            bottomLeft: Radius.circular(dRadius /* 30.0 */),
+            bottomRight: Radius.circular(dRadius /* 30.0 */)),
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 5,
+            color: Colors.black,
+            offset: Offset(0, 15), // changes position of shadow
+          ),
+          BoxShadow(
+            // color: Colors.green,
+            color: Colors.black,
+            offset: Offset(-5, 5),
+          ),
+          BoxShadow(
+            // color: Colors.green,
+            color: Colors.black,
+            offset: Offset(5, 5),
+          ),
+        ],
+         */
+        boxShadow: [
+          getBoxShadowOf(bottomStyle,
+              SHADOWBOXPOSITION.BOTTOMSHADOWBOX),
+          getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX),
+          getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX),
+          getBoxShadowOf(bottomStyle, SHADOWBOXPOSITION.TOPSHADOWBOX),
+        ],
+
+      );
+      break;
+    }
+
+    /*
+    ret ??= BoxDecoration(
+          color: Colors.transparent,
+        );
+    */
+
+      return ret;
+  }
+
   GridView
   buildGameBoard()
   {
@@ -1461,6 +1635,38 @@ class _LGameBoardState extends State<LGameBoard> {
       return getMoveContainer(index);
     });
 
+    /*
+    _listMovePieceShadowContainers = List.generate(16,  (index) {
+      return getMovePieceShadowContainer(index);
+    });
+
+     */
+
+    /*
+    Container(
+        decoration: BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.black,
+              offset: Offset(0, 15), // changes position of shadow
+            ),
+              BoxShadow(
+                // color: Colors.green,
+                color: Colors.black,
+                offset: Offset(-5, 5),
+              ),
+              BoxShadow(
+                // color: Colors.green,
+                color: Colors.black,
+                offset: Offset(5, 5),
+              ),
+          ],
+        ),
+      ),
+     */
     innerSquarePosition = _getInnerSquareBorder();
 
     _listMoveBorderSquares = List.generate(16,  (index) {
@@ -1555,6 +1761,7 @@ class _LGameBoardState extends State<LGameBoard> {
             child: Stack(clipBehavior: Clip.none,
                 children: [_listBoardSquares[i],
           _listBoardPieces[i], _listMoveBorderSquares[i],
+                  _listMovePieceShadowContainers[i],
                   _listScreenReaderSquares[i]
                ]
             /*
@@ -1582,7 +1789,8 @@ class _LGameBoardState extends State<LGameBoard> {
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(
           Container( child: Stack(children: [_listBoardSquares[i],
-          _listBoardPieces[i], _listMoveSquares[i],
+          _listBoardPieces[i],   _listMovePieceShadowContainers[i],
+            _listMoveSquares[i],
             _listMoveBorderSquares[i]]),));
       }
    }
