@@ -1435,8 +1435,9 @@ class _LGameBoardState extends State<LGameBoard> {
              && rightColor == TRANSPARENT) {
            position = INNERCORNERPOSITION.BOTTOMRIGHTCORNER;
          }
-         if (position != null)
-            ret = BorderInnerSquarePosition(position!, i);
+         if (position != null) {
+           ret = BorderInnerSquarePosition(position!, i);
+         }
        }
      }
 
@@ -1449,6 +1450,7 @@ class _LGameBoardState extends State<LGameBoard> {
       Decoration? decoration =
            getMovePieceShadowContainerShadowDecoration(index);
       Container? ret;
+      Color containerColor = getBoardPieceColor(index);
 
       if (decoration != null) {
         ret = Container(
@@ -1456,6 +1458,7 @@ class _LGameBoardState extends State<LGameBoard> {
         //  padding: const EdgeInsets.all(8),
        // color: Colors.transparent,
         width: containerWidth,
+        clipBehavior: Clip.none,
         height: containerHeight,
         decoration: decoration
           /*
@@ -1480,40 +1483,58 @@ class _LGameBoardState extends State<LGameBoard> {
       return ret;
   }
 
-  BoxShadow
+  BoxShadow?
   getBoxShadowOf(BorderStyle bottonStyle, SHADOWBOXPOSITION shadowPosition)
   {
     BoxShadow? ret;
-    Offset? offset = Offset(0,5);;
-    Color color = Colors.transparent;
-    if (bottonStyle != BorderStyle.none)
+
+    Offset? offset = Offset(0,0);
+    Color color = Colors.grey.shade600;
+    if (bottonStyle == BorderStyle.none)
       {
-        color = Colors.black;
+        ret =  BoxShadow(
+          // color: Colors.green,
+            color: Colors.transparent, /* Colors.grey.shade300, */
+            offset: offset,
+            spreadRadius: 0,
+            blurRadius: 0,
+        );
+        return ret;
       }
+
       if (shadowPosition == SHADOWBOXPOSITION.BOTTOMSHADOWBOX)
-      {
-        offset = Offset(-5,5);
-      }
-      else
-      if (shadowPosition == SHADOWBOXPOSITION.TOPSHADOWBOX)
-      {
-        offset = Offset(5,0);
-      }
-      else
-      if (shadowPosition == SHADOWBOXPOSITION.LEFTSHADOWBOX)
       {
         offset = Offset(0,-5);
       }
       else
+      if (shadowPosition == SHADOWBOXPOSITION.TOPSHADOWBOX)
+      {
+        offset = Offset(0,5); // Offset(5,0);
+      }
+      else
+      if (shadowPosition == SHADOWBOXPOSITION.LEFTSHADOWBOX)
+      {
+        offset = Offset(-5,0);
+      }
+      else
       if (shadowPosition == SHADOWBOXPOSITION.RIGHTSHADOWBOX)
       {
-        offset = Offset(0,5);
+        offset = Offset(5,0);
       }
+
+    if (bottonStyle == BorderStyle.none)
+    {
+      color = Colors.transparent;
+      offset = Offset(0,0);
+      return null;
+    }
 
     ret =  BoxShadow(
       // color: Colors.green,
-      color: color,
+      color: color, /* Colors.grey.shade300, */
       offset: offset,
+        spreadRadius: 1,
+        blurRadius: 5
     );
 
     return ret;
@@ -1526,67 +1547,144 @@ class _LGameBoardState extends State<LGameBoard> {
     INNERCORNERPOSITION? position;
     BorderStyle? topStyle, bottomStyle, leftStyle, rightStyle;
     /* const */ BorderStyle BORDERSTYLE_NONE = BorderStyle.none;
-    Border? border;
-    for (int i = 0; i < _listMoveBorders.length; i++ ) {
-      border = _listMoveBorders[i];
-      if (border == null)
-        continue;
-      if (i != index)
-        continue;
+    Border? border = _listMoveBorders[index];
+    if (border == null)
+      return null;
 
-      topStyle = border.top.style;
-      bottomStyle = border.bottom.style;
-      leftStyle = border.left.style;
-      rightStyle = border.right.style;
-      if (topStyle != BORDERSTYLE_NONE && bottomStyle != BORDERSTYLE_NONE
-          && leftStyle != BORDERSTYLE_NONE && rightStyle != BORDERSTYLE_NONE) {
-        continue;
-      }
-
-      Border? lborder = _listMoveBorders[index];
-      if (lborder == null) {
-        return null;
-      }
-
-      double dRadius = 0.0;
-      ret = BoxDecoration(
-        color: Colors.greenAccent,
-        border: lborder,
-        /*
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(dRadius /* 30.0 */),
-            topRight: Radius.circular(dRadius /* 30.0 */),
-            bottomLeft: Radius.circular(dRadius /* 30.0 */),
-            bottomRight: Radius.circular(dRadius /* 30.0 */)),
-        boxShadow: const [
-          BoxShadow(
-            blurRadius: 5,
-            color: Colors.black,
-            offset: Offset(0, 15), // changes position of shadow
-          ),
-          BoxShadow(
-            // color: Colors.green,
-            color: Colors.black,
-            offset: Offset(-5, 5),
-          ),
-          BoxShadow(
-            // color: Colors.green,
-            color: Colors.black,
-            offset: Offset(5, 5),
-          ),
-        ],
-         */
-        boxShadow: [
-          getBoxShadowOf(bottomStyle,
-              SHADOWBOXPOSITION.BOTTOMSHADOWBOX),
-          getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX),
-          getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX),
-          getBoxShadowOf(bottomStyle, SHADOWBOXPOSITION.TOPSHADOWBOX),
-        ],
-
-      );
-      break;
+    topStyle = border.top.style;
+    bottomStyle = border.bottom.style;
+    leftStyle = border.left.style;
+    rightStyle = border.right.style;
+    if (topStyle == BORDERSTYLE_NONE && bottomStyle == BORDERSTYLE_NONE
+        && leftStyle == BORDERSTYLE_NONE && rightStyle == BORDERSTYLE_NONE) {
+      return null;
     }
+
+    List<BoxShadow> shadows =  List<BoxShadow>.empty(growable: true);
+    BoxShadow? shadow = getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX);
+    if (shadow != null) {
+      shadows.add(shadow);
+    }
+
+    if (rightStyle != BORDERSTYLE_NONE)
+      {
+        print("kissa");
+      }
+    shadow = getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX);
+    if (shadow != null) {
+      shadows.add(shadow);
+    }
+
+    shadow = getBoxShadowOf(topStyle, SHADOWBOXPOSITION.TOPSHADOWBOX);
+    if (shadow != null) {
+      shadows.add(shadow);
+    }
+    /*
+    shadow = getBoxShadowOf(bottomStyle, SHADOWBOXPOSITION.BOTTOMSHADOWBOX);
+    if (shadow != null)
+      shadows.add(shadow);
+    */
+
+    /*
+        getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX),
+        getBoxShadowOf(topStyle, SHADOWBOXPOSITION.TOPSHADOWBOX),
+        getBoxShadowOf(bottomStyle,
+            SHADOWBOXPOSITION.BOTTOMSHADOWBOX),
+       */
+
+    double dRadius = 0.0;
+    ret = BoxDecoration(
+      color: Colors.transparent,
+      border: border,
+      /*
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(dRadius /* 30.0 */),
+              topRight: Radius.circular(dRadius /* 30.0 */),
+              bottomLeft: Radius.circular(dRadius /* 30.0 */),
+              bottomRight: Radius.circular(dRadius /* 30.0 */)),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.black,
+              offset: Offset(0, 15), // changes position of shadow
+            ),
+            BoxShadow(
+              // color: Colors.green,
+              color: Colors.black,
+              offset: Offset(-5, 5),
+            ),
+            BoxShadow(
+              // color: Colors.green,
+              color: Colors.black,
+              offset: Offset(5, 5),
+            ),
+          ],
+           */
+      boxShadow: shadows,
+    );
+
+    /*
+    for (int i = 0; i < _listMoveBorders.length; i++ ) {
+        border = _listMoveBorders[i];
+        if (border == null)
+          continue;
+        if (i != index)
+          continue;
+
+        topStyle = border.top.style;
+        bottomStyle = border.bottom.style;
+        leftStyle = border.left.style;
+        rightStyle = border.right.style;
+        if (topStyle != BORDERSTYLE_NONE && bottomStyle != BORDERSTYLE_NONE
+            && leftStyle != BORDERSTYLE_NONE && rightStyle != BORDERSTYLE_NONE) {
+          continue;
+        }
+
+        Border? lborder = _listMoveBorders[index];
+        if (lborder == null) {
+          return null;
+        }
+
+        double dRadius = 0.0;
+        ret = BoxDecoration(
+          color: Colors.greenAccent,
+          border: lborder,
+          /*
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(dRadius /* 30.0 */),
+              topRight: Radius.circular(dRadius /* 30.0 */),
+              bottomLeft: Radius.circular(dRadius /* 30.0 */),
+              bottomRight: Radius.circular(dRadius /* 30.0 */)),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 5,
+              color: Colors.black,
+              offset: Offset(0, 15), // changes position of shadow
+            ),
+            BoxShadow(
+              // color: Colors.green,
+              color: Colors.black,
+              offset: Offset(-5, 5),
+            ),
+            BoxShadow(
+              // color: Colors.green,
+              color: Colors.black,
+              offset: Offset(5, 5),
+            ),
+          ],
+           */
+          boxShadow: [
+            getBoxShadowOf(bottomStyle,
+                SHADOWBOXPOSITION.BOTTOMSHADOWBOX),
+            getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX),
+            getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX),
+            getBoxShadowOf(bottomStyle, SHADOWBOXPOSITION.TOPSHADOWBOX),
+          ],
+
+        );
+        break;
+    }
+    */
 
     /*
     ret ??= BoxDecoration(
@@ -1635,12 +1733,9 @@ class _LGameBoardState extends State<LGameBoard> {
       return getMoveContainer(index);
     });
 
-    /*
     _listMovePieceShadowContainers = List.generate(16,  (index) {
       return getMovePieceShadowContainer(index);
     });
-
-     */
 
     /*
     Container(
@@ -1760,8 +1855,8 @@ class _LGameBoardState extends State<LGameBoard> {
             //      decoration: listBoxDecoration,
             child: Stack(clipBehavior: Clip.none,
                 children: [_listBoardSquares[i],
-          _listBoardPieces[i], _listMoveBorderSquares[i],
-                  _listMovePieceShadowContainers[i],
+                  _listMovePieceShadowContainers[i], _listBoardPieces[i],
+                  _listMoveBorderSquares[i],
                   _listScreenReaderSquares[i]
                ]
             /*
@@ -1789,7 +1884,7 @@ class _LGameBoardState extends State<LGameBoard> {
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(
           Container( child: Stack(children: [_listBoardSquares[i],
-          _listBoardPieces[i],   _listMovePieceShadowContainers[i],
+            _listMovePieceShadowContainers[i], _listBoardPieces[i],
             _listMoveSquares[i],
             _listMoveBorderSquares[i]]),));
       }
