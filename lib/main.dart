@@ -31,7 +31,7 @@ var loggerNoStack = Logger(
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
-enum MenuButtonSelected { remoteGames, oldUnFinishedGames,
+enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame }
 
 void main() async {
@@ -1086,12 +1086,14 @@ class _LGamePageState extends State<MyHomePage>
                     {
                       callFinishedGames();
                     }
+                    /*
                   else
                     if (selectedMenuButton ==
                     MenuButtonSelected.remoteGames)
                     {
                         callRemoteGames();
                     }
+                     */
                     else
                     if (selectedMenuButton ==
                         MenuButtonSelected.exitGame)
@@ -1106,10 +1108,13 @@ class _LGamePageState extends State<MyHomePage>
                 value: MenuButtonSelected.oldUnFinishedGames,
                 child: Text('Select unfinished games'),
               ),
+              /*
               const PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.remoteGames,
                 child: Text('Remote games'),
               ),
+
+               */
               const PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.editPlayerNames,
                 child: Text('Edit player names'),
