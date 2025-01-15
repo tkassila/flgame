@@ -11,6 +11,7 @@ import 'dart:async';
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 // import 'dart:js_interop_unsafe';
 import '../models/LGameDataService.dart';
+import 'package:intl/intl.dart';
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flgame/models/lgame_data.dart';
@@ -190,10 +191,20 @@ class _OldGamesState extends State<OldGamesRoute> {
       bool bCancelReturnValue = false;
       bool bContinueReturnValue = true;
       return showYesNoDialog(thisContext, "Delete old game", "Cancel", "Continue",
-          "Would you like to delete a old L game?", bCancelReturnValue,
+          "Would you like to delete an old L game?", bCancelReturnValue,
           bContinueReturnValue);
     }
 
+
+    String _formatTitle(String title)
+    {
+      if (title == "")
+        return "";
+      // .format()
+      var dt = DateTime.parse(title);
+      String tmp = DateFormat('yyyy-mm-dd hh:mm:ss').format(dt).toString();
+      return tmp;
+    }
 
     Widget _renderOldGames() {
       return Flexible(child:
@@ -205,10 +216,17 @@ class _OldGamesState extends State<OldGamesRoute> {
                 Flexible(
                 flex: 1,
                 child: ExpansionTile(
+                  backgroundColor: (selectedIndex == -1 || selectedIndex != index)
+                    ? Colors.white : Colors.lightGreenAccent,
                   key: Key(index.toString()), //attention
                   initiallyExpanded: selectedIndex == index,
                   controller: expansionControllers![index],
-                  title: Text(_dataTitles![index].title),
+                  title: (selectedIndex == -1 || selectedIndex != index)
+                    ?  Text(_formatTitle(_dataTitles![index].title))
+                    : Text(_formatTitle(_dataTitles![index].title), style:
+                       const TextStyle(color: Colors.black, fontSize: 20,
+                      backgroundColor: Colors.lightGreenAccent ),
+                        ),
                   children: [
                     Text(_dataTitles![index].data.name1 != null
                         ? "Player 1: ${_dataTitles![index].data.name1!}"
@@ -260,6 +278,7 @@ class _OldGamesState extends State<OldGamesRoute> {
                         _dataTitles!.remove(_dataTitles![index]);
                         updateTileControllers();
                         selectedSessionData = null;
+                        selectedIndex = -1;
                       });
                     }
                   },
@@ -458,6 +477,9 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
           bContinueReturnValue);
     }
 
+    String _formatTime(DateTime dateTime) {
+      return DateFormat('hh:mm:ss').format(dateTime);
+    }
 
     Widget _renderFinishedGames() {
       return Flexible(child:
@@ -469,6 +491,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                 Flexible(
                   flex: 1,
                   child: ExpansionTile(
+                      backgroundColor: (selected_index == -1 || selected_index != index)
+                          ? Colors.white : Colors.lightGreenAccent,
                       key: Key(index.toString()), //attention
                       initiallyExpanded: selected_index == index,
                       controller: expansionControllers![index],

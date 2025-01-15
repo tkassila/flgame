@@ -49,6 +49,7 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   injectable: ^2.4.4
   get_it: ^8.0.0
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

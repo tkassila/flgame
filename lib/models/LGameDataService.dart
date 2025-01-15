@@ -124,6 +124,16 @@ class LGameDateService {
       await Hive.openBox<LGameSessionData>(_boxName);
   */
 
+  LGameSessionData? getActiveGame()
+  {
+    return hiveLGameSessionData!.activeGame;
+  }
+
+  setActiveGame(LGameSessionData? active)
+  {
+      hiveLGameSessionData!.activeGame = active;
+  }
+
   List<LGameSessionData>? getLGameSessionDatasUnfinished() {
     /*
      List<LGameSessionData> ret = List.empty(growable: true);

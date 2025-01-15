@@ -952,7 +952,7 @@ class _LGameBoardState extends State<LGameBoard> {
 
     Widget ret = Container(
       // padding: const EdgeInsets.all(8),
-      color: modeColor.withOpacity(0.1),
+      color: modeColor.withOpacity(0.3),
       width: containerWidth,
       height: containerHeight,
       child: /** textWidget ?? */ text,

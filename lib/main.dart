@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:platform/platform.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
+import 'package:intl/intl.dart';
+//import 'package:intl/date_symbol_data_file.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'views/utils/util_dialog.dart';
 import 'views/help_route.dart';
@@ -35,6 +38,7 @@ enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame }
 
 void main() async {
+  Intl.defaultLocale = 'fi_FI';
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
@@ -43,7 +47,7 @@ void main() async {
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await setupDi();
  // FlutterNativeSplash.remove();
-  runApp(const MyApp());
+  initializeDateFormatting('fi_FI', "yyyy-mm-dd hh:mm:ss").then((_) => runApp(const MyApp()));
 }
 
 const String strAppTitle = 'LGame for creativity';
@@ -119,8 +123,9 @@ class _LGamePageState extends State<MyHomePage>
         break;
       case AppLifecycleState.paused:
         logger.i("paused");
-          await di<LGameDateService>().saveLGameSessionData(
-                        lGameSession.getGamePositionsForSaveGame());
+          var obj = lGameSession.getGamePositionsForSaveGame();
+          await di<LGameDateService>().setActiveGame(obj);
+          await di<LGameDateService>().saveLGameSessionData(obj);
           await di<LGameDateService>().closeHive();
         break;
       default:
@@ -169,7 +174,7 @@ class _LGamePageState extends State<MyHomePage>
   Color player2Color = Colors.blueAccent;
   Color neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
-         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 25,
+         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20,
              fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
@@ -562,12 +567,16 @@ class _LGamePageState extends State<MyHomePage>
 
   getLastDataSession() async
   {
+    LGameSessionData? active = di<LGameDateService>().getActiveGame();
     List<LGameSessionData>? cList =
         di<LGameDateService>().getLGameSessionDatasUnfinished();
     if (cList != null && cList.isNotEmpty)
     {
       setState(() {
-        lGameSession.setStartGameAfterOldGame(cList.first);
+        if (active == null)
+          lGameSession.setStartGameAfterOldGame(cList.first);
+        else
+          lGameSession.setStartGameAfterOldGame(active);
         _buildBoard = buildGameBoard();
       });
     }
@@ -992,6 +1001,9 @@ class _LGamePageState extends State<MyHomePage>
                 selectedLGameSessionData!.gameSessionData!.
                 startedAt!))
         {
+          if(selectedLGameSessionData!.gameSessionData != null) {
+            await di<LGameDateService>().setActiveGame(selectedLGameSessionData!.gameSessionData);
+          }
           return;
         }
       }
@@ -1008,10 +1020,14 @@ class _LGamePageState extends State<MyHomePage>
         return;
       }
 
+      await di<LGameDateService>().setActiveGame(selectedLGameSessionData!.gameSessionData);
       oldSelectedLGameSessionData = selectedLGameSessionData;
+      lGameSession.setStartGameAfterOldGame(
+          selectedLGameSessionData!.gameSessionData!);
+      bool bSaved2 = await di<LGameDateService>().saveLGameSessionData(
+        lGameSession.getGamePositionsForSaveGame(),
+      );
       setState(() {
-        lGameSession.setStartGameAfterOldGame(
-            selectedLGameSessionData!.gameSessionData!);
         _buildBoard = buildGameBoard();
       });
     }

@@ -186,6 +186,9 @@ class HiveLGameSessionData extends HiveObject {
   @HiveField(2) //uinque id for each field
   List<LGameSessionData>? finishedGames;
 
+  @HiveField(3)
+  LGameSessionData? activeGame;
+
   /*
   HiveLGameSessionData({
     required this.saveTime,
@@ -1686,7 +1689,7 @@ class LGameSession {
         }
       }
       if (!newNeutralPositionAreFreeToMove()) {
-        msg = "This neutral piece position is not free!n.";
+        msg = "This neutral piece position is not free!";
         return true;
       }
 
@@ -1789,6 +1792,16 @@ class LGameSession {
     return ret;
   }
 
+
+  bool isIntersect(List? listOne, List? listTwo) {
+    if(listOne == null)
+      return false;
+    if(listTwo == null)
+      return false;
+
+    return listOne.toSet().intersection(listTwo.toSet()).isNotEmpty;
+  }
+
   bool newLPiecePositionsAreFreeToMove()
   {
     bool ret = false;
@@ -1819,6 +1832,12 @@ class LGameSession {
                  || (iActiveNeutral == 1 &&  iArrPlayerMovePieces!.contains(iPlayerNeutral1Piece))){
                areNotInNeutralPieces = true;
              }
+
+             if (isIntersect(iArrPlayer1Pieces, iArrPlayerMovePieces) ||
+                 isIntersect(iArrPlayer2Pieces, iArrPlayerMovePieces))
+               {
+                 return false;
+               }
 
              if (areNotInNeutralPieces) {
                return true;

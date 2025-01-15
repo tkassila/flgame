@@ -31,13 +31,17 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..oldPlayerTurn = fields[11] as GamePlayerTurn?
       ..oldInMovingPiece = fields[12] as LGamePieceInMove?
       ..oldIPlayerMove = fields[13] as int?
-      ..bGameOver = fields[14] as bool;
+      ..bGameOver = fields[14] as bool
+      ..oldIArrPlayerPossibleMovePieces = (fields[15] as List?)?.cast<int>()
+      ..oldIPlayerNeutral1PieceInBeginningMove = fields[16] as int?
+      ..oldIPlayerNeutral2PieceInBeginningMove = fields[17] as int?
+      ..modifiedAt = fields[18] as DateTime?;
   }
 
   @override
   void write(BinaryWriter writer, LGameSessionData obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.name1)
       ..writeByte(1)
@@ -67,7 +71,15 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..writeByte(13)
       ..write(obj.oldIPlayerMove)
       ..writeByte(14)
-      ..write(obj.bGameOver);
+      ..write(obj.bGameOver)
+      ..writeByte(15)
+      ..write(obj.oldIArrPlayerPossibleMovePieces)
+      ..writeByte(16)
+      ..write(obj.oldIPlayerNeutral1PieceInBeginningMove)
+      ..writeByte(17)
+      ..write(obj.oldIPlayerNeutral2PieceInBeginningMove)
+      ..writeByte(18)
+      ..write(obj.modifiedAt);
   }
 
   @override
@@ -94,19 +106,22 @@ class HiveLGameSessionDataAdapter extends TypeAdapter<HiveLGameSessionData> {
     return HiveLGameSessionData()
       ..saveTime = fields[0] as DateTime?
       ..unFinishedGames = (fields[1] as List?)?.cast<LGameSessionData>()
-      ..finishedGames = (fields[2] as List?)?.cast<LGameSessionData>();
+      ..finishedGames = (fields[2] as List?)?.cast<LGameSessionData>()
+      ..activeGame = fields[3] as LGameSessionData?;
   }
 
   @override
   void write(BinaryWriter writer, HiveLGameSessionData obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.saveTime)
       ..writeByte(1)
       ..write(obj.unFinishedGames)
       ..writeByte(2)
-      ..write(obj.finishedGames);
+      ..write(obj.finishedGames)
+      ..writeByte(3)
+      ..write(obj.activeGame);
   }
 
   @override
