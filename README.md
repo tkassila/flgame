@@ -1,6 +1,6 @@
 # flgame
 
-A L game for flutter android
+A L game for flutter android after Edward Bono, see wikipedia, L game. And help button of the game.
 
 ## Getting Started
 
