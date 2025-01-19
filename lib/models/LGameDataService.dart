@@ -19,16 +19,21 @@ var loggerNoStack = Logger(
 
 class LGameDateServiceProvider {
   // Local Source For Home
-  final LGameDateService _lGameDateService;
+  final LGameDataService _lGameDateService;
 
   LGameDateServiceProvider(this._lGameDateService,) {
     _lGameDateService.initHive();
   }
 }
 
-class LGameDateService {
+class LGameDataService {
   static bool bInitHasDone = false;
-  SelectedLGameSessionData? selectedLGameSessionData;
+  static LGameDataService? _instance;
+
+//  LGameDateService._();
+
+//  factory LGameDateService() => _instance ??= LGameDateService._();
+  LGameSessionData? selectedLGameSessionData;
   static const String _nameHiveDataBox = "hivelgamesessiondatabox";
  // static const String _nameDataBox = "lgamesessiondatabox";
   HiveLGameSessionData? hiveLGameSessionData;
@@ -65,14 +70,13 @@ class LGameDateService {
   }
    */
 
-  LGameDateService() {
-    /* sessionDataBox =
-       Hive.box<HiveLGameSessionData>(_boxName);
-    */
-  }
-
   closeHive() async
   {
+    if (_boxSessionHiveData!.isEmpty) {
+      await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
+    } else {
+      await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
+    }
     if (_boxSessionHiveData != null) {
       await _boxSessionHiveData!.close();
     }
@@ -102,7 +106,7 @@ class LGameDateService {
     Hive.registerAdapter(LGameSessionDataAdapter());
     Hive.registerAdapter(HiveLGameSessionDataAdapter());
    // LGameDateService.setDataBox(await Hive.openBox(LGameDateService.getDataBoxName()));
-    _boxSessionHiveData = await Hive.openBox(LGameDateService.getHiveDataBoxName());
+    _boxSessionHiveData = await Hive.openBox(LGameDataService.getHiveDataBoxName());
 
     // _sessionDataBox =  (await
     //   Hive.openBox<HiveLGameSessionData>('data/' +_boxName));
@@ -116,6 +120,15 @@ class LGameDateService {
         hiveLGameSessionData!.finishedGames = List.empty(growable: true);
     //  }
     }
+    else
+      {
+        if (hiveLGameSessionData!.unFinishedGames == null) {
+          hiveLGameSessionData!.unFinishedGames = List.empty(growable: true);
+        }
+        if (hiveLGameSessionData!.finishedGames == null) {
+          hiveLGameSessionData!.finishedGames = List.empty(growable: true);
+        }
+      }
     bInitHasDone = true;
   }
 
@@ -134,7 +147,7 @@ class LGameDateService {
       hiveLGameSessionData!.activeGame = active;
   }
 
-  List<LGameSessionData>? getLGameSessionDatasUnfinished() {
+  List<LGameSessionData>? getLGameSessionDataUnfinished() {
     /*
      List<LGameSessionData> ret = List.empty(growable: true);
      LGameSessionData gs1 = LGameSessionData();
@@ -172,7 +185,7 @@ class LGameDateService {
      return ret;
      */
 
-    checkInit();
+    // checkInit();
 
     if (hiveLGameSessionData == null) {
       return null;
@@ -195,32 +208,34 @@ class LGameDateService {
     return ret;
   }
 
-  checkInit() {
+  checkInit() async {
     if (!bInitHasDone) {
       initHive();
     }
   }
 
   List<LGameSessionData>? getLGameSessionDataFinished() {
-    checkInit();
+  //  checkInit();
     List<LGameSessionData> ret = List<LGameSessionData>.empty(growable: true);
     var hiveList = hiveLGameSessionData!.finishedGames!.toList()
         .reversed.toList();
     for (int i = 0; i < hiveList.length; i++) {
-      ret.add(hiveList[i] as LGameSessionData);
+      ret.add(hiveList[i]);
     }
     return ret;
   }
 
-  Future<bool> saveLGameSessionData(LGameSessionData ds) async
+  bool /* Future<bool> */ saveLGameSessionData(LGameSessionData ds) /* async */
   {
-    checkInit();
+   // checkInit();
     getSavingGamesList(ds);
+    /*
     if (_boxSessionHiveData!.isEmpty) {
       await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
     } else {
       await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
     }
+     */
     return true;
   }
 
@@ -246,89 +261,45 @@ class LGameDateService {
 
 //  List<LGameSessionData>?
   getSavingGamesList(LGameSessionData ds) {
-    checkInit();
+   // checkInit();
     bool founded = false;
     List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
     List<LGameSessionData> unfinishedGames = hiveLGameSessionData!.unFinishedGames!;
     bool bUnFinishedGamesExists = false;
-    if (ds.bGameOver) {
-      listGames = hiveLGameSessionData!.finishedGames!;
-      bUnFinishedGamesExists = unfinishedGames.any((listItem) =>
+
+    bool ActiveTheSame = hiveLGameSessionData!.activeGame == null ? false :
+        ds.startedAt == hiveLGameSessionData!.activeGame!.startedAt;
+    if (ActiveTheSame) {
+      hiveLGameSessionData!.activeGame = ds;
+    }
+
+    saveIntoUnFinishedGamesList(ds);
+    /*
+    bUnFinishedGamesExists = unfinishedGames.any((listItem) =>
          listItem.startedAt == ds.startedAt);
-    }
 
-    if (ds.bGameOver)
-    {
-      if (bUnFinishedGamesExists) {
-        unfinishedGames.remove(ds);
-      }
-      unfinishedGames.add(getNewFreshGame());
-      hiveLGameSessionData!.unFinishedGames = unfinishedGames;
+    if (bUnFinishedGamesExists) {
+      unfinishedGames.remove(ds);
     }
-
-    bool bExists = listGames.isNotEmpty;
-    if (bExists) {
-      bExists = listGames.any((listItem) => listItem.startedAt == ds.startedAt);
-    }
-    if (!bExists) {
-      // _boxSessionData!.add(ds);
-      listGames.add(ds);
-      founded = true;
-    }
-    else {
-      // .put(ds.startedAt, ds);
-      LGameSessionData? data;
-      for (int i = 0; i < listGames.length; i++) {
-        data = listGames[i] as LGameSessionData;
-        if (data == null) {
-          continue;
-        }
-        if (data.startedAt == ds.startedAt) {
-          listGames[i] = ds;
-          founded = true;
-          break;
-        }
-      }
-      if (!founded) {
-        listGames.add(ds);
-      }
-    }
-
-    if (!founded) {
-      return;
-    }
-
-    if (ds.bGameOver) {
-      hiveLGameSessionData!.finishedGames = listGames;
-    }
-    else {
-      hiveLGameSessionData!.unFinishedGames = listGames;
-    }
-
-    // return listGames;
+    unfinishedGames.add(getNewFreshGame());
+    hiveLGameSessionData!.unFinishedGames = unfinishedGames;
+    */
   }
 
-  // HiveList?
-  getDeleteGameSessionData(LGameSessionData ds) {
+  saveIntoUnFinishedGamesList(LGameSessionData ds)
+  {
     List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
-    if (ds.bGameOver) {
-      listGames = hiveLGameSessionData!.finishedGames!;
-    }
-    if (listGames == null) {
-      listGames = List<LGameSessionData>.empty(growable: true);
-    }
-    checkInit();
+    listGames ??= List<LGameSessionData>.empty(growable: true);
+//    checkInit();
 
-    bool bExists = listGames.isNotEmpty;
+    bool bExists = false; // listGames.isNotEmpty;
+    /*
+    bExists = listGames.contains(ds);
     if (bExists) {
-      bExists = listGames.contains(ds);
-    }
-    if (bExists) {
-      listGames.remove(ds);
-      /*
-      // .put(ds.startedAt, ds);
+     */
       LGameSessionData? data;
       bool founded =  false;
+      int iFounded = -1;
       for (int i = 0; i < listGames.length; i++) {
         data = listGames[i];
         if (data == null) {
@@ -336,40 +307,146 @@ class LGameDateService {
         }
         if (data.startedAt == ds.startedAt) {
           listGames[i] = ds;
+          iFounded = i;
           founded = true;
           break;
         }
       }
-      if (!founded)
-      {
+   // }
+      if (!founded) {
         listGames.add(ds);
       }
-       */
-    }
-
-    if (ds.bGameOver) {
-      hiveLGameSessionData!.finishedGames = listGames;
-    }
-    else {
-      hiveLGameSessionData!.unFinishedGames = listGames;
-    }
-
-    //  return listGames;
+    hiveLGameSessionData!.unFinishedGames = listGames;
   }
 
-  Future<bool?> deleteLGameSessionData(LGameSessionData ds) async
+  saveIntoFinishedGamesList(LGameSessionData ds)
   {
-    checkInit();
+    List<LGameSessionData> listGames = hiveLGameSessionData!.finishedGames!;
+    listGames ??= List<LGameSessionData>.empty(growable: true);
+   // checkInit();
+
+    bool bExists = false; // listGames.isNotEmpty;
+    /*
+    bExists = listGames.contains(ds);
+    if (bExists) {
+     */
+      LGameSessionData? data;
+      bool founded =  false;
+      int iFounded = -1;
+      for (int i = 0; i < listGames.length; i++) {
+        data = listGames[i];
+        if (data == null) {
+          continue;
+        }
+        if (data.startedAt == ds.startedAt) {
+          listGames[i] = ds;
+          iFounded = i;
+          founded = true;
+          break;
+        }
+      }
+      if (!founded) {
+        listGames.add(ds);
+      }
+    // }
+    hiveLGameSessionData!.finishedGames = listGames;
+  }
+
+  deleteFinishedGameSessionData(LGameSessionData ds) {
+    List<LGameSessionData> listGames = hiveLGameSessionData!.finishedGames!;
+    listGames ??= List<LGameSessionData>.empty(growable: true);
+  //  checkInit();
+
+    bool bExists = false; // listGames.isNotEmpty;
+    // .put(ds.startedAt, ds);
+    LGameSessionData? data;
+    bool founded =  false;
+    int iFounded = -1;
+    for (int i = 0; i < listGames.length; i++) {
+      data = listGames[i];
+      if (data == null) {
+        continue;
+      }
+      if (data.startedAt == ds.startedAt) {
+        listGames[i] = ds;
+        iFounded = i;
+        founded = true;
+        break;
+      }
+    }
+    if (!founded)
+      {
+        return false;
+      }
+      listGames.removeAt(iFounded);
+      hiveLGameSessionData!.finishedGames = listGames;
+  }
+
+  deleteUnFinishedGameSessionData(LGameSessionData ds) {
+    List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
+    listGames ??= List<LGameSessionData>.empty(growable: true);
+  //  checkInit();
+
+    bool bExists = false; // listGames.isNotEmpty;
+      // .put(ds.startedAt, ds);
+    LGameSessionData? data;
+    bool founded =  false;
+    int iFounded = -1;
+   for (int i = 0; i < listGames.length; i++) {
+     data = listGames[i];
+     if (data == null) {
+       continue;
+     }
+     if (data.startedAt == ds.startedAt) {
+       listGames[i] = ds;
+       iFounded = i;
+       founded = true;
+       break;
+     }
+   }
+     if (!founded)
+     {
+        return false;
+      }
+     listGames.removeAt(iFounded);
+     hiveLGameSessionData!.unFinishedGames = listGames;
+  }
+
+  Future<bool?> deleteUnFinishedLGameSessionData(LGameSessionData ds) async
+  {
+ //   checkInit();
     if (!ds.bGameOver) {
-      getDeleteGameSessionData(ds);
+      deleteUnFinishedGameSessionData(ds);
+      /*
       if (_boxSessionHiveData!.isEmpty) {
         await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
       } else {
         await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
       }
+       */
       return true;
     }
+    return null;
+  }
 
+  Future<bool?> deleteFinishedLGameSessionData(LGameSessionData ds) async
+  {
+ //   checkInit();
+    if (!ds.bGameOver) {
+      deleteFinishedGameSessionData(ds);
+      /*
+      if (_boxSessionHiveData!.isEmpty) {
+        await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
+      } else {
+        await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
+      }
+       */
+      return true;
+    }
+    return null;
+  }
+
+/*
     void setSelectedLGameSessionData(
         SelectedLGameSessionData p_selectedLGameSessionData) {
       selectedLGameSessionData = p_selectedLGameSessionData;
@@ -379,6 +456,7 @@ class LGameDateService {
     {
       return selectedLGameSessionData;
     }
+    */
 
     /*
   static Future<Box<LGameSessionData>> get async
@@ -386,5 +464,4 @@ class LGameDateService {
     return _servie.box.get();
   }
   */
-  }
 }

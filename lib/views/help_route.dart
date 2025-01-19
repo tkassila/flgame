@@ -45,21 +45,27 @@ const TextStyle textStyle = TextStyle(fontSize: 20,
 
 var htmlStyle = {
   "table": Style(
-    backgroundColor: const Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+    backgroundColor: Colors.white /* const Color.fromARGB(0x50, 0xee, 0xee, 0xee) */,
   ),
   "tr": Style(
-    border: const Border(bottom: BorderSide(color: Colors.grey)),
+    border: const Border(bottom: BorderSide(color: Colors.white)),
   ),
   "th": Style(
     padding: HtmlPaddings.all(6),
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.white,
   ),
   "td": Style(
     padding: HtmlPaddings.all(6),
     alignment: Alignment.topLeft,
+    backgroundColor: Colors.white,
+  ),
+  "div": Style(
+    backgroundColor: Colors.white,
+    padding: HtmlPaddings.all(10),
   ),
   "p": Style(
     padding: HtmlPaddings.all(6),
+    backgroundColor: Colors.white,
     fontSize: FontSize.large,
     alignment: Alignment.center,
   ),
@@ -82,7 +88,19 @@ var htmlStyle = {
 
 const String strHelp = r"""
 
+
 <div class="text">
+    <h4>L game - tablet and phone game
+    </h4>
+    <p>You can use main menu to select next options in the game:</p>
+    <p>This game can store un/finished game sessions with current game situation. Select that 
+        option to see a list of store sessions and game boards. You can also remove old game 
+        sessions to press garbage picture on the row. You can select some unfinished game 
+        to continue the game where players left the selected game.</p>
+</div>
+
+<div class="text">
+    <h4>From Wikipedia</h4>
     <p>From Wikipedia, the free encyclopedia
         L game board and starting setup, with neutral pieces shown as black discs
     </p>
@@ -100,10 +118,12 @@ const String strHelp = r"""
     <p>
         On each turn, a player must first move their L piece, and then may optionally move either one of the neutral pieces. The game is won by leaving the opponent unable to move their L piece to a new position.
     </p>
+    </div>
     """;
 
 
 const String strHelp2 = r"""
+<div class="text">
     <p>
         Pieces may not overlap or cover other pieces, or let the pieces off the board. On moving the L piece, it is picked up and then placed in empty squares anywhere on the board. It may be rotated or even flipped over in doing so; the only rule is that it must end in a different position from the position it started—thus covering at least one square it did not previously cover. To move a neutral piece, a player simply picks it up then places it in an empty square anywhere on the board.
     </p>
@@ -124,9 +144,11 @@ const String strHelp2 = r"""
         All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing.
         All possible final positions, Blue has won
     </p>
+    </div>
 """;
 
 const String strHelp3 = r"""
+<div class="text">
       <p>
         In a game with two perfect players, neither will ever win or lose. The L game is small enough to be completely solvable. There are 2296 different possible valid ways the pieces can be arranged, not counting a rotation or mirror of an arrangement as a new arrangement, and considering the two neutral pieces to be identical. Any arrangement can be reached during the game, with it being any player's turn. Each player has lost in 15 of these arrangements, if it is that player's turn. The losing arrangements involve the losing player's L piece touching a corner. Each player will also soon lose to a perfect player in an additional 14 arrangements. A player will be able to at least force a draw (by playing forever without losing) from the remaining 2267 positions.
     </p>
@@ -211,7 +233,8 @@ class HelpPage4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Container( color: Colors.white, child:
+    const Column(
         children:  [
              Image(
               width: 150,
@@ -260,7 +283,7 @@ class HelpPage4 extends StatelessWidget {
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
                */
             ],
-
+    ),
     );
   }
 }

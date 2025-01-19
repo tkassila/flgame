@@ -8,8 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 */
 import 'dart:async';
+import 'dart:ffi';
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 // import 'dart:js_interop_unsafe';
+import 'package:flutter_html/flutter_html.dart';
+
 import '../models/LGameDataService.dart';
 import 'package:intl/intl.dart';
 
@@ -92,9 +95,9 @@ class _OldGamesState extends State<OldGamesRoute> {
 
   int getModified(LGameSessionData a, LGameSessionData b)
   {
-    a.modifiedAt ??= DateTime.parse(a.startedAt!);
-    b.modifiedAt ??= DateTime.parse(b.startedAt!);
-    return a.modifiedAt!.compareTo(b.modifiedAt!);
+    DateTime modifiedAtA = DateTime.parse(a.startedAt!);
+    DateTime modifiedAtB = DateTime.parse(b.startedAt!);
+    return modifiedAtA.compareTo(modifiedAtB);
   }
 
   List<LGameSessionTitle> getSteps()
@@ -128,24 +131,30 @@ class _OldGamesState extends State<OldGamesRoute> {
 
   setInitDataList() async
   {
-    listDataSessions = di<LGameDateService>().getLGameSessionDatasUnfinished();
+    listDataSessions = di<LGameDataService>().getLGameSessionDataUnfinished();
+    _dataTitles = null;
     setState(() {
       if (listDataSessions != null) {
         _dataTitles = getSteps();
       }
+      updateTileControllers();
     });
     //
-
-    updateTileControllers();
   }
 
   @override
   void initState() {
     super.initState();
+    initControls();
+  }
+
+  void initControls()
+  {
+    listDataSessions = di<LGameDataService>().getLGameSessionDataUnfinished();
     setInitDataList();
     lGameSession.initState();
   }
-
+  
   @override
   Widget build(BuildContext context) {
 
@@ -195,19 +204,21 @@ class _OldGamesState extends State<OldGamesRoute> {
           bContinueReturnValue);
     }
 
-
     String _formatTitle(String title)
     {
-      if (title == "")
+      if (title == "") {
         return "";
+      }
       // .format()
       var dt = DateTime.parse(title);
-      String tmp = DateFormat('yyyy-mm-dd hh:mm:ss').format(dt).toString();
+      String tmp = DateFormat('yyyy-MM-dd hh:mm:ss').format(dt).toString();
       return tmp;
     }
 
     Widget _renderOldGames() {
       return Flexible(child:
+      _dataTitles == null ? Card(margin: EdgeInsets.all(5.0),
+        child: Text("No old unfinished games"),) :
       ListView.builder(
           itemCount: _dataTitles!.length,
           itemBuilder: (context, index) {
@@ -244,23 +255,25 @@ class _OldGamesState extends State<OldGamesRoute> {
                          return;
                     }
                     setState(() {
-                      selectedSessionData = _dataTitles![index].data;
                       if (newState) {
+                        selectedSessionData = _dataTitles![index].data;
                         selectedIndex = index;
                         if (prevIndexExpanded != index && prevIndexExpanded != -1)
                         {
                             bUnderCollapse = true;
                             expansionControllers![prevIndexExpanded].collapse();
                             bUnderCollapse = false;
-                      }
+                        }
+                        if (selectedSessionData != null) {
+                          lGameSession.setStartGameAfterOldGame(selectedSessionData!);
+                        }
                         prevIndexExpanded = index;
                       //  selectedExpansionTile = ExpansionTileController.of(context);
                       }
                       else {
                         selectedIndex = -1;
+                        prevIndexExpanded = -1;
                       }
-                      lGameSession.setStartGameAfterOldGame(
-                          selectedSessionData!);
                     },);
                   }
               ),
@@ -272,10 +285,11 @@ class _OldGamesState extends State<OldGamesRoute> {
                     bool bDeleteThisStep = await showDeleteOldGameDialog(
                                                  context);
                     if (bDeleteThisStep) {
-                      await di<LGameDateService>().deleteLGameSessionData(
+                      di<LGameDataService>().deleteUnFinishedGameSessionData(
                         _dataTitles![index].data);
                       setState(() {
-                        _dataTitles!.remove(_dataTitles![index]);
+                        initControls();
+                        // _dataTitles!.remove(_dataTitles![index]);
                         updateTileControllers();
                         selectedSessionData = null;
                         selectedIndex = -1;
@@ -298,14 +312,29 @@ class _OldGamesState extends State<OldGamesRoute> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
      /*   centerTitle: true, */
         actions: [
-          ElevatedButton(
+          if (listDataSessions == null || listDataSessions!.isEmpty) ElevatedButton(
+            style: buttonStyle,
+            child: const Text(
+              'Back to the game',
+            ),
+            onPressed: () async {
+              selectedLGameSessionData = null;
+              di<LGameDataService>().selectedLGameSessionData = null;
+              // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
+              Navigator.pop(context, selectedLGameSessionData);
+              //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
+            },
+          ) else ElevatedButton(
             style: buttonStyle,
             child: const Text(
               'Select game',
             ),
             onPressed: () async {
-              selectedLGameSessionData = SelectedLGameSessionData(selectedSessionData);
-              di<LGameDateService>().selectedLGameSessionData = selectedLGameSessionData;
+              if (selectedSessionData != null)
+                selectedLGameSessionData = SelectedLGameSessionData(selectedSessionData);
+              else
+                selectedLGameSessionData = null;
+              di<LGameDataService>().selectedLGameSessionData = selectedSessionData;
              // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
               Navigator.pop(context, selectedLGameSessionData);
             //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
@@ -313,18 +342,23 @@ class _OldGamesState extends State<OldGamesRoute> {
           ),
         ],
       ),
-      body:   listDataSessions != null ?
-          Column( crossAxisAlignment: CrossAxisAlignment.center,
+      body:   listDataSessions == null || listDataSessions!.length == 0 ?
+        Card(child: Padding(padding: EdgeInsets.all(5),
+        child: const Text("No unfinished games"),),)
+          : Column( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
           Container(
                   child: _renderOldGames(),
                 ),
             selectedSessionData != null ?
-            LGameBoard(lGameSession: lGameSession,
-                bScreenReaderIsUsed: bScreenReaderIsUsed)
-        : Container(child: Text("No selected session")),
-              const SizedBox(height: 10, width: 100,),
+            Column(children: [
+                LGameBoard(lGameSession: lGameSession,
+                bScreenReaderIsUsed: bScreenReaderIsUsed),
+                SizedBox(height: 20,)
+                ],
+            )
+                : Card(child: null,),
         ],
            )
 
@@ -340,8 +374,7 @@ class _OldGamesState extends State<OldGamesRoute> {
             ),
           );
         },
-      ) */ : Container(child: const Center(child:  Text('No old unfinished l games.',
-         style: TextStyle(fontSize: 30),),),),
+      ) */
       );
   }
   }
@@ -377,8 +410,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
 
   int getModified(LGameSessionData a, LGameSessionData b)
   {
-    a.modifiedAt ??= DateTime.parse(a.startedAt!);
-    b.modifiedAt ??= DateTime.parse(b.startedAt!);
+    // a.modifiedAt ??= DateTime.parse(a.startedAt!);
+    // b.modifiedAt ??= DateTime.parse(b.startedAt!);
     return a.modifiedAt!.compareTo(b.modifiedAt!);
   }
 
@@ -411,20 +444,26 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
 
   setInitDataList() async
   {
-    listDataSessions = di<LGameDateService>().getLGameSessionDataFinished();
     setState(() {
+      listDataSessions = di<LGameDataService>().getLGameSessionDataFinished();
+      _dataTitles = null;
       if (listDataSessions != null) {
         _dataTitles = getSteps();
       }
+      updateTileControllers();
     });
     //
-
-    updateTileControllers();
   }
 
   @override
   void initState() {
     super.initState();
+    initControls();
+  }
+
+  void initControls()
+  {
+    listDataSessions = di<LGameDataService>().getLGameSessionDataFinished();
     setInitDataList();
     lGameSession.initState();
   }
@@ -481,6 +520,18 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
       return DateFormat('hh:mm:ss').format(dateTime);
     }
 
+
+    String _formatTitle(String title)
+    {
+      if (title == "") {
+        return "";
+      }
+      // .format()
+      var dt = DateTime.parse(title);
+      String tmp = DateFormat('yyyy-MM-dd hh:mm:ss').format(dt).toString();
+      return tmp;
+    }
+
     Widget _renderFinishedGames() {
       return Flexible(child:
       ListView.builder(
@@ -496,7 +547,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                       key: Key(index.toString()), //attention
                       initiallyExpanded: selected_index == index,
                       controller: expansionControllers![index],
-                      title: Text(_dataTitles![index].title),
+                      title: Text(_formatTitle(_dataTitles![index].title)),
                       children: [
                         Text(_dataTitles![index].data.name1 != null
                             ? "Player 1: ${_dataTitles![index].data.name1!}"
@@ -514,8 +565,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                           return;
                         }
                         setState(() {
-                          selectedSessionData = _dataTitles![index].data;
                           if (newState) {
+                            selectedSessionData = _dataTitles![index].data;
                             selected_index = index;
                             if (prevIndexExpanded != index && prevIndexExpanded != -1)
                             {
@@ -523,11 +574,15 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                               expansionControllers![prevIndexExpanded].collapse();
                               bUnderCollapse = false;
                             }
+                            if (selectedSessionData != null) {
+                              lGameSession.setStartGameAfterOldGame(selectedSessionData!);
+                            }
                             prevIndexExpanded = index;
                             //  selectedExpansionTile = ExpansionTileController.of(context);
                           }
                           else {
                             selected_index = -1;
+                            prevIndexExpanded = -1;
                           }
                           lGameSession.setStartGameAfterOldGame(
                               selectedSessionData!);
@@ -537,17 +592,20 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete),
-                  tooltip: 'Delete an old game',
+                  tooltip: 'Delete a finished game',
                   onPressed: () async {
                     bool bDeleteThisStep = await showDeleteOldGameDialog(
                         context);
                     if (bDeleteThisStep) {
-                      await di<LGameDateService>().deleteLGameSessionData(
+                      di<LGameDataService>().deleteFinishedLGameSessionData(
                           _dataTitles![index].data);
                       setState(() {
-                        _dataTitles!.remove(_dataTitles![index]);
+                        initControls();
+                        // _dataTitles!.remove(_dataTitles![index]);
                         updateTileControllers();
                         selectedSessionData = null;
+                        selected_index = -1;
+                        prevIndexExpanded = -1;
                       });
                     }
                   },
@@ -577,9 +635,22 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
             child: _renderFinishedGames(),
           ),
           selectedSessionData != null ?
-          LGameBoard(lGameSession: lGameSession,
-              bScreenReaderIsUsed: bScreenReaderIsUsed)
-              : Container(child: Text("No selected session")),
+          Container(
+          decoration: BoxDecoration(
+          color: Colors.white70,
+          border: Border.all(
+          color: Theme.of(context).colorScheme.inversePrimary,
+          width: 20,
+          ),
+          ),
+          child: Column(children: [
+            LGameBoard(lGameSession: lGameSession,
+              bScreenReaderIsUsed: bScreenReaderIsUsed),
+              SizedBox(height: 20),
+            ],
+          ),
+          )
+              : Text("No selected session"),
           const SizedBox(height: 10, width: 100,),
         ],
       )
@@ -596,8 +667,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
             ),
           );
         },
-      ) */ : Container(child: const Center(child:  Text('No finished l games.',
-        style: TextStyle(fontSize: 30),),),),
+      ) */ : const Center(child:  Text('No finished l games.',
+        style: TextStyle(fontSize: 30),),),
     );
   }
 }

@@ -98,9 +98,9 @@ class _LGameBoardState extends State<LGameBoard> {
   {
      Object? objRet = _getPrivateMoveDecorationBorderWithBorderSidesForCol(index,
                l3SeriesList, forthLPieceGp, boxDecorationColor, false);
-     if (objRet != null)
+     if (objRet != null) {
        return objRet as Border;
-     else {
+     } else {
        objRet = Border.all(
          color: boxDecorationColor,
          width: 7,
@@ -120,8 +120,9 @@ class _LGameBoardState extends State<LGameBoard> {
       color: Colors.black,
       width: 7,
     );
-    if (isCalledFromBorderMoveContainer)
-       ret = null;
+    if (isCalledFromBorderMoveContainer) {
+      ret = null;
+    }
 
     if (l3SeriesList == null) {
       return ret;
@@ -409,9 +410,9 @@ class _LGameBoardState extends State<LGameBoard> {
   {
     Object? objRet = _getPrivateMoveDecorationBorder(index, boxDecorationColor,
         false) ;
-    if (objRet != null)
+    if (objRet != null) {
       return objRet as Border;
-    else {
+    } else {
       objRet = Border.all(
         color: boxDecorationColor,
         width: 7,
@@ -429,8 +430,9 @@ class _LGameBoardState extends State<LGameBoard> {
       width: 7,
     );
 
-    if (isCalledFromBorderMoveContainer)
+    if (isCalledFromBorderMoveContainer) {
       ret = null;
+    }
 
     if (lGameSession.iArrPlayerMovePieces != null
         && lGameSession.iArrPlayerMovePieces!.contains(index))
@@ -519,12 +521,13 @@ class _LGameBoardState extends State<LGameBoard> {
           return ret;
         }
 
-        if (!isCalledFromBorderMoveContainer)
+        if (!isCalledFromBorderMoveContainer) {
           ret = getMoveDecorationBorderWithBorderSidesForRow(
                   index, rowSeries.series, forthLPieceGp, boxDecorationColor);
-        else
+        } else {
           ret = _getPrivateMoveDecorationBorderWithBorderSidesForRow(
               index, rowSeries.series, forthLPieceGp, boxDecorationColor, true);
+        }
 
       }
       else {
@@ -584,17 +587,19 @@ class _LGameBoardState extends State<LGameBoard> {
           return ret;
         }
 
-        if (!isCalledFromBorderMoveContainer)
-         ret = getMoveDecorationBorderWithBorderSidesForCol(
+        if (!isCalledFromBorderMoveContainer) {
+          ret = getMoveDecorationBorderWithBorderSidesForCol(
                 index, colSeries.series, forthLPieceGp, boxDecorationColor);
-        else
+        } else {
           ret = _getPrivateMoveDecorationBorderWithBorderSidesForCol(
               index, colSeries.series, forthLPieceGp, boxDecorationColor, true);
+        }
       }
     }
 
-    if (isCalledFromBorderMoveContainer && ret != null && ret.runtimeType == Border)
+    if (isCalledFromBorderMoveContainer && ret != null && ret.runtimeType == Border) {
       ret = null;
+    }
 
     return ret;
   }
@@ -607,9 +612,9 @@ class _LGameBoardState extends State<LGameBoard> {
   {
        Object? objRet = _getPrivateMoveDecorationBorderWithBorderSidesForRow(index,
            l3SeriesList, forthLPieceGp, boxDecorationColor, false) as Border;
-       if (objRet != null)
+       if (objRet != null) {
          return objRet as Border;
-       else {
+       } else {
          objRet = Border.all(
            color: boxDecorationColor,
            width: 7,
@@ -630,8 +635,9 @@ class _LGameBoardState extends State<LGameBoard> {
       color: Colors.black,
       width: 7,
     );
-    if (isCalledFromBorderMoveContainer)
-      ret = null;;
+    if (isCalledFromBorderMoveContainer) {
+      ret = null;
+    };
 
     if (l3SeriesList == null) {
       return ret;
@@ -1406,8 +1412,9 @@ class _LGameBoardState extends State<LGameBoard> {
      Border? border;
      for (int i = 0; i < _listMoveBorders.length; i++ ) {
        border = _listMoveBorders[i];
-       if (border == null)
+       if (border == null) {
          continue;
+       }
        topColor = border.top.style;
        bottomColor = border.bottom.style;
        leftColor = border.left.style;
@@ -1548,8 +1555,9 @@ class _LGameBoardState extends State<LGameBoard> {
     BorderStyle? topStyle, bottomStyle, leftStyle, rightStyle;
     /* const */ BorderStyle BORDERSTYLE_NONE = BorderStyle.none;
     Border? border = _listMoveBorders[index];
-    if (border == null)
+    if (border == null) {
       return null;
+    }
 
     topStyle = border.top.style;
     bottomStyle = border.bottom.style;
@@ -1566,10 +1574,12 @@ class _LGameBoardState extends State<LGameBoard> {
       shadows.add(shadow);
     }
 
+    /*
     if (rightStyle != BORDERSTYLE_NONE)
       {
         print("kissa");
       }
+     */
     shadow = getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX);
     if (shadow != null) {
       shadows.add(shadow);

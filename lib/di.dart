@@ -11,6 +11,6 @@ Future<void> setupDi() async {
 
   /// DB Services
   // Home DataBase Service
-  di.registerSingleton<LGameDateService>(LGameDateService());
-  await di<LGameDateService>().initHive();
+  di.registerSingleton<LGameDataService>(LGameDataService());
+  await di<LGameDataService>().initHive();
 }

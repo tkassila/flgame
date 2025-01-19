@@ -46,6 +46,7 @@ void main() async {
   ]);
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await setupDi();
+  await di<LGameDataService>().checkInit();
  // FlutterNativeSplash.remove();
   initializeDateFormatting('fi_FI', "yyyy-mm-dd hh:mm:ss").then((_) => runApp(const MyApp()));
 }
@@ -124,9 +125,9 @@ class _LGamePageState extends State<MyHomePage>
       case AppLifecycleState.paused:
         logger.i("paused");
           var obj = lGameSession.getGamePositionsForSaveGame();
-          await di<LGameDateService>().setActiveGame(obj);
-          await di<LGameDateService>().saveLGameSessionData(obj);
-          await di<LGameDateService>().closeHive();
+          di<LGameDataService>().setActiveGame(obj);
+          di<LGameDataService>().saveLGameSessionData(obj);
+          di<LGameDataService>().closeHive();
         break;
       default:
         break;
@@ -197,10 +198,14 @@ class _LGamePageState extends State<MyHomePage>
       }
     }
 
+    LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+    di<LGameDataService>().setActiveGame(obj);
+    di<LGameDataService>().saveLGameSessionData(obj);
     bool? bValue = lGameSession.buttonStartGamePressed();
     if (bValue == null) {
       return ;
     }
+    di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame());
     if (bValue) {
       setState(() {
       _buildBoard = buildGameBoard();
@@ -405,18 +410,20 @@ class _LGamePageState extends State<MyHomePage>
       }
   }
 
-  buttonMoveDonePressed() {
+  buttonMoveDonePressed() async {
     logger.i("buttonMoveDonePressed");
-    bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
+    bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
     if (bValue == null) {
       return;
     }
+    /*
     if (bValue)
       {
+     */
         setState(() {
           _buildBoard = buildGameBoard();
         });
-    }
+   // }
   }
 
   buttonHelpEnabledPressed()
@@ -449,110 +456,124 @@ class _LGamePageState extends State<MyHomePage>
     });
   }
 
-  buttonTurn90DegreePressed()
+  buttonTurn90DegreePressed() async
   {
     logger.i("buttonTurn90GradePressed");
-    bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.turn90Degree);
+    bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.turn90Degree);
     if (bValue == null) {
       return;
     }
+    /*
     if (bValue)
     {
+     */
       setState(() {
         _buildBoard = buildGameBoard();
       });
-   }
+  //  }
   }
 
-  buttonUpPressed()
+  buttonUpPressed() async
   {
      logger.i("buttonUpPressed");
-     bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.up);
+     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.up);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-    }
+    // }
   }
 
-  buttonDownPressed()
+  buttonDownPressed() async
   {
      logger.i("buttonDownPressed");
-     bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.down);
+     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.down);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+    // }
   }
 
-  buttonLeftPressed()
+  buttonLeftPressed() async
   {
      logger.i("buttonLeftPressed");
-     bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.left);
+     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.left);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+    // }
   }
 
-  buttonRightPressed()
+  buttonRightPressed() async
   {
      logger.i("buttonRightPressed");
-     bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.right);
+     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.right);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+    // }
   }
 
-  buttonWrapUpPressed()
+  buttonWrapUpPressed() async
   {
      logger.i("buttonWrapUpPressed");
-     bool? bValue = lGameSession.calculatePossibleMovePieces(ButtonPressed.wrap);
+     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.wrap);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+    // }
   }
 
-  buttonSwitchNeutralPressed()
+  buttonSwitchNeutralPressed() async
   {
      logger.i("buttonSwitchNeutralPressed");
-     bool? bValue = lGameSession.
+     bool? bValue = await lGameSession.
           calculatePossibleMovePieces(ButtonPressed.swiftIntoNextNeutral);
      if (bValue == null) {
        return;
      }
+     /*
      if (bValue)
      {
+      */
        setState(() {
          _buildBoard = buildGameBoard();
        });
-     }
+     // }
   }
 
   GameBoardPosition? getGameBoardPosition(int index)
@@ -567,19 +588,30 @@ class _LGamePageState extends State<MyHomePage>
 
   getLastDataSession() async
   {
-    LGameSessionData? active = di<LGameDateService>().getActiveGame();
+    LGameSessionData? active = await di<LGameDataService>().getActiveGame();
     List<LGameSessionData>? cList =
-        di<LGameDateService>().getLGameSessionDatasUnfinished();
-    if (cList != null && cList.isNotEmpty)
-    {
+        await di<LGameDataService>().getLGameSessionDataUnfinished();
+    bool bCreatedJustNow = false;
+    if ((cList == null || cList.isEmpty) && active == null) {
+      bool? bValue = lGameSession.buttonStartGamePressed();
+        if (bValue == null) {
+          return;
+        }
+        bCreatedJustNow = true;
+        active ??= lGameSession.getGamePositionsForSaveGame();
+        cList ??= List.empty(growable: true);
+      }
+
+    if (!bCreatedJustNow && active == null && cList != null && cList.isNotEmpty ) {
+      lGameSession.setStartGameAfterOldGame(cList.first);
+    } else {
+      if (active != null) {
+        lGameSession.setStartGameAfterOldGame(active);
+      }
+    }
       setState(() {
-        if (active == null)
-          lGameSession.setStartGameAfterOldGame(cList.first);
-        else
-          lGameSession.setStartGameAfterOldGame(active);
         _buildBoard = buildGameBoard();
       });
-    }
   }
 
   @override
@@ -992,6 +1024,7 @@ class _LGamePageState extends State<MyHomePage>
     selectedLGameSessionData = navRet as SelectedLGameSessionData;
     if (selectedLGameSessionData != null)
     {
+      /*
       if (oldSelectedLGameSessionData != null)
       {
         if (oldSelectedLGameSessionData!.selectedAtTime.contains(
@@ -1007,8 +1040,9 @@ class _LGamePageState extends State<MyHomePage>
           return;
         }
       }
+       */
 
-      bool bSaved = await di<LGameDateService>().saveLGameSessionData(
+      bool bSaved = di<LGameDataService>().saveLGameSessionData(
         lGameSession.getGamePositionsForSaveGame(),
       );
       if (!bSaved)
@@ -1020,13 +1054,10 @@ class _LGamePageState extends State<MyHomePage>
         return;
       }
 
-      await di<LGameDateService>().setActiveGame(selectedLGameSessionData!.gameSessionData);
+      di<LGameDataService>().setActiveGame(selectedLGameSessionData!.gameSessionData);
       oldSelectedLGameSessionData = selectedLGameSessionData;
       lGameSession.setStartGameAfterOldGame(
           selectedLGameSessionData!.gameSessionData!);
-      bool bSaved2 = await di<LGameDateService>().saveLGameSessionData(
-        lGameSession.getGamePositionsForSaveGame(),
-      );
       setState(() {
         _buildBoard = buildGameBoard();
       });
@@ -1171,7 +1202,7 @@ class _LGamePageState extends State<MyHomePage>
                      }
 
                    bool bSaved = await
-                   LGameDateService.saveLGameSessionData(
+                   di<LGameDateService>().saveLGameSessionData(
                      lGameSession.getGamePositionsForSaveGame()!,
                    );
                    if (!bSaved)

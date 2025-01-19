@@ -2,6 +2,9 @@ import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 
+
+import '../models/LGameDataService.dart';
+import '../di.dart';
 part 'lgame_data.g.dart';
 
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
@@ -375,7 +378,24 @@ class LGameSession {
     bButtonHelpEnabled = true;
   }
 
-  bool? switchTurn(bool bStartNewGame)
+  Future<bool> checkAllowToMoveOrGameOver() async
+  {
+    bool ret = true;
+    if (!bInitGameBoard && inMovingPiece == LGamePieceInMove.LPiece
+        && noLPieceFreePositions())
+    {
+      msg =
+      "There is no free positions for L piece. You had lost this game!";
+      bGameIsOver = true;
+      disAbleButtonsForGameOver();
+      LGameSessionData obj = getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteFinishedGameSessionData(obj);
+      return false;
+    }
+    return ret;
+  }
+
+  Future<bool?> switchTurn(bool bStartNewGame) async
    {
     bButtonSwitchNeutralEnabled = false;
     bButtonTurn90DegreeEnabled = true;
@@ -400,6 +420,11 @@ class LGameSession {
         iActiveNeutral = 1;
         iPlayerMove = 2;
 
+        if (!await checkAllowToMoveOrGameOver()) {
+          return true;
+        }
+
+        /*
         if (!bInitGameBoard && inMovingPiece == LGamePieceInMove.LPiece
             && noLPieceFreePositions())
         {
@@ -407,9 +432,11 @@ class LGameSession {
             "There is no free positions for L piece. You had lost this game!";
           bGameIsOver = true;
           disAbleButtonsForGameOver();
+          var obj = getGamePositionsForSaveGame();
+          await di<LGameDateService>().deleteLGameSessionData(obj);
           return true;
         }
-
+         */
       }
     else
       {
@@ -421,6 +448,10 @@ class LGameSession {
       iActiveNeutral = 1;
       iPlayerMove = 1;
 
+      if (!await checkAllowToMoveOrGameOver()) {
+        return true;
+      }
+      /*
       if (!bInitGameBoard && inMovingPiece == LGamePieceInMove.LPiece
           && noLPieceFreePositions())
       {
@@ -428,10 +459,18 @@ class LGameSession {
             "There is no free positions for L piece. You had lost this game!";
         disAbleButtonsForGameOver();
         bGameIsOver = true;
+        var obj = getGamePositionsForSaveGame();
+        await di<LGameDateService>().deleteLGameSessionData(obj);
+        await di<LGameDateService>().saveIntoFinishedGamesList(obj);
         return true;
       }
-
+      */
       }
+
+      /*
+      var obj = getGamePositionsForSaveGame();
+      await di<LGameDateService>().getSavingGamesList(obj);
+       */
       return true;
   }
 
@@ -1329,12 +1368,21 @@ class LGameSession {
     return ret;
   }
 
-  bool? calculatePossibleMovePieces(ButtonPressed buttonTypePressed)
+  Future<bool> calculatePossibleMovePieces(ButtonPressed buttonTypePressed) async
   {
     bool ret = true;
+    if (!await checkAllowToMoveOrGameOver()) {
+      return false;
+    }
+
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
        bool bValue = moveDone();
+       /*
+       if (bValue) {
+         await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
+       }
+        */
        return bValue;
     }
     else
@@ -1370,7 +1418,8 @@ class LGameSession {
          iActiveNeutral = 1;
        }
         */
-        //  calculatePossibleMovePieces(DirectionButtonPressed.wrapDown)
+        //  calculatePossibleMovePieces(DirectionButtonPressed.wrapDown
+        // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
         return true;
       }
 
@@ -1453,6 +1502,7 @@ class LGameSession {
            iArrPlayerMovePieces = [4, 5, 6, 10];
          }
        }
+      // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
        return true;
     }
     else
@@ -1487,6 +1537,7 @@ class LGameSession {
                 iArrPlayerMovePieces = [1, 5, 9, getNextFortLPosition(true)];
               }
           }
+         // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
             return true;
       }
       return false;
@@ -1519,6 +1570,7 @@ class LGameSession {
       iArrPlayerMovePieces = iNewArrPlayerPossibleMovePieces;
 
     ret = true;
+   // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
     return ret;
   }
 
@@ -1794,10 +1846,12 @@ class LGameSession {
 
 
   bool isIntersect(List? listOne, List? listTwo) {
-    if(listOne == null)
+    if(listOne == null) {
       return false;
-    if(listTwo == null)
+    }
+    if(listTwo == null) {
       return false;
+    }
 
     return listOne.toSet().intersection(listTwo.toSet()).isNotEmpty;
   }
