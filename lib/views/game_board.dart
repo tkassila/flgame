@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/lgame_data.dart';
 
@@ -65,7 +66,7 @@ class _LGameBoardState extends State<LGameBoard> {
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
   final ButtonStyle buttonStyleScreenReader =
-  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 12,
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
       fontWeight: FontWeight.bold),
       backgroundColor: Colors.transparent);
 
@@ -952,7 +953,7 @@ class _LGameBoardState extends State<LGameBoard> {
     Widget text = Text(
         "${lGameSession.iPlayerMove}",
         textAlign: TextAlign.left,
-        style: const TextStyle(fontSize: 27, color: Colors.black,
+        style: TextStyle(fontSize: ScreenUtil().setSp(27), color: Colors.black,
             fontWeight: FontWeight.bold)
     );
 
@@ -1332,7 +1333,7 @@ class _LGameBoardState extends State<LGameBoard> {
 
     return Center(child: AutoSizeText(strText,
       // This is some text that will resize based on the screen size.,
-      style: TextStyle(fontSize: 30, color: fontColor,
+      style: TextStyle(fontSize: ScreenUtil().setSp(30), color: fontColor,
           fontWeight: FontWeight.bold),
       overflow: TextOverflow.ellipsis,));
   }
@@ -1355,7 +1356,7 @@ class _LGameBoardState extends State<LGameBoard> {
       },
       child: */ Text(_iArrScreenReaderSquareText[index],
           textAlign: TextAlign.left,
-          style: const TextStyle(fontSize: 12, color: Colors.transparent,
+          style: TextStyle(fontSize: ScreenUtil().setSp(12), color: Colors.transparent,
               fontWeight: FontWeight.bold
             /* Colors.grey */),
       ),

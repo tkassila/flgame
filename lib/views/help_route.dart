@@ -16,6 +16,7 @@ import 'package:flutter_html/flutter_html.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 // import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BorderedContainer extends StatelessWidget {
   final Widget child;
@@ -40,8 +41,13 @@ class BorderedContainer extends StatelessWidget {
   }
 }
 
-const TextStyle textStyle = TextStyle(fontSize: 20,
+final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(20),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
+
+const TextStyle textStyleHtml = TextStyle(fontSize: 16,
+    color: Colors.black,
+fontWeight: FontWeight.bold
+/* Colors.grey */);
 
 var htmlStyle = {
   "table": Style(
@@ -66,8 +72,10 @@ var htmlStyle = {
   "p": Style(
     padding: HtmlPaddings.all(6),
     backgroundColor: Colors.white,
+    color: Colors.black,
     fontSize: FontSize.large,
     alignment: Alignment.center,
+      fontWeight: FontWeight.bold
   ),
   'h5': Style(maxLines: 2, textOverflow: TextOverflow.ellipsis),
 };
@@ -88,19 +96,16 @@ var htmlStyle = {
 
 const String strHelp = r"""
 
-
 <div class="text">
-    <h4>L game - tablet and phone game
-    </h4>
+    <h2>L game - tablet and phone game
+    </h2>
     <p>You can use main menu to select next options in the game:</p>
     <p>This game can store un/finished game sessions with current game situation. Select that 
         option to see a list of store sessions and game boards. You can also remove old game 
         sessions to press garbage picture on the row. You can select some unfinished game 
         to continue the game where players left the selected game.</p>
-</div>
 
-<div class="text">
-    <h4>From Wikipedia</h4>
+    <h2>From Wikipedia</h2>
     <p>From Wikipedia, the free encyclopedia
         L game board and starting setup, with neutral pieces shown as black discs
     </p>
@@ -193,13 +198,14 @@ class HelpPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      const Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
+    return SingleChildScrollView(child: Column(children: [
+      Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
       SingleChildScrollView(
-        primary: true,
+        primary: false,
         child: Html(style: htmlStyle, data: strHelp),
       ),
-    ],)
+    ],),
+    )
     ;
   }
 }
@@ -210,7 +216,7 @@ class HelpPage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      primary: true,
+      primary: false,
       child: Html(style: htmlStyle, data: strHelp2),
     );
   }
@@ -222,7 +228,7 @@ class HelpPage3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  SingleChildScrollView(
-      primary: true,
+      primary: false,
       child: Html(style: htmlStyle, data: strHelp3),
     );
   }
@@ -234,30 +240,34 @@ class HelpPage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container( color: Colors.white, child:
-    const Column(
+    Column(
         children:  [
-             Image(
+             const Image(
               width: 150,
               height: 150,
             image: AssetImage(
             'assets/L_Game_start_position.svg.png',
         ),
         ),
-         Text("Start position of L game"),
-           Image(
+         Text("Start position of L game", style: textStyleHtml,),
+           const Image(
             width: 150,
             height: 150,
             image: AssetImage(
               'assets/560px-L_Game_mate_positions.svg.png',
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(17.0),
             child: Center(
-              child: Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
+              child: Text("All positions, Red to move, where Red will lose " +
+                  "to a perfect Blue, and maximum number of moves remaining " +
+                      "for Red. By looking ahead one move and ensuring " +
+                          "one never ends up in any of the above positions,"
+                              " one can avoid losing.", style: textStyleHtml,),
                 ),
             ),
-           Image(
+           const Image(
             width: 150,
             height: 150,
             image: AssetImage(
@@ -265,7 +275,8 @@ class HelpPage4 extends StatelessWidget {
             ),
 
           ),
-          Text("All possible final positions, Blue has won"),
+          const Text("All possible final positions, Blue has won",
+            style: textStyleHtml,),
               /*
               Image(
                 width: 250,
@@ -486,7 +497,7 @@ class HelpRoute extends StatelessWidget {
   Widget build(BuildContext context)
   {
     final ButtonStyle buttonStyle =
-    ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20),
+    ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: ScreenUtil().setSp(20)),
         backgroundColor: Colors.amberAccent);
 
     //  rootBundle = context;
@@ -577,13 +588,13 @@ class HelpRoute extends StatelessWidget {
   const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 10),
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(10)),
       backgroundColor: Colors.amberAccent);
 
   return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('LGame help', style: textStyle,),
+        title: Text('LGame help', style: textStyle,),
         centerTitle: true,
         actions: [
           ElevatedButton(
@@ -597,7 +608,10 @@ class HelpRoute extends StatelessWidget {
           ),
         ],
       ),
-      body: pageView ,
+      body: SafeArea(
+        minimum: const EdgeInsets.all(16.0),
+        child: pageView ,
+      ),
       );
   }
   }

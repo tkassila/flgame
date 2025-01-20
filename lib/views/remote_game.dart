@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RemoteGamesRoute extends StatefulWidget {
   // final NavigatorState parentNavigator;
@@ -44,7 +45,7 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           automaticallyImplyLeading: false,
           title: const Text('LGame is loading...',
-            style: TextStyle(fontSize: 30),),
+            style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
         ),
         */
         body: Container(
@@ -59,7 +60,7 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
             children: [
               const SizedBox(height: 150, width: 100),
               const Center(
-                child: Text('LGame',
+                child: const Text('LGame',
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
               AnimatedOpacity(

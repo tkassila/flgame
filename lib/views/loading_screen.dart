@@ -53,17 +53,20 @@ class _LoadingScreenState extends State<LoadingScreen>
     //  rootBundle = context;
     return MaterialApp(
       title: 'L Game is loading...',
-      home: Center( child:  Scaffold(
+      home: SafeArea(
+        minimum: const EdgeInsets.all(16.0),
+        child: Center( child:  Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
        /* appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           automaticallyImplyLeading: false,
           title: const Text('LGame is loading...',
-            style: TextStyle(fontSize: 30),),
+            style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
         ),
         */
         body: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.inversePrimary, // const Color(0xffe8e8e8),
+            color: Colors.white70, /* Theme.of(context).colorScheme.primary, */// const Color(0xffe8e8e8),
             border: Border.all(
               color: Theme.of(context).colorScheme.inversePrimary,
               width: 10,
@@ -89,6 +92,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             ),
           ],
         ),
+      ),
       ),
       ),
       ),

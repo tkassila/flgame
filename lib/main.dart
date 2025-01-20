@@ -19,6 +19,7 @@ import './views/oldgames_route.dart';
 import './views/remote_game.dart';
 import '../models/LGameDataService.dart';
 import './di.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
@@ -48,7 +49,8 @@ void main() async {
   await setupDi();
   await di<LGameDataService>().checkInit();
  // FlutterNativeSplash.remove();
-  initializeDateFormatting('fi_FI', "yyyy-mm-dd hh:mm:ss").then((_) => runApp(const MyApp()));
+  initializeDateFormatting('fi_FI', "yyyy-mm-dd hh:mm:ss").then((_) =>
+      runApp(const MyApp()));
 }
 
 const String strAppTitle = 'LGame for creativity';
@@ -68,7 +70,25 @@ class MyApp extends StatelessWidget {
       bScreenReaderIsUsed = false;
     }
 
+    return ScreenUtilInit(
+        designSize: const Size(448, 998), // Size(360, 690),
+    minTextAdapt: true,
+      enableScaleWH: ()=>true,
+      enableScaleText: ()=>true,
+    splitScreenMode: true,
+    // Use builder only if you need to use library outside ScreenUtilInit context
+    builder: (_ , child) {
     return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    title: strAppTitle,
+    // You can use the library anywhere in the app even in theme
+    theme: ThemeData(
+    primarySwatch: Colors.blue,
+    ),
+    home: child,
+    );
+    },
+    child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: strAppTitle,
       initialRoute: '/',
@@ -85,6 +105,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: 
       Colors.deepPurple).copyWith(surface: Colors.blueGrey),
       ),
+    ),
      // home: const MyHomePage(title: strAppTitle),
     );
   }
@@ -175,7 +196,7 @@ class _LGamePageState extends State<MyHomePage>
   Color player2Color = Colors.blueAccent;
   Color neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
-         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20,
+         ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20),
              fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
@@ -673,7 +694,7 @@ class _LGamePageState extends State<MyHomePage>
             onPressed: lGameSession.bButtonUpEnabled ? buttonUpPressed : null,
         ),
         Container(color: Colors.amberAccent,
-            child: const Text('Up', style: TextStyle(fontSize: 20))),
+            child: const Text('Up', style: TextStyle(fontSize: ScreenUtil().setSp(20)))),
   ],
         ),
 
@@ -742,13 +763,13 @@ class _LGamePageState extends State<MyHomePage>
      if (lGameSession.bGameIsOver)
      {
        textMessage = Text(lGameSession.msg,
-         style: const TextStyle(color: Colors.black, fontSize: 25,
+         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(25),
              backgroundColor: Colors.yellowAccent),
        );
      }
      else {
        textMessage = Text(lGameSession.msg,
-         style: const TextStyle(color: Colors.black, fontSize: 25),
+         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(25)),
        );
      }
 
@@ -1233,7 +1254,7 @@ class _LGamePageState extends State<MyHomePage>
     color: Colors.white70,
     border: Border.all(
     color: Theme.of(context).colorScheme.inversePrimary,
-    width: 10,
+    width: 15,
     ),
     ),
     child: /* buildGameBoard() */ _buildBoard ,

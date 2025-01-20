@@ -15,6 +15,7 @@ import 'package:flutter_html/flutter_html.dart';
 
 import '../models/LGameDataService.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flgame/models/lgame_data.dart';
@@ -50,7 +51,9 @@ class OldGamesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SafeArea(
+      minimum: const EdgeInsets.all(16.0),
+      child: Container(
       // width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 20),
       decoration: BoxDecoration(
@@ -58,11 +61,12 @@ class OldGamesPage extends StatelessWidget {
         color: color,
       ),
       child: child,
+      ),
     );
   }
 }
 
-const TextStyle textStyle = TextStyle(fontSize: 20,
+TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(20),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
 
 class OldGamesRoute extends StatefulWidget {
@@ -75,7 +79,7 @@ class OldGamesRoute extends StatefulWidget {
 class _OldGamesState extends State<OldGamesRoute> {
 
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20),
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20)),
       backgroundColor: Colors.amberAccent);
 
   Future<Null> _fetchPartner() async {
@@ -170,7 +174,7 @@ class _OldGamesState extends State<OldGamesRoute> {
   );
   */
     final ButtonStyle buttonStyle =
-    ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 15),
+    ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(15)),
         backgroundColor: Colors.amberAccent);
 
     /*
@@ -204,7 +208,7 @@ class _OldGamesState extends State<OldGamesRoute> {
           bContinueReturnValue);
     }
 
-    String _formatTitle(String title)
+    String formatTitle(String title)
     {
       if (title == "") {
         return "";
@@ -215,7 +219,7 @@ class _OldGamesState extends State<OldGamesRoute> {
       return tmp;
     }
 
-    Widget _renderOldGames() {
+    Widget renderOldGames() {
       return Flexible(child:
       _dataTitles == null ? Card(margin: EdgeInsets.all(5.0),
         child: Text("No old unfinished games"),) :
@@ -233,21 +237,21 @@ class _OldGamesState extends State<OldGamesRoute> {
                   initiallyExpanded: selectedIndex == index,
                   controller: expansionControllers![index],
                   title: (selectedIndex == -1 || selectedIndex != index)
-                    ?  Text(_formatTitle(_dataTitles![index].title))
-                    : Text(_formatTitle(_dataTitles![index].title), style:
-                       const TextStyle(color: Colors.black, fontSize: 20,
+                    ?  Text(formatTitle(_dataTitles![index].title))
+                    : Text(formatTitle(_dataTitles![index].title), style:
+                       TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(20),
                       backgroundColor: Colors.lightGreenAccent ),
                         ),
                   children: [
                     Text(_dataTitles![index].data.name1 != null
                         ? "Player 1: ${_dataTitles![index].data.name1!}"
-                        : '', style: const TextStyle(fontSize: 15)),
+                        : '', style: TextStyle(fontSize: ScreenUtil().setSp(15))),
                     const SizedBox(
                       height: 5.0,
                     ),
                     Text(_dataTitles![index].data.name2 != null
                         ? "Player 2: ${_dataTitles![index].data.name2!}"
-                        : '', style: TextStyle(fontSize: 15)),
+                        : '', style: TextStyle(fontSize: ScreenUtil().setSp(15))),
                   ],
                   onExpansionChanged: (newState) {
                     if (bUnderCollapse)
@@ -330,10 +334,11 @@ class _OldGamesState extends State<OldGamesRoute> {
               'Select game',
             ),
             onPressed: () async {
-              if (selectedSessionData != null)
+              if (selectedSessionData != null) {
                 selectedLGameSessionData = SelectedLGameSessionData(selectedSessionData);
-              else
+              } else {
                 selectedLGameSessionData = null;
+              }
               di<LGameDataService>().selectedLGameSessionData = selectedSessionData;
              // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
               Navigator.pop(context, selectedLGameSessionData);
@@ -342,14 +347,16 @@ class _OldGamesState extends State<OldGamesRoute> {
           ),
         ],
       ),
-      body:   listDataSessions == null || listDataSessions!.length == 0 ?
+      body:   listDataSessions == null || listDataSessions!.isEmpty ?
         Card(child: Padding(padding: EdgeInsets.all(5),
         child: const Text("No unfinished games"),),)
-          : Column( crossAxisAlignment: CrossAxisAlignment.center,
+          : SafeArea(
+        minimum: const EdgeInsets.all(16.0),
+        child: Column( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
           Container(
-                  child: _renderOldGames(),
+                  child: renderOldGames(),
                 ),
             selectedSessionData != null ?
             Column(children: [
@@ -375,6 +382,7 @@ class _OldGamesState extends State<OldGamesRoute> {
           );
         },
       ) */
+      ),
       );
   }
   }
@@ -390,7 +398,7 @@ class FinishedGamesRoute extends StatefulWidget {
 class _FinishedGamesState extends State<FinishedGamesRoute> {
 
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20),
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20)),
       backgroundColor: Colors.amberAccent);
 
   Future<Null> _fetchPartner() async {
@@ -482,7 +490,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
   );
   */
     final ButtonStyle buttonStyle =
-    ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 15),
+    ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(15)),
         backgroundColor: Colors.amberAccent);
 
     /*
@@ -521,7 +529,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
     }
 
 
-    String _formatTitle(String title)
+    String formatTitle(String title)
     {
       if (title == "") {
         return "";
@@ -532,7 +540,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
       return tmp;
     }
 
-    Widget _renderFinishedGames() {
+    Widget renderFinishedGames() {
       return Flexible(child:
       ListView.builder(
           itemCount: _dataTitles!.length,
@@ -547,17 +555,17 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
                       key: Key(index.toString()), //attention
                       initiallyExpanded: selected_index == index,
                       controller: expansionControllers![index],
-                      title: Text(_formatTitle(_dataTitles![index].title)),
+                      title: Text(formatTitle(_dataTitles![index].title)),
                       children: [
                         Text(_dataTitles![index].data.name1 != null
                             ? "Player 1: ${_dataTitles![index].data.name1!}"
-                            : '', style: const TextStyle(fontSize: 15)),
+                            : '', style: TextStyle(fontSize: ScreenUtil().setSp(15))),
                         const SizedBox(
                           height: 5.0,
                         ),
                         Text(_dataTitles![index].data.name2 != null
                             ? "Player 2: ${_dataTitles![index].data.name2!}"
-                            : '', style: TextStyle(fontSize: 15)),
+                            : '', style: TextStyle(fontSize: ScreenUtil().setSp(15))),
                       ],
                       onExpansionChanged: (newState) {
                         if (bUnderCollapse)
@@ -628,11 +636,13 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
         ],
       ),
       body:   listDataSessions != null ?
-      Column( crossAxisAlignment: CrossAxisAlignment.center,
+      SafeArea(
+        minimum: const EdgeInsets.all(16.0),
+        child: Column( crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            child: _renderFinishedGames(),
+            child: renderFinishedGames(),
           ),
           selectedSessionData != null ?
           Container(
@@ -667,7 +677,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
             ),
           );
         },
-      ) */ : const Center(child:  Text('No finished l games.',
+      ) */
+      )    : const Center(child:  Text('No finished l games.',
         style: TextStyle(fontSize: 30),),),
     );
   }
