@@ -1925,7 +1925,7 @@ class _LGameBoardState extends State<LGameBoard> {
     thisContext = context;
     lGameSession = widget.lGameSession;
     lGameSession.setScreenReaderIsUsed(widget.bScreenReaderIsUsed);
-    return Card(child: buildGameBoard());
+    return /* Card(child: */ buildGameBoard()/* ) */;
   }
 }
 

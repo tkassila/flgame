@@ -319,7 +319,7 @@ class LGameDataService {
     hiveLGameSessionData!.unFinishedGames = listGames;
   }
 
-  saveIntoFinishedGamesList(LGameSessionData ds)
+  saveIntoFinishedGamesList(LGameSessionData ds) async
   {
     List<LGameSessionData> listGames = hiveLGameSessionData!.finishedGames!;
     listGames ??= List<LGameSessionData>.empty(growable: true);

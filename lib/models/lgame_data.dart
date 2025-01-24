@@ -381,6 +381,7 @@ class LGameSession {
   Future<bool> checkAllowToMoveOrGameOver() async
   {
     bool ret = true;
+    msg = "";
     if (!bInitGameBoard && inMovingPiece == LGamePieceInMove.LPiece
         && noLPieceFreePositions())
     {
@@ -390,6 +391,7 @@ class LGameSession {
       disAbleButtonsForGameOver();
       LGameSessionData obj = getGamePositionsForSaveGame();
       di<LGameDataService>().deleteFinishedGameSessionData(obj);
+      di<LGameDataService>().saveIntoFinishedGamesList(obj);
       return false;
     }
     return ret;

@@ -9,6 +9,9 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:intl/intl.dart';
 //import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import './di.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:content_resolver/content_resolver.dart';
 
 import 'views/utils/util_dialog.dart';
 import 'views/help_route.dart';
@@ -16,10 +19,11 @@ import 'views/loading_screen.dart';
 import 'views/game_board.dart';
 import './models/lgame_data.dart';
 import './views/oldgames_route.dart';
+import './views/finished_games_route.dart';
 import './views/remote_game.dart';
 import '../models/LGameDataService.dart';
-import './di.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import './services/navigation_service.dart';
+import './views/about_game.dart';
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
@@ -36,7 +40,7 @@ Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
 enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
-  editPlayerNames, finishedGames, exitGame }
+  editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
   Intl.defaultLocale = 'fi_FI';
@@ -58,6 +62,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -69,9 +74,22 @@ class MyApp extends StatelessWidget {
     } else {
       bScreenReaderIsUsed = false;
     }
+    //Inside Build function since we need context.
+    // This is device height
+    final deviceHeight = MediaQuery.of(context).size.height;
+    // Device width
+    final deviceWidth =   MediaQuery.of(context).size.width;
+    // Subtract paddings to calculate available dimensions
+    final availableHeight = deviceHeight - AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top
+        - MediaQuery.of(context).padding.bottom;
+    final availableWidth = deviceWidth -
+        MediaQuery.of(context).padding.right -
+        MediaQuery.of(context).padding.left;
 
     return ScreenUtilInit(
-        designSize: const Size(448, 998), // Size(360, 690),
+        designSize: Size(availableHeight * .4 ,availableWidth * .5),
+         // const Size(448, 998), // Size(360, 690),
     minTextAdapt: true,
       enableScaleWH: ()=>true,
       enableScaleText: ()=>true,
@@ -85,6 +103,7 @@ class MyApp extends StatelessWidget {
     theme: ThemeData(
     primarySwatch: Colors.blue,
     ),
+    navigatorKey: NavigationService.navigatorKey,
     home: child,
     );
     },
@@ -97,6 +116,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoadingScreen(),
         '/lgamefor2': (context) => MyHomePage(title: strAppTitle, bScreenReaderIsUsed: bScreenReaderIsUsed),
         '/help': (context) => const HelpRoute(),
+        '/about': (context) => const AboutRoute(),
         '/oldgames': (context) => const OldGamesRoute(),
         '/finishedgames': (context) => const FinishedGamesRoute(),
         '/remotegames': (context) => const RemoteGamesRoute(),
@@ -156,7 +176,7 @@ class _LGamePageState extends State<MyHomePage>
   }
 
   bool bGameIsFormat = true;
-  BuildContext? thisContext;
+ // BuildContext? thisContext;
   LGameSession lGameSession = LGameSession();
   SelectedLGameSessionData? selectedLGameSessionData;
   SelectedLGameSessionData? oldSelectedLGameSessionData;
@@ -196,14 +216,15 @@ class _LGamePageState extends State<MyHomePage>
   Color player2Color = Colors.blueAccent;
   Color neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
-         ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20),
+         ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(13),
              fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
   Future<bool> showStartNewGameDialog() async {
     bool bCancelReturnValue = true;
     bool bContinueReturnValue = false;
-      return showYesNoDialog(thisContext!, "New L game", "Cancel", "Continue",
+    // showYesNoDialog
+      return showYesNoDialogWithContext("New L game", "Cancel", "Continue",
           "Would you like to start a new L game?", bCancelReturnValue,
           bContinueReturnValue);
   }
@@ -222,6 +243,7 @@ class _LGamePageState extends State<MyHomePage>
     LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
     di<LGameDataService>().setActiveGame(obj);
     di<LGameDataService>().saveLGameSessionData(obj);
+   // for test finished games: di<LGameDataService>().saveIntoFinishedGamesList(obj);
     bool? bValue = lGameSession.buttonStartGamePressed();
     if (bValue == null) {
       return ;
@@ -609,9 +631,9 @@ class _LGamePageState extends State<MyHomePage>
 
   getLastDataSession() async
   {
-    LGameSessionData? active = await di<LGameDataService>().getActiveGame();
+    LGameSessionData? active = di<LGameDataService>().getActiveGame();
     List<LGameSessionData>? cList =
-        await di<LGameDataService>().getLGameSessionDataUnfinished();
+         di<LGameDataService>().getLGameSessionDataUnfinished();
     bool bCreatedJustNow = false;
     if ((cList == null || cList.isEmpty) && active == null) {
       bool? bValue = lGameSession.buttonStartGamePressed();
@@ -973,17 +995,20 @@ class _LGamePageState extends State<MyHomePage>
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Expanded( // wrap in Expanded
-          child: LGameBoard(lGameSession: lGameSession,
+        /* Expanded( // wrap in Expanded
+          child: */LGameBoard(lGameSession: lGameSession,
               bScreenReaderIsUsed: widget.bScreenReaderIsUsed) /* _gameBoardGrid! */,
-        ),
+       // ),
 //        SizedBox(height: 20,),
     Padding(
     padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-    child: Column (
+    child: Container(
+    //  color: Colors.black87,
+      child:  Column (
      crossAxisAlignment: CrossAxisAlignment.center,
      mainAxisSize: MainAxisSize.min,
      children: <Widget>[
+       const SizedBox(height: 40),
       Center( child: Semantics(
         liveRegion: true,
         child: textMessage!,),
@@ -992,6 +1017,8 @@ class _LGamePageState extends State<MyHomePage>
        editOrButtonContainer,
     ],),
     ),
+    ),
+        if (isSystemNavigateMenu) const SizedBox(height: 30, ),
     ],
     );
 
@@ -1096,6 +1123,11 @@ class _LGamePageState extends State<MyHomePage>
     }
   }
 
+  callAboutGame()
+  {
+    Navigator.pushNamed(context, "/about");
+  }
+
   callRemoteGames() async
   {
     /*
@@ -1114,20 +1146,47 @@ class _LGamePageState extends State<MyHomePage>
     Navigator.pushNamed(context, "/finishedgames");
   }
 
+  bool isSystemNavigateMenu = false;
+
+  @override
+  void didChangeDependencies()
+  {
+    super.didChangeDependencies();
+   // thisContext = context;
+  }
+
   @override
   Widget build(BuildContext context) {
-    thisContext = context;
+    /*
+    EdgeInsets systemGestureInsets =
+        MediaQuery.of(context).systemGestureInsets;
+    isSystemNavigateMenu = systemGestureInsets.left > 0;
+     */
     if (bGameIsFormat)
       {
         _buildBoard = buildGameBoard();
         bGameIsFormat = false;
       }
 
+    String strPlayer = _getPlayerName();
+    String homeTitle = widget.title;
+    if (strPlayer != null && !strPlayer.isEmpty) {
+      homeTitle = "Turn: " + strPlayer;
+    }
+
+    final TextStyle menuTextStyle = TextStyle(fontSize: ScreenUtil().setSp(16),
+        fontWeight: FontWeight.bold);
+
+    double height = MediaQuery.sizeOf(context).height;
+    var padding = MediaQuery.paddingOf(context);
+    double newheight = height - padding.top - padding.bottom;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("${widget.title}: ${_getPlayerName()}"),
+        title: Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
+            fontWeight: FontWeight.bold),),
         actions: [
           PopupMenuButton<MenuButtonSelected>(
             initialValue: selectedMenuButton,
@@ -1168,32 +1227,42 @@ class _LGamePageState extends State<MyHomePage>
                     {
                       callExitGame();
                     }
+                    else
+                    if (selectedMenuButton ==
+                        MenuButtonSelected.aboutGame)
+                    {
+                      callAboutGame();
+                    }
 
               });
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuButtonSelected>>[
-              const PopupMenuItem<MenuButtonSelected>(
+              PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.oldUnFinishedGames,
-                child: Text('Select unfinished games'),
+                child: Text('Select unfinished games', style: menuTextStyle,),
               ),
               /*
-              const PopupMenuItem<MenuButtonSelected>(
+              PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.remoteGames,
-                child: Text('Remote games'),
+                child: Text('Remote games', style: menuTextStyle,),
               ),
 
                */
-              const PopupMenuItem<MenuButtonSelected>(
+              PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.editPlayerNames,
-                child: Text('Edit player names'),
+                child: Text('Edit player names', style: menuTextStyle,),
               ),
-              const PopupMenuItem<MenuButtonSelected>(
+              PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.finishedGames,
-                child: Text('Finished games'),
+                child: Text('Finished games', style: menuTextStyle,),
               ),
-              const PopupMenuItem<MenuButtonSelected>(
+              PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.exitGame,
-                child: Text('Exit game'),
+                child: Text('Exit game', style: menuTextStyle,),
+              ),
+              PopupMenuItem<MenuButtonSelected>(
+                value: MenuButtonSelected.aboutGame,
+                child: Text('About game', style: menuTextStyle,),
               ),
             ],
           ),
@@ -1250,14 +1319,16 @@ class _LGamePageState extends State<MyHomePage>
       ),
       backgroundColor: Colors.white70,
       body: Container(
+        height: newheight,
     decoration: BoxDecoration(
     color: Colors.white70,
     border: Border.all(
-    color: Theme.of(context).colorScheme.inversePrimary,
-    width: 15,
-    ),
+      color: Theme.of(context).colorScheme.inversePrimary,
+      width: 15,
+      ),
     ),
     child: /* buildGameBoard() */ _buildBoard ,
+        //   if (isSystemNavigateMenu) SizedBox(height: 30,),
       ),
     );
   }

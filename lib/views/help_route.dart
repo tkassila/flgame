@@ -198,9 +198,12 @@ class HelpPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(child: Column(children: [
+    return SingleChildScrollView(
+      controller: ScrollController(),
+      child: Column(children: [
       Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
       SingleChildScrollView(
+        controller: ScrollController(),
         primary: false,
         child: Html(style: htmlStyle, data: strHelp),
       ),
@@ -216,6 +219,7 @@ class HelpPage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: ScrollController(),
       primary: false,
       child: Html(style: htmlStyle, data: strHelp2),
     );
@@ -228,6 +232,7 @@ class HelpPage3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  SingleChildScrollView(
+      controller: ScrollController(),
       primary: false,
       child: Html(style: htmlStyle, data: strHelp3),
     );
@@ -342,6 +347,7 @@ class _HtmlViewExampleState extends State<HelpRoute> {
         centerTitle: true,
       ),
       body: /* SingleChildScrollView(
+      controller: ScrollController(),
         child:  HtmlWidget(strHelp +strHelp2 +strHelp3),
       ), */
           Expanded(
@@ -527,7 +533,9 @@ class HelpRoute extends StatelessWidget {
         ),
       ),
       Scrollbar(
+      controller: ScrollController(),
         child: SingleChildScrollView(
+        controller: ScrollController(),
           child: Html(
             data: """
 <h1>Demo Page</h1>
@@ -588,28 +596,34 @@ class HelpRoute extends StatelessWidget {
   const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(10)),
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize:
+     ScreenUtil().setSp(15), fontWeight: FontWeight.bold),
       backgroundColor: Colors.amberAccent);
 
   return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+    // leadingWidth: MediaQuery.of(context).padding.top,
+        primary: false,
         title: Text('LGame help', style: textStyle,),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
-          ElevatedButton(
+          Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
+        child: ElevatedButton(
             style: buttonStyle,
             child: const Text(
-              'back into LGame',
+              'Back into LGame',
             ),
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
+              Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2",
+                  ModalRoute.withName('/lgamefor2'));
             },
+          ),
           ),
         ],
       ),
       body: SafeArea(
-        minimum: const EdgeInsets.all(16.0),
+        minimum: const EdgeInsets.all(4.0),
         child: pageView ,
       ),
       );
@@ -620,6 +634,7 @@ class HelpRoute extends StatelessWidget {
         RefreshIndicator(
         onRefresh: _fetchPartner,
         child: SingleChildScrollView(
+        controller: ScrollController(),
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
             children: [
@@ -684,6 +699,7 @@ class HelpRoute extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ) */
                     SingleChildScrollView(
+                    controller: ScrollController(),
                       primary: true,
                       child: Html(style: htmlStyle, data: (strHelp0))  /* HtmlWidget(strHelp +strHelp2 +strHelp3) */,
                     ),
