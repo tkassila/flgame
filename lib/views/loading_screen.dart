@@ -43,7 +43,7 @@ class _LoadingScreenState extends State<LoadingScreen>
       _visible = !_visible;
     });
 
-    Timer(const Duration(milliseconds: 800), handleTimeout2);
+    Timer(const Duration(milliseconds: 100), handleTimeout2);
     // Navigator.pushNamed(context, "/lgamefor2");
   }
 
@@ -81,7 +81,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             ),
             AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 600),
+                duration: const Duration(milliseconds: 500),
             child: const Image(
             height: 300,
             width: 300,

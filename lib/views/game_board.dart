@@ -51,6 +51,7 @@ class _LGameBoardState extends State<LGameBoard> {
   List<Container> _listBoardSquares = List<Container>.empty(growable: true);
   List<Container> _listBoardPieces = List<Container>.empty(growable: true);
   List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
+  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
   List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
   List<Border?> _listMoveBorders = List<Border>.empty(growable: true);
   BorderInnerSquarePosition? innerSquarePosition;
@@ -89,9 +90,21 @@ class _LGameBoardState extends State<LGameBoard> {
         height: containerHeight,
       );
     });
-  }
 
-  Border
+    _listMovePieceShadowCenterContainers = List.generate(16,  (index) {
+      return Container(
+        //    duration: const Duration(seconds: 1),
+        //  padding: const EdgeInsets.all(8),
+        color: Colors.transparent,
+        width: containerWidth,
+        height: containerHeight,
+      );
+    });
+
+}
+
+
+Border
   getMoveDecorationBorderWithBorderSidesForCol(int index,
       List<GameBoardPosition>? l3SeriesList,
       GameBoardPosition forthLPieceGp,
@@ -935,10 +948,10 @@ class _LGameBoardState extends State<LGameBoard> {
     }
 
     if (lGameSession.iPlayerMove == 1) {
-      ret = Colors.white60;
+      ret = Colors.white10;
     } else
     if (lGameSession.iPlayerMove == 2) {
-      ret = Colors.white60;
+      ret = Colors.white10 /* Colors.white60 */;
     }
     return ret;
   }
@@ -949,17 +962,41 @@ class _LGameBoardState extends State<LGameBoard> {
     if (modeColor == Colors.transparent) {
       return null;
     }
+
     Widget? textWidget = getTextChild(index, false);
+
+    Color textColor = Colors.black;
+    bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
+           lGameSession.iArrPlayer1Pieces!.contains(index);
+    bool isIn2List = lGameSession.iArrPlayer2Pieces == null ? false :
+           lGameSession.iArrPlayer2Pieces!.contains(index);
+    if (index == lGameSession.iPlayerNeutral1Piece
+        || index == lGameSession.iPlayerNeutral2Piece) {
+      textColor = Colors.white;
+    }
+
     Widget text = Text(
         "${lGameSession.iPlayerMove}",
         textAlign: TextAlign.left,
-        style: TextStyle(fontSize: ScreenUtil().setSp(27), color: Colors.black,
+        style: TextStyle(fontSize: ScreenUtil().setSp(27), color: textColor,
             fontWeight: FontWeight.bold)
     );
 
+    if (modeColor == Colors.white10) {
+      modeColor = Colors.transparent;
+    }
+    /*
+    else
+    if (modeColor != Colors.transparent) {
+      {
+        print("Kissa");
+      }
+    }
+     */
+
     Widget ret = Container(
       // padding: const EdgeInsets.all(8),
-      color: modeColor.withOpacity(0.3),
+      color: modeColor /* modeColor.withOpacity(0.1) */,
       width: containerWidth,
       height: containerHeight,
       child: /** textWidget ?? */ text,
@@ -1131,11 +1168,32 @@ class _LGameBoardState extends State<LGameBoard> {
           lGameSession.iArrPlayerMovePieces!.contains(index)) {
         boxDecorationColor = modeColor; // Colors.white;
       }
+
+      Color borderColor = lGameSession.playerTurn == GamePlayerTurn.player1 ?
+      player1Color : player2Color /* Colors.black */ ;
+      if (lGameSession.inMovingPiece == LGamePieceInMove.neutral)
+      {
+          if (lGameSession.iArrPlayerMovePieces!.contains(index)
+          && lGameSession.iArrPlayer1Pieces!.contains(index))
+          {
+            if (lGameSession.playerTurn == GamePlayerTurn.player1) {
+              borderColor = Colors.black;
+            }
+          }
+          else
+          if (lGameSession.iArrPlayerMovePieces!.contains(index)
+          && lGameSession.iArrPlayer2Pieces!.contains(index))
+          {
+            if (lGameSession.playerTurn == GamePlayerTurn.player2) {
+              borderColor = Colors.black;
+            }
+          }
+      }
+
       boxDecoration = BoxDecoration(
         color: boxDecorationColor,
         border: Border.all(
-          color: lGameSession.playerTurn == GamePlayerTurn.player1 ?
-          player1Color : player2Color /* Colors.black */,
+          color: borderColor,
           width: 7,
         ),
 
@@ -1227,15 +1285,26 @@ class _LGameBoardState extends State<LGameBoard> {
   Container getBoardSquaresContainer(int index)
   {
     return Container(
-      // padding: const EdgeInsets.all(8),
-
+      padding: const EdgeInsets.all(1),
       width: containerWidth,
       height: containerHeight,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.blue, Colors.green],
+        ),
+      ),
+      child: Container(
+      // padding: const EdgeInsets.all(8),
+
+      width: containerWidth -20,
+      height: containerHeight -20,
       decoration: BoxDecoration(
         color: Colors.orange[200],
         border: Border.all(
           color: Colors.black,
-          width: 1,
+          width: 0,
         ),
       ),
       /*
@@ -1246,6 +1315,7 @@ class _LGameBoardState extends State<LGameBoard> {
                   bottomRight: Radius.circular(dRadius /* 30.0 */)),
                */
       child: null,
+    ),
     );
   }
 
@@ -1321,14 +1391,34 @@ class _LGameBoardState extends State<LGameBoard> {
     Color fontColor = Colors.black;
     if (isIn1List) {
       strText = "1";
+      if (isBoardPiece) {
+        fontColor = Colors.yellowAccent;
+      }
+      else {
+        fontColor = Colors.white70;
+      }
     } else if (isIn2List) {
       strText = "2";
+      if (isBoardPiece) {
+        fontColor = Colors.white70;
+        if (isIn1List) {
+          fontColor = Colors.white70;
+        }
+      }
     } else {
       strText = "0";
       fontColor = Colors.white;
       if (!isBoardPiece) {
         fontColor = Colors.black;
       }
+      else {
+        fontColor = Colors.white70;
+      }
+    }
+
+    if (index == lGameSession.iPlayerNeutral1Piece
+        || index != lGameSession.iPlayerNeutral2Piece) {
+      fontColor = Colors.white;
     }
 
     return Center(child: AutoSizeText(strText,
@@ -1356,7 +1446,8 @@ class _LGameBoardState extends State<LGameBoard> {
       },
       child: */ Text(_iArrScreenReaderSquareText[index],
           textAlign: TextAlign.left,
-          style: TextStyle(fontSize: ScreenUtil().setSp(12), color: Colors.transparent,
+          style: TextStyle(fontSize: ScreenUtil().setSp(12),
+              color: Colors.transparent,
               fontWeight: FontWeight.bold
             /* Colors.grey */),
       ),
@@ -1468,7 +1559,11 @@ class _LGameBoardState extends State<LGameBoard> {
         width: containerWidth,
         clipBehavior: Clip.none,
         height: containerHeight,
-        decoration: decoration
+        decoration: decoration,
+            child: Opacity(
+        opacity: 1.0,
+          child: Container(child: null, color: Colors.transparent,),
+        ),
           /*
             decoration: BoxDecoration(
             color: Colors.orange[200],
@@ -1492,13 +1587,13 @@ class _LGameBoardState extends State<LGameBoard> {
   }
 
   BoxShadow?
-  getBoxShadowOf(BorderStyle bottonStyle, SHADOWBOXPOSITION shadowPosition)
+  getBoxShadowOf(BorderStyle borderStyle, SHADOWBOXPOSITION shadowPosition)
   {
     BoxShadow? ret;
 
     Offset? offset = Offset(0,0);
     Color color = Colors.grey.shade600;
-    if (bottonStyle == BorderStyle.none)
+    if (borderStyle == BorderStyle.none)
       {
         ret =  BoxShadow(
           // color: Colors.green,
@@ -1530,7 +1625,7 @@ class _LGameBoardState extends State<LGameBoard> {
         offset = Offset(5,0);
       }
 
-    if (bottonStyle == BorderStyle.none)
+    if (borderStyle == BorderStyle.none)
     {
       color = Colors.transparent;
       offset = Offset(0,0);
@@ -1631,7 +1726,7 @@ class _LGameBoardState extends State<LGameBoard> {
             ),
           ],
            */
-      boxShadow: shadows,
+         boxShadow: shadows,
     );
 
     /*
@@ -1706,6 +1801,30 @@ class _LGameBoardState extends State<LGameBoard> {
       return ret;
   }
 
+  Container getMovePieceShadowCenterContainer(index)
+  {
+    Container ret = Container(
+      //    duration: const Duration(seconds: 1),
+      //  padding: const EdgeInsets.all(8),
+      color: Colors.transparent,
+      width: containerWidth,
+      height: containerHeight,
+    );
+    bool isInMoveList = lGameSession.iArrPlayerMovePieces == null ? false :
+                    lGameSession.iArrPlayerMovePieces!.contains(index);
+    if (!isInMoveList) {
+      return ret;
+    }
+    ret = Container(
+      //    duration: const Duration(seconds: 1),
+      //  padding: const EdgeInsets.all(8),
+      color: Colors.yellow[200],
+      width: containerWidth,
+      height: containerHeight,
+    );
+    return ret;
+  }
+
   GridView
   buildGameBoard()
   {
@@ -1746,6 +1865,10 @@ class _LGameBoardState extends State<LGameBoard> {
 
     _listMovePieceShadowContainers = List.generate(16,  (index) {
       return getMovePieceShadowContainer(index);
+    });
+
+    _listMovePieceShadowCenterContainers = List.generate(16,  (index) {
+      return getMovePieceShadowCenterContainer(index);
     });
 
     /*
@@ -1866,8 +1989,10 @@ class _LGameBoardState extends State<LGameBoard> {
             //      decoration: listBoxDecoration,
             child: Stack(clipBehavior: Clip.none,
                 children: [_listBoardSquares[i],
-                  _listMovePieceShadowContainers[i], _listBoardPieces[i],
-                  _listMoveBorderSquares[i],
+                 _listMovePieceShadowContainers[i],
+                  _listMovePieceShadowCenterContainers[i],
+                  _listBoardPieces[i],
+                 _listMoveBorderSquares[i],
                   _listScreenReaderSquares[i]
                ]
             /*
@@ -1895,7 +2020,9 @@ class _LGameBoardState extends State<LGameBoard> {
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(
           Container( child: Stack(children: [_listBoardSquares[i],
-            _listMovePieceShadowContainers[i], _listBoardPieces[i],
+            _listMovePieceShadowContainers[i],
+            _listMovePieceShadowCenterContainers[i],
+            _listBoardPieces[i],
             _listMoveSquares[i],
             _listMoveBorderSquares[i]]),));
       }
@@ -1908,7 +2035,7 @@ class _LGameBoardState extends State<LGameBoard> {
       primary: false,
       mainAxisSpacing: 0,
       crossAxisSpacing: 0,
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.all(8.0),
       // mainAxisSpacing: 1.0,
       // crossAxisSpacing: 1.0,
       // Create a grid with 2 columns. If you change the scrollDirection to

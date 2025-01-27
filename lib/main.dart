@@ -39,7 +39,7 @@ var loggerNoStack = Logger(
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
-enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
+enum MenuButtonSelected { remoteGames, oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
@@ -114,12 +114,13 @@ class MyApp extends StatelessWidget {
    //   navigatorKey: navigatorKey, // important
       routes: {
         '/': (context) => const LoadingScreen(),
-        '/lgamefor2': (context) => MyHomePage(title: strAppTitle, bScreenReaderIsUsed: bScreenReaderIsUsed),
+        '/lgamefor2': (context) => MyHomePage(title: strAppTitle,
+            bScreenReaderIsUsed: bScreenReaderIsUsed),
         '/help': (context) => const HelpRoute(),
         '/about': (context) => const AboutRoute(),
         '/oldgames': (context) => const OldGamesRoute(),
         '/finishedgames': (context) => const FinishedGamesRoute(),
-        '/remotegames': (context) => const RemoteGamesRoute(),
+       '/remotegames': (context) => const RemoteGamesRoute(),
       },
       theme: ThemeData(
         useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: 
@@ -185,6 +186,7 @@ class _LGamePageState extends State<MyHomePage>
   Widget? _buttonsRow1;
   Widget? _buttonsRow2;
   Widget? _buttonsRow3;
+  Widget? _buttonsRow4;
   Widget? _buildBoard;
   Widget? _buttonsEditRow1;
   TextField? _textFieldName1, _textFieldName2;
@@ -202,13 +204,13 @@ class _LGamePageState extends State<MyHomePage>
   Widget? buttonUp;
   Widget? buttonDown;
   Widget? buttonWrapUp;
-  ElevatedButton? buttonSwitchNeutral;
+  Widget? buttonSwitchNeutral;
   Widget? buttonLeft;
   Widget? buttonRight;
-  ElevatedButton? buttonStartGame;
-  ElevatedButton? buttonTurn90Degree;
-  ElevatedButton? buttonMoveDone;
-  ElevatedButton? buttonHelp;
+  Widget? buttonStartGame;
+  Widget? buttonTurn90Degree;
+  Widget? buttonMoveDone;
+  Widget? buttonHelp;
   Text? textMessage;
   // bool bScreenReaderIsUsed = true;
 
@@ -216,7 +218,8 @@ class _LGamePageState extends State<MyHomePage>
   Color player2Color = Colors.blueAccent;
   Color neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
-         ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(13),
+         ElevatedButton.styleFrom(textStyle:
+         TextStyle(fontSize: ScreenUtil().setSp(13),
              fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
@@ -667,6 +670,9 @@ class _LGamePageState extends State<MyHomePage>
    //   _buildBoard = buildGameBoard();
   }
 
+  final double buttonRowBetweenHeight = 40;
+  final double buttonIconSize = 35.0;
+
   Widget buildGameBoard()
   {
 
@@ -692,7 +698,7 @@ class _LGamePageState extends State<MyHomePage>
       ),
        */
       onPressed: lGameSession.bButtonUpEnabled ? buttonUpPressed : null,
-      icon: const Icon(Icons.arrow_upward, size: 30.0,),
+      icon: Icon(Icons.arrow_upward, size: buttonIconSize,),
       label: const Text("Up"),
     );
     /* Container(
@@ -727,21 +733,21 @@ class _LGamePageState extends State<MyHomePage>
     buttonDown = ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonDownEnabled ? buttonDownPressed : null,
-      icon: const Icon(Icons.arrow_downward, size: 30.0,),
+      icon: Icon(Icons.arrow_downward, size: buttonIconSize,),
       label: const Text('Down'),
     );
 
     buttonLeft = ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonLeftEnabled ? buttonLeftPressed : null,
-      icon: const Icon(Icons.arrow_back, size: 30.0,),
+      icon: Icon(Icons.arrow_back, size: buttonIconSize,),
       label: const Text('Left'),
     );
 
     buttonRight =   ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonRightEnabled ? buttonRightPressed : null,
-      icon: const Icon(Icons.arrow_forward, size: 30.0,),
+      icon: Icon(Icons.arrow_forward, size: buttonIconSize,),
       label: const Text('Right'),
     );
 
@@ -785,17 +791,17 @@ class _LGamePageState extends State<MyHomePage>
      if (lGameSession.bGameIsOver)
      {
        textMessage = Text(lGameSession.msg,
-         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(25),
+         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15),
              backgroundColor: Colors.yellowAccent),
        );
      }
      else {
        textMessage = Text(lGameSession.msg,
-         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(25)),
+         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15)),
        );
      }
 
-     const double buttonBetweenWidth = 20;
+     const double buttonBetweenWidth = 5;
 
      if (bEditPlayerNames) {
        /*
@@ -883,35 +889,39 @@ class _LGamePageState extends State<MyHomePage>
 
      _buttonsRow0 = Row(children: [
       buttonStartGame!,
-      const SizedBox(height: 40, width: buttonBetweenWidth,),
+      SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
       buttonMoveDone!,
     ],
     );
 
     _buttonsRow1 = Row(children: [
       buttonUp!,
-  //    const SizedBox(height: 2, width: buttonBetweenWidth,),
+      SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
       buttonDown!,
     //  const SizedBox(height: 2, width: buttonBetweenWidth,),
-      buttonTurn90Degree!
     ],
     );
 
     _buttonsRow2 = Row(children: [
       buttonLeft!,
-   //   const SizedBox(height: 2, width: buttonBetweenWidth,),
+      SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
       buttonRight!,
-     // const SizedBox(height: 2, width: buttonBetweenWidth,),
-      buttonHelp!,
     ],
     );
 
     _buttonsRow3 = Row(children: [
       buttonWrapUp!,
-      const SizedBox(height: 30, width: buttonBetweenWidth,),
+      SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
       buttonSwitchNeutral!,
     ],
     );
+
+     _buttonsRow4 = Row(children: [
+        buttonTurn90Degree!,
+        SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
+        buttonHelp!,
+     ],
+     );
 
     /*
     _listBoardPieces = List.generate(16,  (index) {
@@ -987,6 +997,7 @@ class _LGamePageState extends State<MyHomePage>
        {
          editOrButtonContainer = Column(children: [
          _buttonsRow0!,  _buttonsRow1!, _buttonsRow2!, _buttonsRow3!,
+           _buttonsRow4!
         ],);
        }
 
@@ -1213,14 +1224,13 @@ class _LGamePageState extends State<MyHomePage>
                     {
                       callFinishedGames();
                     }
-                    /*
                   else
                     if (selectedMenuButton ==
                     MenuButtonSelected.remoteGames)
                     {
                         callRemoteGames();
                     }
-                     */
+
                     else
                     if (selectedMenuButton ==
                         MenuButtonSelected.exitGame)
@@ -1241,13 +1251,11 @@ class _LGamePageState extends State<MyHomePage>
                 value: MenuButtonSelected.oldUnFinishedGames,
                 child: Text('Select unfinished games', style: menuTextStyle,),
               ),
-              /*
+
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.remoteGames,
                 child: Text('Remote games', style: menuTextStyle,),
               ),
-
-               */
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.editPlayerNames,
                 child: Text('Edit player names', style: menuTextStyle,),
