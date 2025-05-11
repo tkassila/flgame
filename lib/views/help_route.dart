@@ -107,9 +107,14 @@ const String strHelp = r"""
 
     <h2>From Wikipedia</h2>
     <p>From Wikipedia, the free encyclopedia
-        L game board and starting setup, with neutral pieces shown as black discs
+        L game board and starting setup, with neutral pieces shown as black discs:
     </p>
+  </div>  
+    """;
 
+const String strHelp_2 = r"""
+
+<div class="text">
     <p>
         The L game is a simple abstract strategy board game invented by Edward de Bono. It was introduced in his book The Five-Day Course in Thinking (1967).
         Description
@@ -205,7 +210,19 @@ class HelpPage1 extends StatelessWidget {
       SingleChildScrollView(
         controller: ScrollController(),
         primary: false,
-        child: Html(style: htmlStyle, data: strHelp),
+        child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
+          Html(style: htmlStyle, data: strHelp),
+          const Image(
+            width: 150,
+            height: 150,
+            image: AssetImage(
+              'assets/L_Game_start_position.svg.png',
+            ),
+          ),
+          Html(style: htmlStyle, data: strHelp_2),
+        ],
+        ),
+        ),
       ),
     ],),
     )

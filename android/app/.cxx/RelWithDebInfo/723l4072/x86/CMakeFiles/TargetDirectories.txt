@@ -1,0 +1,2 @@
+/home/tk/Documents/Java/project/flutter/flgame/android/app/.cxx/RelWithDebInfo/723l4072/x86/CMakeFiles/edit_cache.dir
+/home/tk/Documents/Java/project/flutter/flgame/android/app/.cxx/RelWithDebInfo/723l4072/x86/CMakeFiles/rebuild_cache.dir

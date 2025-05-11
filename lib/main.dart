@@ -1190,14 +1190,25 @@ class _LGamePageState extends State<MyHomePage>
 
     double height = MediaQuery.sizeOf(context).height;
     var padding = MediaQuery.paddingOf(context);
-    double newheight = height - padding.top - padding.bottom;
+    double newHeight = height - padding.top - padding.bottom;
+    Color? playerColor = lGameSession.playerTurn == null ? null :
+    (lGameSession.playerTurn == GamePlayerTurn.player1 ?
+    player1Color : player2Color);
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
-            fontWeight: FontWeight.bold),),
+        title: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
+            fontWeight: FontWeight.bold, background: Paint()
+          ..strokeWidth = 35.0
+          ..strokeMiterLimit = 0.0
+          ..color = playerColor!
+          ..style = PaintingStyle.stroke
+          ..strokeJoin = StrokeJoin.round),),
+        ),
         actions: [
           PopupMenuButton<MenuButtonSelected>(
             initialValue: selectedMenuButton,
@@ -1327,7 +1338,7 @@ class _LGamePageState extends State<MyHomePage>
       ),
       backgroundColor: Colors.white70,
       body: Container(
-        height: newheight,
+        height: newHeight,
     decoration: BoxDecoration(
     color: Colors.white70,
     border: Border.all(

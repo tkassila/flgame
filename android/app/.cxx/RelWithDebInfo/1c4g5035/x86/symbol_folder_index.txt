@@ -1,0 +1,1 @@
+/home/tk/Documents/Java/project/flutter/flgame/build/app/intermediates/cxx/RelWithDebInfo/1c4g5035/obj/x86

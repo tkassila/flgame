@@ -1,0 +1,1 @@
+/home/tk/Documents/Java/project/flutter/flgame/build/app/intermediates/cxx/RelWithDebInfo/723l4072/obj/arm64-v8a
