@@ -66,8 +66,7 @@ class _LGameBoardState extends State<LGameBoard> {
   final double containerHeight = 200;
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
-  final ButtonStyle buttonStyleScreenReader =
-  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
+  ButtonStyle get buttonStyleScreenReader => ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
       fontWeight: FontWeight.bold),
       backgroundColor: Colors.transparent);
 
@@ -148,19 +147,19 @@ Border
     GameBoardPosition rightGp = l3SeriesList.last;
     GameBoardPosition betweenGp = l3SeriesList[1];
     GameBoardPosition? neighbour;
-    bool? neighBourIsLeftGp;
+    bool? neighBorIsLeftGp;
     if (leftGp.iRow == forthLPieceGp.iRow)
     {
-      neighBourIsLeftGp = true;
+      neighBorIsLeftGp = true;
       neighbour = leftGp;
     }
     else
     if (rightGp.iRow == forthLPieceGp.iRow)
     {
       neighbour = rightGp;
-      neighBourIsLeftGp = false;
+      neighBorIsLeftGp = false;
     }
-    logger.i("neighBourIsLeftGp" +neighBourIsLeftGp.toString());
+    logger.i("neighBorIsLeftGp$neighBorIsLeftGp");
 
     if (leftGp.iPos == index)
     {
@@ -185,7 +184,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
+      if (neighBorIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol > leftGp.iCol)
       {
         ret = const Border(
@@ -210,7 +209,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
+      if (neighBorIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol < leftGp.iCol)
       {
         ret = const Border(
@@ -259,7 +258,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
+      if (neighBorIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol > rightGp.iCol)
       {
         ret = const Border(
@@ -284,7 +283,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
+      if (neighBorIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol < rightGp.iCol)
       {
         ret = const Border(
@@ -358,7 +357,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null
+      if (neighBorIsLeftGp != null
           && (( /* neighBourIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
               && forthLPieceGp.iCol > leftGp.iCol)
               || ( /*!neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
@@ -386,7 +385,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null
+      if (neighBorIsLeftGp != null
           && ((/* neighBourIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
               && forthLPieceGp.iCol < leftGp.iCol)
               || (/* !neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
@@ -498,14 +497,14 @@ Border
           return ret;
         }
 
-        logger.i("rowSeries gps " +gps.length.toString());
+        logger.i("rowSeries gps ${gps.length}");
         GameBoardPositionSeries? rowSeries =
         lGameSession.getPositionsOfFreePieceInSpecRow(
             iHorizontalRow, gps);
         if (rowSeries == null) {
           return ret;
         }
-        logger.i("rowSeries " +rowSeries!.series.length.toString());
+        logger.i("rowSeries ${rowSeries!.series.length}");
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
         for (int i = 0; i < gps.length; i++ ) {
@@ -530,7 +529,7 @@ Border
           }
         }
 
-        logger.i("rowSeries forthLPieceGp " +forthLPieceGp!.iPos.toString());
+        logger.i("rowSeries forthLPieceGp ${forthLPieceGp!.iPos}");
         if(forthLPieceGp == null) {
           return ret;
         }
@@ -564,14 +563,14 @@ Border
           return ret;
         }
 
-        logger.i("colSeries gps " +gps.length.toString());
+        logger.i("colSeries gps ${gps.length}");
         GameBoardPositionSeries? colSeries =
         lGameSession.getPositionsOfFreePieceInSpecCol(
             iHorizontalCol, gps);
         if (colSeries == null) {
           return ret;
         }
-        logger.i("colSeries " +colSeries!.series.length.toString());
+        logger.i("colSeries ${colSeries!.series.length}");
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
         for (int i = 0; i < gps.length; i++ ) {
@@ -596,7 +595,7 @@ Border
           }
         }
 
-        logger.i("colSeries forthLPieceGp " +forthLPieceGp!.iPos.toString());
+        logger.i("colSeries forthLPieceGp ${forthLPieceGp!.iPos}");
         if(forthLPieceGp == null) {
           return ret;
         }
@@ -675,7 +674,7 @@ Border
       neighbour = rightGp;
       neighBourIsLeftGp = false;
     }
-    logger.i("neighBourIsLeftGp" +neighBourIsLeftGp.toString());
+    logger.i("neighBourIsLeftGp$neighBourIsLeftGp");
 
     if (leftGp.iPos == index)
     {
@@ -1461,7 +1460,7 @@ Border
       String strLabel = "";
       if (bChangeScreenReaderTextIntoTop) {
         strLabel = lGameSession.getScreenReaderSquareLabel(i);
-        String strExpr = "Position " + strLabel;
+        String strExpr = "Position $strLabel";
         return strExpr;
       }
       else {
@@ -1475,7 +1474,7 @@ Border
   {
     if (widget.bScreenReaderIsUsed) {
       String strLabel = lGameSession.getScreenReaderSquareLabel(i);
-      String strExpr = "Position " +strLabel;
+      String strExpr = "Position $strLabel";
       final snackBar = SnackBar(content: Semantics(liveRegion: true, child:  Text(strExpr)));
       ScaffoldMessenger.of(thisContext!).showSnackBar(snackBar);
       /*
@@ -1487,7 +1486,7 @@ Border
     }
   }
 
-  _screenReaderAnnounce(String msg) async
+  Future<void> _screenReaderAnnounce(String msg) async
   {
     if (widget.bScreenReaderIsUsed && msg.isNotEmpty)
     {

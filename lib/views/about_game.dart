@@ -24,7 +24,11 @@ class AboutRoute extends StatelessWidget {
         centerTitle: false,
         actions: [
           Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
-            child: ElevatedButton(
+            child: Semantics(
+              readOnly: true,
+              label: "Back",
+              hint: 'Back button',
+              child: ElevatedButton(
               style: buttonStyle,
               child: const Text(
                 'Back',
@@ -34,6 +38,7 @@ class AboutRoute extends StatelessWidget {
                     ModalRoute.withName('/lgamefor2'));
               },
             ),
+          ),
           ),
         ],
       ),

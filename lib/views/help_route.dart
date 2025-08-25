@@ -206,7 +206,10 @@ class HelpPage1 extends StatelessWidget {
     return SingleChildScrollView(
       controller: ScrollController(),
       child: Column(children: [
-      Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
+      Padding(
+      padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 4.0),
+      child: Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
+      ),
       SingleChildScrollView(
         controller: ScrollController(),
         primary: false,
@@ -626,7 +629,11 @@ class HelpRoute extends StatelessWidget {
         centerTitle: false,
         actions: [
           Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
-        child: ElevatedButton(
+        child: Semantics(
+          readOnly: true,
+          label: "Wrap",
+          hint: 'Wrap button',
+          child: ElevatedButton(
             style: buttonStyle,
             child: const Text(
               'Back into LGame',
@@ -635,6 +642,7 @@ class HelpRoute extends StatelessWidget {
               Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2",
                   ModalRoute.withName('/lgamefor2'));
             },
+          ),
           ),
           ),
         ],

@@ -190,7 +190,7 @@ class _LGamePageState extends State<MyHomePage>
   Widget? _buildBoard;
   Widget? _buttonsEditRow1;
   TextField? _textFieldName1, _textFieldName2;
-  ElevatedButton? _buttonSaveEdit, _buttonReturnFromEdit;
+  Widget? _buttonSaveEdit, _buttonReturnFromEdit;
   final TextEditingController _textFieldName1Controller = TextEditingController();
   final TextEditingController _textFieldName2Controller = TextEditingController();
 
@@ -684,13 +684,22 @@ class _LGamePageState extends State<MyHomePage>
     });
       */
 
-    buttonStartGame =  ElevatedButton(
+    buttonStartGame = Semantics(
+      readOnly: true,
+      label: 'Start game',
+      hint: 'Start game button',
+      child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonStartGameEnabled ? buttonStartGamePressed : null,
       child: const Text('Start game'),
+      ),
     );
 
-    buttonUp = ElevatedButton.icon(
+    buttonUp = Semantics(
+      readOnly: true,
+      label: "Up",
+      hint: 'Up button',
+      child: ElevatedButton.icon(
       style: buttonStyle,
       /*
       style: ElevatedButton.styleFrom(
@@ -700,6 +709,7 @@ class _LGamePageState extends State<MyHomePage>
       onPressed: lGameSession.bButtonUpEnabled ? buttonUpPressed : null,
       icon: Icon(Icons.arrow_upward, size: buttonIconSize,),
       label: const Text("Up"),
+      ),
     );
     /* Container(
           margin: const EdgeInsets.all(1.0),
@@ -730,31 +740,51 @@ class _LGamePageState extends State<MyHomePage>
 
     */
 
-    buttonDown = ElevatedButton.icon(
+    buttonDown = Semantics(
+      readOnly: true,
+      label: "Down",
+      hint: 'Down button',
+      child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonDownEnabled ? buttonDownPressed : null,
       icon: Icon(Icons.arrow_downward, size: buttonIconSize,),
       label: const Text('Down'),
+    ),
     );
 
-    buttonLeft = ElevatedButton.icon(
+    buttonLeft = Semantics(
+      readOnly: true,
+      label: "Left",
+      hint: 'Left button',
+      child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonLeftEnabled ? buttonLeftPressed : null,
       icon: Icon(Icons.arrow_back, size: buttonIconSize,),
       label: const Text('Left'),
+    ),
     );
 
-    buttonRight =   ElevatedButton.icon(
+    buttonRight = Semantics(
+      readOnly: true,
+      label: "Right",
+      hint: 'Right button',
+      child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonRightEnabled ? buttonRightPressed : null,
       icon: Icon(Icons.arrow_forward, size: buttonIconSize,),
       label: const Text('Right'),
+    ),
     );
 
-    buttonWrapUp = ElevatedButton(
+    buttonWrapUp = Semantics(
+      readOnly: true,
+        label: "Wrap",
+        hint: 'Wrap button',
+        child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonWrapUpEnabled ? buttonWrapUpPressed : null,
       child: const Text('Wrap'),
+    ),
     );
 
     String strNeutral;
@@ -764,28 +794,48 @@ class _LGamePageState extends State<MyHomePage>
       strNeutral = "Select 2' neutral";
     }
 
-    buttonSwitchNeutral = ElevatedButton(
+    buttonSwitchNeutral = Semantics(
+      readOnly: true,
+    label: strNeutral,
+  hint: "$strNeutral button",
+  child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonSwitchNeutralEnabled ? buttonSwitchNeutralPressed : null,
       child: Text(strNeutral),
-    );
+    ),
+  );
 
-    buttonTurn90Degree = ElevatedButton(
+    buttonTurn90Degree = Semantics(
+      readOnly: true,
+  label: "Turn 90º",
+  hint: "Turn 90º button",
+  child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
       child: const Text('Turn 90º'),
-    );
+    ),
+  );
 
-     buttonHelp = ElevatedButton(
+     buttonHelp = Semantics(
+       readOnly: true,
+       label: "Help",
+       hint: "Help button",
+       child: ElevatedButton(
        style: buttonStyle,
        onPressed: lGameSession.bButtonHelpEnabled ? buttonHelpEnabledPressed : null,
        child: const Text('Help'),
+      ),
      );
 
-     buttonMoveDone = ElevatedButton(
+     buttonMoveDone = Semantics(
+       readOnly: true,
+         label: "Move Done",
+         hint: "Move Done button",
+         child: ElevatedButton(
        style: buttonStyle,
        onPressed: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
        child: const Text('Move Done'),
+       ),
      );
 
      if (lGameSession.bGameIsOver)
@@ -810,16 +860,26 @@ class _LGamePageState extends State<MyHomePage>
      ElevatedButton? _buttonSaveEdit, _buttonReturnFromEdit;
       */
 
-       _buttonSaveEdit = ElevatedButton(
+       _buttonSaveEdit = Semantics(
+         readOnly: true,
+         label: "Save names",
+         hint: "Save names button",
+         child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonSaveEditPressed : null,
          child: const Text('Save names'),
+         ),
        );
 
-       _buttonReturnFromEdit = ElevatedButton(
+       _buttonReturnFromEdit = Semantics(
+         readOnly: true,
+         label: "No save",
+         hint: "No save button",
+         child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonReturnFromEditPressed : null,
          child: const Text('No save'),
+         ),
        );
 
        _textFieldName1Controller.text = lGameSession.name1;

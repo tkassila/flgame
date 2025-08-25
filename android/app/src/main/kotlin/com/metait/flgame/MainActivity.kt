@@ -1,4 +1,4 @@
-package com.metait.flgame.flgame
+package com.metait.flgame
 
 import io.flutter.embedding.android.FlutterActivity
 

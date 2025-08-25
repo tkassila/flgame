@@ -58,7 +58,6 @@ class _OldGamesPageState extends State<OldGamesPage> {
     print('Please Wait');
   }
 
-
 //  List<LGameSessionData>? listDataSessions;
   // List<LGameSessionTitle>? _dataTitles;
   LGameSessionData? selectedSessionData;
@@ -110,7 +109,11 @@ class _OldGamesPageState extends State<OldGamesPage> {
           if (widget.bCalledFromFinishedGames ||
               (widget.listDataSessions == null || widget.listDataSessions!.isEmpty))
             Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
-                child: ElevatedButton(
+                child: Semantics(
+                    readOnly: true,
+                    label: "Back",
+                    hint: 'Back button',
+                    child: ElevatedButton(
                   style: buttonStyle,
                   child: const Text(
                     'Back',
@@ -126,9 +129,14 @@ class _OldGamesPageState extends State<OldGamesPage> {
                       //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
                     }
                   },
-                ))
+                )),
+            )
           else Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
-            child: ElevatedButton(
+            child: Semantics(
+    readOnly: true,
+    label: "Select game",
+    hint: 'Select game button',
+    child: ElevatedButton(
               style: buttonStyle,
               child: const Text(
                 'Select game',
@@ -145,6 +153,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
                 //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
               },
             ),
+          ),
           ),
         ],
       ),
