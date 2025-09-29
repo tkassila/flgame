@@ -67,7 +67,7 @@ class AboutRoute extends StatelessWidget {
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1',
+                child: Text('version 1.1.1',
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

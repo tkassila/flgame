@@ -39,7 +39,7 @@ var loggerNoStack = Logger(
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
-enum MenuButtonSelected { remoteGames, oldUnFinishedGames,
+enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
@@ -161,8 +161,19 @@ class _LGamePageState extends State<MyHomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
+      case AppLifecycleState.inactive:
+        logger.i("inactive");
+        var obj = lGameSession.getGamePositionsForSaveGame();
+        di<LGameDataService>().setActiveGame(obj);
+        di<LGameDataService>().saveLGameSessionData(obj);
+        di<LGameDataService>().closeHive();
+        break;
       case AppLifecycleState.resumed:
         logger.i("resumed");
+        var obj = lGameSession.getGamePositionsForSaveGame();
+        di<LGameDataService>().setActiveGame(obj);
+        di<LGameDataService>().saveLGameSessionData(obj);
+        di<LGameDataService>().closeHive();
         break;
       case AppLifecycleState.paused:
         logger.i("paused");
@@ -1125,15 +1136,23 @@ class _LGamePageState extends State<MyHomePage>
        return "";
      }
      if (lGameSession.playerTurn == GamePlayerTurn.player1) {
-       ret = "Player 1";
+       if (lGameSession.name1.isEmpty) {
+         ret = "Player 1";
+       } else {
+         ret = lGameSession.name1;
+       }
      } else
      if (lGameSession.playerTurn == GamePlayerTurn.player2) {
-       ret = "Player 2";
+       if (lGameSession.name2.isEmpty) {
+         ret = "Player 2";
+       } else {
+         ret = lGameSession.name2;
+       }
      }
      return ret;
   }
 
-  callOldUnFinishedGames() async
+  void callOldUnFinishedGames() async
   {
     Object? navRet = await Navigator.pushNamedAndRemoveUntil(
         context, "/oldgames", ModalRoute.withName('/lgamefor2'));
@@ -1185,7 +1204,7 @@ class _LGamePageState extends State<MyHomePage>
     //   OldGamesPage()), (route) => false);
   }
 
-  callExitGame()
+  void callExitGame()
   {
     if (localPlatform.isAndroid) {
       FlutterExitApp.exitApp();
@@ -1194,12 +1213,12 @@ class _LGamePageState extends State<MyHomePage>
     }
   }
 
-  callAboutGame()
+  void callAboutGame()
   {
     Navigator.pushNamed(context, "/about");
   }
 
-  callRemoteGames() async
+  void callRemoteGames() async
   {
     /*
     await Navigator.pushNamedAndRemoveUntil(
@@ -1208,7 +1227,7 @@ class _LGamePageState extends State<MyHomePage>
     Navigator.pushNamed(context, "/remotegames");
   }
 
-  callFinishedGames() async
+  void callFinishedGames() async
   {
     /*
     await Navigator.pushNamedAndRemoveUntil(
@@ -1295,12 +1314,14 @@ class _LGamePageState extends State<MyHomePage>
                     {
                       callFinishedGames();
                     }
+                    /*
                   else
                     if (selectedMenuButton ==
                     MenuButtonSelected.remoteGames)
                     {
                         callRemoteGames();
                     }
+                     */
 
                     else
                     if (selectedMenuButton ==
@@ -1323,10 +1344,12 @@ class _LGamePageState extends State<MyHomePage>
                 child: Text('Select unfinished games', style: menuTextStyle,),
               ),
 
+              /*
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.remoteGames,
                 child: Text('Remote games', style: menuTextStyle,),
               ),
+               */
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.editPlayerNames,
                 child: Text('Edit player names', style: menuTextStyle,),

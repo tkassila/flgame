@@ -112,6 +112,12 @@ class _ListGameSessionsState
   }
 
   @override
+  void dispose() {
+    widget.scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return /* Expanded(child: Column(children: [
        */ RawScrollbar(
