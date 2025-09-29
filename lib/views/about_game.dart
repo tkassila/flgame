@@ -14,7 +14,9 @@ class AboutRoute extends StatelessWidget {
     ScreenUtil().setSp(15), fontWeight: FontWeight.bold),
         backgroundColor: Colors.amberAccent);
 
-    return Scaffold(
+    return SafeArea(
+      minimum: const EdgeInsets.all(4.0),
+      child: Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         // leadingWidth: MediaQuery.of(context).padding.top,
@@ -42,9 +44,7 @@ class AboutRoute extends StatelessWidget {
           ),
         ],
       ),
-      body: SafeArea(
-        minimum: const EdgeInsets.all(4.0),
-        child: Container(
+      body: Container(
           decoration: BoxDecoration(
             color: Colors.white70, /* Theme.of(context).colorScheme.primary, */// const Color(0xffe8e8e8),
             border: Border.all(
@@ -67,14 +67,14 @@ class AboutRoute extends StatelessWidget {
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1.1',
+                child: Text('version 1.1.2',
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 
             ],
           ),
         ),
-      ),
+    ),
     );
   }
 }

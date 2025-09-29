@@ -97,7 +97,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
 
     ScrollController scrollController = ScrollController();
 
-    return Scaffold(
+    return SafeArea(
+        minimum: const EdgeInsets.all(4.0),
+        child: Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         primary: false,
@@ -230,6 +232,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
           );
         },
       ) */
+        ),
     );
 
   }

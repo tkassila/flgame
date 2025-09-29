@@ -620,7 +620,9 @@ class HelpRoute extends StatelessWidget {
      ScreenUtil().setSp(15), fontWeight: FontWeight.bold),
       backgroundColor: Colors.amberAccent);
 
-  return Scaffold(
+  return SafeArea(
+      minimum: const EdgeInsets.all(4.0),
+      child: Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
     // leadingWidth: MediaQuery.of(context).padding.top,
@@ -647,9 +649,7 @@ class HelpRoute extends StatelessWidget {
           ),
         ],
       ),
-      body: SafeArea(
-        minimum: const EdgeInsets.all(4.0),
-        child: pageView ,
+      body: pageView ,
       ),
       );
   }

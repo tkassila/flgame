@@ -1274,7 +1274,13 @@ class _LGamePageState extends State<MyHomePage>
     (lGameSession.playerTurn == GamePlayerTurn.player1 ?
     player1Color : player2Color);
 
-    return Scaffold(
+    return SafeArea(
+        top: true, // applies padding at the top
+        bottom: true, // applies padding at the bottom
+        left: false, // no padding on the left
+        right: false, // no padding on the right
+        minimum: EdgeInsets.all(16), // minimum padding for all sides
+        child: Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -1432,6 +1438,7 @@ class _LGamePageState extends State<MyHomePage>
     child: /* buildGameBoard() */ _buildBoard ,
         //   if (isSystemNavigateMenu) SizedBox(height: 30,),
       ),
+        ),
     );
   }
 }

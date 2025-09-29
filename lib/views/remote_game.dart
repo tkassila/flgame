@@ -43,7 +43,9 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
   Widget build(BuildContext context)
   {
     //  rootBundle = context;
-    return Scaffold(
+    return SafeArea(
+        minimum: const EdgeInsets.all(4.0),
+        child: Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         // leadingWidth: MediaQuery.of(context).padding.top,
@@ -65,9 +67,7 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
           ),
         ],
       ),
-      body: SafeArea(
-        minimum: const EdgeInsets.all(4.0),
-        child: Container(
+      body: Container(
           decoration: BoxDecoration(
             color: Colors.white70, /* Theme.of(context).colorScheme.primary, */// const Color(0xffe8e8e8),
             border: Border.all(
