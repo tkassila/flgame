@@ -1284,16 +1284,20 @@ class _LGamePageState extends State<MyHomePage>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        titleSpacing: 23,
         title: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
+            padding: const EdgeInsets.all(10.0),
+            child: /* Card(child: */ Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
             fontWeight: FontWeight.bold, background: Paint()
-          ..strokeWidth = 35.0
+            /*
+          ..strokeWidth = 12.0
           ..strokeMiterLimit = 0.0
+             */
           ..color = playerColor!
-          ..style = PaintingStyle.stroke
-          ..strokeJoin = StrokeJoin.round),),
+          // ..style = PaintingStyle.stroke
+         ..strokeJoin = StrokeJoin.round),),
         ),
+       // ),
         actions: [
           PopupMenuButton<MenuButtonSelected>(
             initialValue: selectedMenuButton,
