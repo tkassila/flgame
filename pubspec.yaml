@@ -43,13 +43,14 @@ dependencies:
   build_runner: ^2.4.11
   # flutter_co: ^7.2.2
   path_provider: any
-  platform: ^3.1.5
-  flutter_exit_app: ^1.1.3
-  flutter_html: ^3.0.0-beta.2
-  injectable: ^2.4.4
-  get_it: ^8.0.0
-  intl: ^0.20.1
+  platform: ^3.1.6
+  flutter_exit_app: ^2.0.0
+  flutter_html: ^3.0.0
+  injectable: ^2.6.0
+  get_it: ^9.1.0
+  intl: ^0.20.2
   flutter_screenutil: ^5.9.3
+  flutter_soloud: ^3.4.4
 
 dev_dependencies:
   flutter_test:
@@ -78,7 +79,10 @@ flutter:
     - assets/L_Game_start_position.svg.png
     - assets/560px-L_Game_mate_positions.svg.png
     - assets/560px-L_Game_all_final_positions.svg.png
+    - assets/help.html
+    - assets/sounds/errbeep.mp3
     - assets/
+    - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

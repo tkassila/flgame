@@ -114,16 +114,16 @@ const String strHelp = r"""
 
 const String strHelp_2 = r"""
 
-<div class="text">
+<div>
     <p>
         The L game is a simple abstract strategy board game invented by Edward de Bono. It was introduced in his book The Five-Day Course in Thinking (1967).
-        Description
     </p>
-
+    <h3>Description</h3>
     <p>
         The L game is a two-player game played on a board of 4×4 squares. Each player has a 3×2 L-shaped tetromino, and there are two 1×1 neutral pieces.
-        Rules
     </p>
+        
+   <h3>Rules</h3>
 
     <p>
         On each turn, a player must first move their L piece, and then may optionally move either one of the neutral pieces. The game is won by leaving the opponent unable to move their L piece to a new position.

@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import '../models/LGameDataService.dart';
 import 'package:flgame/models/lgame_data.dart';
 import 'game_board.dart';
+import '../main.dart';
 
 class LGameSessionTitle {
   String title;

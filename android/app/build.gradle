@@ -5,18 +5,38 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// 1. Read the key.properties file
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    println "loaded prop file"
+}
+
 android {
     namespace = "com.metait.flgame"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
+    // 2. Add the signingConfigs block
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_18
-        targetCompatibility = JavaVersion.VERSION_18
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_18
+        jvmTarget = JavaVersion.VERSION_21
     }
 
     defaultConfig {
@@ -34,9 +54,18 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // signingConfig = signingConfigs.debug
+            // 3. Apply the signing config to the release build type.
+            signingConfig = signingConfigs.release
         }
     }
+}
+
+
+dependencies {
+        // ...
+        implementation 'com.google.android.material:material:1.13.0'
+        // ...
 }
 
 flutter {

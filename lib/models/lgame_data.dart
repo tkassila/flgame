@@ -1,15 +1,15 @@
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
-
-
+// import 'package:audioplayers/audioplayers.dart';
 import '../models/LGameDataService.dart';
 import '../di.dart';
+// import '../main.dart';
+import '../AudioPlayerService.dart' as audioPlayerService;
 part 'lgame_data.g.dart';
 
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
-
-  // This widget is the root of your application.
 
 @HiveType(typeId: 2)
 enum GamePlayerTurn {
@@ -423,6 +423,7 @@ class LGameSession {
         iPlayerMove = 2;
 
         if (!await checkAllowToMoveOrGameOver()) {
+          beep(false);
           return true;
         }
 
@@ -451,6 +452,7 @@ class LGameSession {
       iPlayerMove = 1;
 
       if (!await checkAllowToMoveOrGameOver()) {
+        beep(false);
         return true;
       }
       /*
@@ -1374,12 +1376,15 @@ class LGameSession {
   {
     bool ret = true;
     if (!await checkAllowToMoveOrGameOver()) {
+      beep(false);
       return false;
     }
 
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
        bool bValue = moveDone();
+       if (!bValue)
+         beep(false);
        /*
        if (bValue) {
          await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
@@ -1427,11 +1432,13 @@ class LGameSession {
 
     iArrPlayerPossibleMovePieces = [... iArrPlayerMovePieces! ];
     if (iArrPlayerPossibleMovePieces == null || iArrPlayerPossibleMovePieces!.isEmpty) {
+      beep(false);
       return false;
     }
     if (buttonTypePressed == ButtonPressed.turn90Degree)
     {
        if (iArrPlayerPossibleMovePieces!.length < 4) {
+         beep(false);
          return false;
        }
        bool? bHorizon = moveArrayIsInHorizontal(iArrPlayerMovePieces!);
@@ -1512,7 +1519,10 @@ class LGameSession {
       // TODO: wrapDown implementation
       switch (iArrPlayerPossibleMovePieces!.length) {
         case < 4:
-          return false;
+          {
+            beep(false);
+            return false;
+          }
       }
       bool? bHorizon = moveArrayIsInHorizontal(iArrPlayerMovePieces!);
       if (bHorizon != null) {
@@ -1542,6 +1552,7 @@ class LGameSession {
          // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
             return true;
       }
+      beep(false);
       return false;
     }
 
@@ -1553,9 +1564,11 @@ class LGameSession {
       for (int i = 0; i < iArrPlayerPossibleMovePieces!.length; i++ ) {
         validate = getGameBoardValidate(iArrPlayerPossibleMovePieces![i]);
         if (validate == null) {
+          beep(false);
           return false;
         }
         if(!validate.calculatePossibleMove(buttonTypePressed)) {
+          beep(false);
           return false;
         }
         listBoardPieces.add(validate);
@@ -1563,10 +1576,12 @@ class LGameSession {
     }
 
     if (listBoardPieces.isEmpty || listBoardPieces.length !=  iArrPlayerPossibleMovePieces!.length) {
+      beep(false);
       return false;
     }
     List<int>? iNewArrPlayerPossibleMovePieces = getNewMovePositions(listBoardPieces);
     if (iNewArrPlayerPossibleMovePieces == null || iNewArrPlayerPossibleMovePieces.isEmpty) {
+      beep(false);
       return false;
     }
       iArrPlayerMovePieces = iNewArrPlayerPossibleMovePieces;
@@ -1677,10 +1692,12 @@ class LGameSession {
       if (areTheSame) {
         msg =
           "L position and the move are the same! Move into diff position.";
+        beep(false);
         return true;
       }
       if (!newLPiecePositionsAreFreeToMove()) {
         msg = "All L positions are not free!";
+        beep(false);
         return true;
       }
 
@@ -1744,6 +1761,7 @@ class LGameSession {
       }
       if (!newNeutralPositionAreFreeToMove()) {
         msg = "This neutral piece position is not free!";
+        beep(false);
         return true;
       }
 
@@ -2018,7 +2036,13 @@ class LGameSession {
     return ret;
   }
 
+ // late AudioPlayer player = AudioPlayer();
+
   void initState() {
+    // Create the audio player.
+    // player = AudioPlayer();
+    // Set the release mode to keep the source after playback has completed.
+    // player.setReleaseMode(ReleaseMode.stop);
 
     iArrPlayer1Pieces = [... startIArrPlayer1Pieces];
     iArrPlayer2Pieces = [... startIArrPlayer2Pieces];
@@ -2067,7 +2091,32 @@ class LGameSession {
     */
   }
 
+  @override
+  void dispose() {
+  }
+
   /*
+  LGamePageState? callBeep;
+  setCallBeep(LGamePageState p_MyHomePage)
+  {
+    callBeep = p_MyHomePage;
+  }
+   */
+
+  Future beep(bool bValue) async {
+    if (!bValue) {
+      await audioPlayerService.audioPlayerService.beepError();
+    }
+  }
+
+  /*
+  Future beep(bool bValue) async {
+    if (!bValue)
+      await callBeep!.beep(bValue);
+  }
+   */
+
+/*
   Container getMoveContainer2(int index)
   {
     Widget? modeContainerChild = getMoveChild(index);

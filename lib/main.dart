@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -9,9 +8,12 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:intl/intl.dart';
 //import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:logger/logger.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 import './di.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:content_resolver/content_resolver.dart';
+// import 'package:audioplayers/audioplayers.dart';
 
 import 'views/utils/util_dialog.dart';
 import 'views/help_route.dart';
@@ -24,19 +26,21 @@ import './views/remote_game.dart';
 import '../models/LGameDataService.dart';
 import './services/navigation_service.dart';
 import './views/about_game.dart';
+import './LoggerDef.dart';
+import '../AudioPlayerService.dart' as audioPlayerService;
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
 
+Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
+
 var logger = Logger(
-   printer: PrettyPrinter(),
+  printer: PrettyPrinter(),
 );
 
 var loggerNoStack = Logger(
-   printer: PrettyPrinter(methodCount: 0),
+  printer: PrettyPrinter(methodCount: 0),
 );
-
-Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
 enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
@@ -150,10 +154,23 @@ class MyHomePage extends StatefulWidget {
 class _LGamePageState extends State<MyHomePage>
     with WidgetsBindingObserver
 {
+ // late AudioPlayer player = AudioPlayer();
+
+  /*
+  Future beep(bool bValue) async {
+    if (!bValue) {
+      logger.i("beep");
+      await player.play(AssetSource('errbeep.mp3'));
+    }
+  }
+   */
 
   @override
   void dispose() {
     logger.i("dispose");
+  //  player.dispose();
+    lGameSession.dispose();
+    audioPlayerService.audioPlayerService.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -671,11 +688,25 @@ class _LGamePageState extends State<MyHomePage>
       });
   }
 
+  initAudioService() async {
+    await SoLoud.instance.init();
+    audioPlayerService.audioPlayerService = audioPlayerService.AudioPlayerService();
+    audioPlayerService.audioPlayerService.initState();
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    initAudioService();
 
+    /*
+    // Create the audio player.
+    player = AudioPlayer();
+    // Set the release mode to keep the source after playback has completed.
+    player.setReleaseMode(ReleaseMode.stop);
+    lGameSession.setCallBeep(this);
+     */
     lGameSession.initState();
     getLastDataSession();
    //   _buildBoard = buildGameBoard();
@@ -791,10 +822,11 @@ class _LGamePageState extends State<MyHomePage>
       readOnly: true,
         label: "Wrap",
         hint: 'Wrap button',
-        child: ElevatedButton(
+        child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonWrapUpEnabled ? buttonWrapUpPressed : null,
-      child: const Text('Wrap'),
+      icon: Icon(Icons.autorenew, size: buttonIconSize,),
+      label: const Text('Wrap'),
     ),
     );
 
@@ -820,10 +852,11 @@ class _LGamePageState extends State<MyHomePage>
       readOnly: true,
   label: "Turn 90º",
   hint: "Turn 90º button",
-  child: ElevatedButton(
+  child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
-      child: const Text('Turn 90º'),
+      icon: Icon(Icons.arrow_outward, size: buttonIconSize,),
+      label: const Text('Turn 90º'),
     ),
   );
 
