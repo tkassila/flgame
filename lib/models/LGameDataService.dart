@@ -2,13 +2,15 @@
 // import 'package:injectable/injectable.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:flgame/LoggerDef.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
-import 'package:logger/logger.dart';
+// import 'package:logger/logger.dart';
 
 import './lgame_data.dart';
 // import 'package:your_app/models/person_model.dart';
 
+/*
 var logger = Logger(
   printer: PrettyPrinter(),
 );
@@ -16,6 +18,7 @@ var logger = Logger(
 var loggerNoStack = Logger(
   printer: PrettyPrinter(methodCount: 0),
 );
+ */
 
 class LGameDateServiceProvider {
   // Local Source For Home
@@ -90,10 +93,14 @@ class LGameDataService {
   initHive() async
   {
     var path = Directory.current.path;
-    logger.i("var path = Directory.current.path: " +path);
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("var path = Directory.current.path: " +path);
+    }
     Directory directory = await pathProvider.getApplicationDocumentsDirectory();
 //  hiveDb = Directory('${appDir. path}/chosenPath');
-    logger.i(".current.path: " +directory.path);
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i(".current.path: " +directory.path);
+    }
     await Hive.initFlutter();
     /*
     var hiveInterface = await Hive

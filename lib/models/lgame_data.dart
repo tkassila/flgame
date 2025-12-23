@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 import '../models/LGameDataService.dart';
 import '../di.dart';
 // import '../main.dart';
-import '../AudioPlayerService.dart' as audioPlayerService;
+import '../services/AudioPlayerService.dart' as audioPlayerService;
 part 'lgame_data.g.dart';
 
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
@@ -213,6 +213,17 @@ class LGameSession {
   {
     setStartGameAfterOldGame(oldData);
     // this.buttonStartGamePressed();
+  }
+
+  bool listBoardPiecesUpdated = false;
+  void setListBoardPiecesUpdated(bool bValue)
+  {
+    listBoardPiecesUpdated = bValue;
+  }
+  bool listMovePiecesUpdated = false;
+  void setListMovePiecesUpdated(bool bValue)
+  {
+    listMovePiecesUpdated = bValue;
   }
 
   // var freeElements;

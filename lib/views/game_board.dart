@@ -2,12 +2,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:logger/logger.dart';
+// import 'package:logger/logger.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../services/AudioPlayerService.dart' as LoggerDef;
 import '../models/lgame_data.dart';
+import '../LoggerDef.dart';
 
+/*
 var logger = Logger(
   printer: PrettyPrinter(),
 );
@@ -15,6 +18,7 @@ var logger = Logger(
 var loggerNoStack = Logger(
   printer: PrettyPrinter(methodCount: 0),
 );
+ */
 
 enum INNERCORNERPOSITION {
   TOPRIGHTCORNER, TOPLEFTCORNER, BOTTOMLEFTCORNER, BOTTOMRIGHTCORNER
@@ -35,44 +39,54 @@ class BorderInnerSquarePosition {
   }
 }
 
-class LGameBoard extends StatefulWidget {
-  const LGameBoard({super.key, required this.lGameSession,
-  required this.bScreenReaderIsUsed });
-  final LGameSession lGameSession;
+class LGameBoard extends StatelessWidget {
+  LGameBoard({super.key, required this.lGameSession,
+  required this.bScreenReaderIsUsed, required this.availableWidth});
   final bool bScreenReaderIsUsed;
-
-  @override
-  State<LGameBoard> createState() => _LGameBoardState();
-}
-
-class _LGameBoardState extends State<LGameBoard> {
-  LGameSession lGameSession = LGameSession();
-  GridView? _gameBoardGrid;
-  List<Container> _listBoardSquares = List<Container>.empty(growable: true);
-  List<Container> _listBoardPieces = List<Container>.empty(growable: true);
-  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
-  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
-  List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
-  List<Border?> _listMoveBorders = List<Border>.empty(growable: true);
+  final double availableWidth;
+  final LGameSession lGameSession;
+  Widget? _gameBoardGrid;
+  late List<Container> _listBoardSquares;
+  late List<Container>  _listBoardPieces;
+  // var _listBoardPieces = List<Container>.empty(growable: true);
+//  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
+//  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
+  late List<Container> _listMoveBorderSquares;
+  late List<Border?>  _listMoveBorders;
   BorderInnerSquarePosition? innerSquarePosition;
-  List<Container> _listMoveSquares = List<Container>.empty(growable: true);
-  List<String> _iArrScreenReaderSquareText = List<String>.empty(growable: true);
-  List<Widget> _listScreenReaderSquares = List<Widget>.empty(
-      growable: true);
+  late List<Container>  _listMoveSquares;
+  late List<String> _iArrScreenReaderSquareText;
+  late List<Widget> _listScreenReaderSquares;
   final Color player1Color = Colors.redAccent;
   final Color player2Color = Colors.blueAccent;
   final Color neutralColor = Colors.black;
-  final double containerWidth = 200;
-  final double containerHeight = 200;
+  double containerWidth = 80;
+  double containerHeight = 80;
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
-  ButtonStyle get buttonStyleScreenReader => ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
-      fontWeight: FontWeight.bold),
-      backgroundColor: Colors.transparent);
+  bool callInit = true;
+  late ButtonStyle buttonStyleScreenReader;
+  ValueNotifier<bool> _notifier = ValueNotifier(true);
+//  bool listBoardPiecesUpdated = false;
+//  bool listMovePiecesUpdated = false;
 
+  /*
   @override
+  */
   void initState() {
-    super.initState();
+   // super.initState();
+    buttonStyleScreenReader = ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
+        fontWeight: FontWeight.bold),
+        backgroundColor: Colors.transparent);
+    final availableWidth = this.availableWidth;
+    containerWidth = (availableWidth / 4).ceilToDouble() -18;
+    containerHeight = (availableWidth / 4).ceilToDouble() -18;
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("containerWidth=$containerWidth");
+      Loggerdef.logger.i("containerWidth=$containerWidth");
+      Loggerdef.logger.i("widget.availableWidth=$availableWidth");
+    }
+
     _listBoardSquares = List.generate(16,  (index) {
       return getBoardSquaresContainer(index);
     });
@@ -80,6 +94,7 @@ class _LGameBoardState extends State<LGameBoard> {
       return null;
     });
 
+    /*
     _listMovePieceShadowContainers = List.generate(16,  (index) {
       return Container(
         //    duration: const Duration(seconds: 1),
@@ -89,7 +104,9 @@ class _LGameBoardState extends State<LGameBoard> {
         height: containerHeight,
       );
     });
+     */
 
+    /*
     _listMovePieceShadowCenterContainers = List.generate(16,  (index) {
       return Container(
         //    duration: const Duration(seconds: 1),
@@ -99,7 +116,8 @@ class _LGameBoardState extends State<LGameBoard> {
         height: containerHeight,
       );
     });
-
+     */
+    callInit = false;
 }
 
 
@@ -159,7 +177,9 @@ Border
       neighbour = rightGp;
       neighBorIsLeftGp = false;
     }
-    logger.i("neighBorIsLeftGp$neighBorIsLeftGp");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("neighBorIsLeftGp $neighBorIsLeftGp");
+    }
 
     if (leftGp.iPos == index)
     {
@@ -497,14 +517,18 @@ Border
           return ret;
         }
 
-        logger.i("rowSeries gps ${gps.length}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("rowSeries gps ${gps.length}");
+        }
         GameBoardPositionSeries? rowSeries =
         lGameSession.getPositionsOfFreePieceInSpecRow(
             iHorizontalRow, gps);
         if (rowSeries == null) {
           return ret;
         }
-        logger.i("rowSeries ${rowSeries!.series.length}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("rowSeries ${rowSeries!.series.length}");
+        }
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
         for (int i = 0; i < gps.length; i++ ) {
@@ -528,8 +552,9 @@ Border
             break;
           }
         }
-
-        logger.i("rowSeries forthLPieceGp ${forthLPieceGp!.iPos}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("rowSeries forthLPieceGp ${forthLPieceGp!.iPos}");
+        }
         if(forthLPieceGp == null) {
           return ret;
         }
@@ -563,14 +588,18 @@ Border
           return ret;
         }
 
-        logger.i("colSeries gps ${gps.length}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("colSeries gps ${gps.length}");
+        }
         GameBoardPositionSeries? colSeries =
         lGameSession.getPositionsOfFreePieceInSpecCol(
             iHorizontalCol, gps);
         if (colSeries == null) {
           return ret;
         }
-        logger.i("colSeries ${colSeries!.series.length}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("colSeries ${colSeries!.series.length}");
+        }
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
         for (int i = 0; i < gps.length; i++ ) {
@@ -595,7 +624,9 @@ Border
           }
         }
 
-        logger.i("colSeries forthLPieceGp ${forthLPieceGp!.iPos}");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("colSeries forthLPieceGp ${forthLPieceGp!.iPos}");
+        }
         if(forthLPieceGp == null) {
           return ret;
         }
@@ -674,7 +705,9 @@ Border
       neighbour = rightGp;
       neighBourIsLeftGp = false;
     }
-    logger.i("neighBourIsLeftGp$neighBourIsLeftGp");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("neighBourIsLeftGp $neighBourIsLeftGp");
+    }
 
     if (leftGp.iPos == index)
     {
@@ -969,9 +1002,9 @@ Border
            lGameSession.iArrPlayer1Pieces!.contains(index);
     bool isIn2List = lGameSession.iArrPlayer2Pieces == null ? false :
            lGameSession.iArrPlayer2Pieces!.contains(index);
-    if (index == lGameSession.iPlayerNeutral1Piece
+    if ((!isIn2List && !isIn1List) && index == lGameSession.iPlayerNeutral1Piece
         || index == lGameSession.iPlayerNeutral2Piece) {
-      textColor = Colors.white;
+      textColor = Colors.yellow;
     }
 
     Widget text = Text(
@@ -1392,16 +1425,19 @@ Border
       strText = "1";
       if (isBoardPiece) {
         fontColor = Colors.yellowAccent;
+        if (isIn1List) {
+          fontColor = Colors.white;
+        }
       }
       else {
-        fontColor = Colors.white70;
+        fontColor = Colors.white;
       }
     } else if (isIn2List) {
       strText = "2";
       if (isBoardPiece) {
-        fontColor = Colors.white70;
-        if (isIn1List) {
-          fontColor = Colors.white70;
+        fontColor = Colors.yellowAccent;
+        if (isIn2List) {
+          fontColor = Colors.white;
         }
       }
     } else {
@@ -1411,14 +1447,30 @@ Border
         fontColor = Colors.black;
       }
       else {
-        fontColor = Colors.white70;
+        fontColor = Colors.white;
       }
     }
 
     if (index == lGameSession.iPlayerNeutral1Piece
-        || index != lGameSession.iPlayerNeutral2Piece) {
+        || index == lGameSession.iPlayerNeutral2Piece) {
       fontColor = Colors.white;
     }
+
+    /*
+    if (isBoardPiece && index == lGameSession.iPlayerNeutral2Piece
+        && lGameSession.iActiveNeutral == 2
+        && lGameSession.inMovingPiece == index)
+      {
+        fontColor = Colors.yellow;
+      }
+    else
+    if (isBoardPiece && index == lGameSession.iPlayerNeutral1Piece
+        && lGameSession.iActiveNeutral == 1
+        && lGameSession.inMovingPiece == index)
+    {
+      fontColor = Colors.yellow;
+    }
+     */
 
     return Center(child: AutoSizeText(strText,
       // This is some text that will resize based on the screen size.,
@@ -1456,7 +1508,7 @@ Border
 
   String getChangeScreenReaderText(int i, bool bInit)
   {
-    if (bInit || widget.bScreenReaderIsUsed) {
+    if (bInit || bScreenReaderIsUsed) {
       String strLabel = "";
       if (bChangeScreenReaderTextIntoTop) {
         strLabel = lGameSession.getScreenReaderSquareLabel(i);
@@ -1472,7 +1524,7 @@ Border
 
   showSnapBar(int i)
   {
-    if (widget.bScreenReaderIsUsed) {
+    if (bScreenReaderIsUsed) {
       String strLabel = lGameSession.getScreenReaderSquareLabel(i);
       String strExpr = "Position $strLabel";
       final snackBar = SnackBar(content: Semantics(liveRegion: true, child:  Text(strExpr)));
@@ -1488,7 +1540,7 @@ Border
 
   Future<void> _screenReaderAnnounce(String msg) async
   {
-    if (widget.bScreenReaderIsUsed && msg.isNotEmpty)
+    if (bScreenReaderIsUsed && msg.isNotEmpty)
     {
       await SemanticsService.announce(msg, TextDirection.ltr);
     }
@@ -1824,10 +1876,11 @@ Border
     return ret;
   }
 
-  GridView
+  List<Widget>
   buildGameBoard()
   {
-    _listBoardPieces = List.generate(16,  (index) {
+ //  if (_listBoardPieces.isEmpty || lGameSession.listBoardPiecesUpdated) {
+     _listBoardPieces = List.generate(16,  (index) {
       BoxDecoration? listBoxDecoration;
       Color containerColor = getBoardPieceColor(index);
       Color? cColor;
@@ -1850,25 +1903,38 @@ Border
         height: containerHeight,
         decoration: listBoxDecoration,
         child: getTextChild(index, true),
-
       );
     });
+//   }
 
-    _listMoveBorders = List.generate(16,  (index) {
+   // if (_listMoveBorders.isEmpty || lGameSession.listMovePiecesUpdated) {
+      _listMoveBorders = List.generate(16,  (index) {
       return null;
     });
+   // }
 
-    _listMoveSquares = List.generate(16,  (index) {
+    // if (_listMoveSquares.isEmpty || lGameSession.listMovePiecesUpdated) {
+      _listMoveSquares = List.generate(16,  (index) {
       return getMoveContainer(index);
     });
+   // }
 
-    _listMovePieceShadowContainers = List.generate(16,  (index) {
-      return getMovePieceShadowContainer(index);
-    });
+   /*
+   // if (_listMovePieceShadowContainers.isEmpty || lGameSession.listMovePiecesUpdated) {
+      _listMovePieceShadowContainers = List.generate(16, (index) {
+        return getMovePieceShadowContainer(index);
+      });
+   // }
+    */
 
-    _listMovePieceShadowCenterContainers = List.generate(16,  (index) {
-      return getMovePieceShadowCenterContainer(index);
-    });
+     /*
+//    if (_listMovePieceShadowCenterContainers.isEmpty
+  //    || lGameSession.listMovePiecesUpdated) {
+      _listMovePieceShadowCenterContainers = List.generate(16, (index) {
+        return getMovePieceShadowCenterContainer(index);
+      });
+   // }
+      */
 
     /*
     Container(
@@ -1897,13 +1963,16 @@ Border
      */
     innerSquarePosition = _getInnerSquareBorder();
 
-    _listMoveBorderSquares = List.generate(16,  (index) {
-      return getBorderMoveContainer(index);
-    });
+   // if (_listMoveBorderSquares.isEmpty
+     //   || lGameSession.listMovePiecesUpdated) {
+      _listMoveBorderSquares = List.generate(16, (index) {
+        return getBorderMoveContainer(index);
+      });
+   // }
 
-    List<Widget> listBoardStack = List<Widget>.empty(growable: true);
+   /* List<Widget> */ listBoardStack = List<Widget>.empty(growable: true);
     //_listBoardStack.clear();
-    if (widget.bScreenReaderIsUsed) {
+    if (bScreenReaderIsUsed) {
       if (_iArrScreenReaderSquareText.isEmpty) {
           _iArrScreenReaderSquareText = List.generate(16,  (index) {
           return getChangeScreenReaderText(index, true);
@@ -1923,8 +1992,8 @@ Border
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(BoardSquare(detector: GestureDetector( behavior:
                    HitTestBehavior.translucent,
-          onTap: () => setState(() {
-            setState(() {
+          onTap: () => () {
+        //    setState(() {
               //   logger.i(" onTap ->");
               bChangeScreenReaderTextIntoTop =
                  ! _iArrScreenReaderSquareText[i].contains("Position");
@@ -1934,8 +2003,10 @@ Border
               _iArrScreenReaderSquareText[i] =
                   getChangeScreenReaderText(i, false);
               _screenReaderAnnounce(_iArrScreenReaderSquareText[i]);
-            });
-          }),
+              callInit = true;
+              _notifier.value = true;
+            //      });
+          } /*)*/,
       /*
       onDoubleTap: () {
           setState(() {
@@ -1979,7 +2050,6 @@ Border
       }
       */
           //   ),
-
           AbsorbPointer(
             child: Container(
             color: Colors.transparent,
@@ -1988,8 +2058,8 @@ Border
             //      decoration: listBoxDecoration,
             child: Stack(clipBehavior: Clip.none,
                 children: [_listBoardSquares[i],
-                 _listMovePieceShadowContainers[i],
-                  _listMovePieceShadowCenterContainers[i],
+               //  _listMovePieceShadowContainers[i],
+              //    _listMovePieceShadowCenterContainers[i],
                   _listBoardPieces[i],
                  _listMoveBorderSquares[i],
                   _listScreenReaderSquares[i]
@@ -2018,15 +2088,17 @@ Border
     else {
       for (int i = 0; i < _listBoardSquares.length; i++) {
         listBoardStack.add(
-          Container( child: Stack(children: [_listBoardSquares[i],
-            _listMovePieceShadowContainers[i],
-            _listMovePieceShadowCenterContainers[i],
+          Stack(children: [_listBoardSquares[i],
+      //      _listMovePieceShadowContainers[i],
+      //      _listMovePieceShadowCenterContainers[i],
             _listBoardPieces[i],
             _listMoveSquares[i],
-            _listMoveBorderSquares[i]]),));
+            _listMoveBorderSquares[i]]))
+            ;
       }
    }
 
+    /*
   _gameBoardGrid = GridView.count(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -2044,19 +2116,88 @@ Border
       children: listBoardStack,
     );
     return _gameBoardGrid!;
+     */
+    return listBoardStack;
   }
 
-  @override
+  late List<Widget> listBoardStack;
+
+ @override
   Widget build(BuildContext context) {
     thisContext = context;
-    lGameSession = widget.lGameSession;
-    lGameSession.setScreenReaderIsUsed(widget.bScreenReaderIsUsed);
-    return /* Card(child: */ buildGameBoard()/* ) */;
+    lGameSession.setScreenReaderIsUsed(bScreenReaderIsUsed);
+    if (callInit) {
+      initState();
+      listBoardStack = buildGameBoard();
+    }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: _notifier,
+      builder: (BuildContext context, bool value, child) {
+        return /* buildGameBoard() */
+      /*
+      FlexibleGridViewPlus(
+        shrinkWrap: true,
+        axisCount: GridLayoutEnum.fourElementsInRow,
+        crossAxisSpacing: 0,
+        mainAxisSpacing: 0,
+        padding: const EdgeInsets.all(8.0),
+        children: listBoardStack,
+      ) */ /*
+      GridView.count(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      //  childAspectRatio: 3/2,
+      primary: false,
+      mainAxisSpacing: 0,
+      crossAxisSpacing: 0,
+      padding: const EdgeInsets.all(8.0),
+      // mainAxisSpacing: 1.0,
+      // crossAxisSpacing: 1.0,
+      // Create a grid with 2 columns. If you change the scrollDirection to
+      // horizontal, this produces 2 rows.
+      crossAxisCount: 4,
+      // padding: const EdgeInsets.all(20),
+      children: buildGameBoard(),
+    ) */
+          RepaintBoundary(child: Column(
+       // padding: EdgeInsets.all(8.0),
+      children: [
+          RepaintBoundary(child: Row(children: [
+          RepaintBoundary(child: listBoardStack[0]),
+          RepaintBoundary(child: listBoardStack[1]),
+        RepaintBoundary(child: listBoardStack[2]),
+        RepaintBoundary(child: listBoardStack[3]),
+           ],),),
+        RepaintBoundary(child: Row(children: [
+        RepaintBoundary(child: listBoardStack[4]),
+           RepaintBoundary(child: listBoardStack[5]),
+           RepaintBoundary(child: listBoardStack[6]),
+           RepaintBoundary(child: listBoardStack[7]),
+        ],),),
+        RepaintBoundary(child: Row(children: [
+           RepaintBoundary(child: listBoardStack[8]),
+           RepaintBoundary(child: listBoardStack[9]),
+           RepaintBoundary(child: listBoardStack[10]),
+           RepaintBoundary(child: listBoardStack[11]),
+        ],),),
+        RepaintBoundary(child: Row(children: [
+           RepaintBoundary(child: listBoardStack[12]),
+           RepaintBoundary(child: listBoardStack[13]),
+           RepaintBoundary(child: listBoardStack[14]),
+           RepaintBoundary(child: listBoardStack[15]),
+        ],),)
+        ],
+          ),
+      );
+      },
+    )
+    ;
   }
 }
 
 class BoardSquare extends StatelessWidget {
-  const BoardSquare({super.key, required this.detector});
+ /* const */ BoardSquare({super.key, required this.detector});
   final GestureDetector detector;
 
   @override

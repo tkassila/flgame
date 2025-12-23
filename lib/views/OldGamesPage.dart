@@ -211,8 +211,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
               const SizedBox(height: 10, width: 100,),
               if (selectedSessionData != null && widget.listDataSessions!.isNotEmpty)
               /* Expanded( // Expanded_A
-      child: */ LGameBoard(bScreenReaderIsUsed: bScreenReaderIsUsed,
-                lGameSession: lGameSession,
+      child: */ LGameBoard(lGameSession: lGameSession,
+                  bScreenReaderIsUsed: bScreenReaderIsUsed,
+                availableWidth: 0
               ),
               // ),
             ],

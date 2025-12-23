@@ -1,15 +1,18 @@
 library my_project.global;
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
-import 'package:logger/logger.dart';
+// import 'package:logger/logger.dart';
 import 'dart:isolate';
+import '../LoggerDef.dart';
 
 // import 'package:flutter_beep/flutter_beep.dart';
 
 // set default values for the initial run
+/*
 var logger = Logger(
   printer: PrettyPrinter(),
 );
+ */
 
 class AudioPlayerService {
  // static AudioPlayer? _audioPlayer;
@@ -37,14 +40,18 @@ class AudioPlayerService {
   Future beepError() async {
     // var _aplayer = _audioPlayer;
     try {
-      logger.i("before beed: beep_error");
+      if (Loggerdef.isLoggerOn) {
+        Loggerdef.logger.i("before beed: beep_error");
+      }
       // audioPlayer.play(AssetSource('sounds/errbeep.mp3'));
       /// play it
       await SoLoud.instance.play(currentSound!);
-     logger.i("after beed: beep_error");
+      if (Loggerdef.isLoggerOn) {
+        Loggerdef.logger.i("after beed: beep_error");
+      }
     }catch(e)
     {
-      logger.i("Audio error: " +e.toString());
+      Loggerdef.logger.i("Audio error: " +e.toString());
     }
   }
 

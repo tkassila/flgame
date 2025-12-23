@@ -1,3 +1,4 @@
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -8,7 +9,8 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:intl/intl.dart';
 //import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
+import 'package:rounded_background_text/rounded_background_text.dart';
+// import 'package:logger/logger.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 import './di.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,26 +29,20 @@ import '../models/LGameDataService.dart';
 import './services/navigation_service.dart';
 import './views/about_game.dart';
 import './LoggerDef.dart';
-import '../AudioPlayerService.dart' as audioPlayerService;
+import 'services/AudioPlayerService.dart' as audioPlayerService;
+import './LoggerDef.dart';
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
 
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
-var logger = Logger(
-  printer: PrettyPrinter(),
-);
-
-var loggerNoStack = Logger(
-  printer: PrettyPrinter(methodCount: 0),
-);
-
 // This is the type used by the popup menu below.
 enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
+
   Intl.defaultLocale = 'fi_FI';
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -74,23 +70,27 @@ class MyApp extends StatelessWidget {
     bool bScreenReaderIsUsed = false;
     if (mediaQueryData.accessibleNavigation) {
       bScreenReaderIsUsed = true;
-      logger.i("bScreenReaderIsUsed = true");
+      if (Loggerdef.isLoggerOn) {
+        Loggerdef.logger.i("bScreenReaderIsUsed = true");
+      }
     } else {
       bScreenReaderIsUsed = false;
     }
-    //Inside Build function since we need context.
-    // This is device height
-    final deviceHeight = MediaQuery.of(context).size.height;
-    // Device width
+
+
+// Device width
     final deviceWidth =   MediaQuery.of(context).size.width;
-    // Subtract paddings to calculate available dimensions
+// Subtract paddings to calculate available dimensions
+    final padding_right = MediaQuery.of(context).padding.right;
+    final padding_left = MediaQuery.of(context).padding.left;
+
+    final availableWidth = deviceWidth - padding_right - padding_left;
+//Inside Build function since we need context.
+// This is device height
+    final deviceHeight = MediaQuery.of(context).size.height;
     final availableHeight = deviceHeight - AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top
         - MediaQuery.of(context).padding.bottom;
-    final availableWidth = deviceWidth -
-        MediaQuery.of(context).padding.right -
-        MediaQuery.of(context).padding.left;
-
     return ScreenUtilInit(
         designSize: Size(availableHeight * .4 ,availableWidth * .5),
          // const Size(448, 998), // Size(360, 690),
@@ -119,7 +119,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoadingScreen(),
         '/lgamefor2': (context) => MyHomePage(title: strAppTitle,
-            bScreenReaderIsUsed: bScreenReaderIsUsed),
+            bScreenReaderIsUsed: bScreenReaderIsUsed,
+            availableWidth: availableWidth,
+            padding_right: padding_right,
+            padding_left: padding_left),
         '/help': (context) => const HelpRoute(),
         '/about': (context) => const AboutRoute(),
         '/oldgames': (context) => const OldGamesRoute(),
@@ -142,9 +145,15 @@ class MyHomePage extends StatefulWidget {
  // final Function() notifyParent;
   // ChildWidget({Key key, @required this.notifyParent}) : super(key: key);
   const MyHomePage({super.key,
-    required this.title, required this.bScreenReaderIsUsed /*, @required this.notifyParent} */});
+    required this.title, required this.bScreenReaderIsUsed,
+    required this.availableWidth,
+    required this.padding_right,
+    required this.padding_left,/*, @required this.notifyParent} */});
   final String title;
   final bool bScreenReaderIsUsed;
+  final double availableWidth;
+  final double padding_right;
+  final double padding_left;
 
   @override
   State<MyHomePage> createState() => _LGamePageState();
@@ -154,8 +163,11 @@ class MyHomePage extends StatefulWidget {
 class _LGamePageState extends State<MyHomePage>
     with WidgetsBindingObserver
 {
- // late AudioPlayer player = AudioPlayer();
 
+  LGameBoard? lGameBoard;
+ // late AudioPlayer player = AudioPlayer();
+  final double buttonBetweenWidth = 5;
+  Column? editOrButtonContainer;
   /*
   Future beep(bool bValue) async {
     if (!bValue) {
@@ -167,10 +179,13 @@ class _LGamePageState extends State<MyHomePage>
 
   @override
   void dispose() {
-    logger.i("dispose");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("dispose");
+    }
   //  player.dispose();
     lGameSession.dispose();
     audioPlayerService.audioPlayerService.dispose();
+    SoLoud.instance.deinit();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -179,21 +194,27 @@ class _LGamePageState extends State<MyHomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.inactive:
-        logger.i("inactive");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("inactive");
+        }
         var obj = lGameSession.getGamePositionsForSaveGame();
         di<LGameDataService>().setActiveGame(obj);
         di<LGameDataService>().saveLGameSessionData(obj);
         di<LGameDataService>().closeHive();
         break;
       case AppLifecycleState.resumed:
-        logger.i("resumed");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("resumed");
+        }
         var obj = lGameSession.getGamePositionsForSaveGame();
         di<LGameDataService>().setActiveGame(obj);
         di<LGameDataService>().saveLGameSessionData(obj);
         di<LGameDataService>().closeHive();
         break;
       case AppLifecycleState.paused:
-        logger.i("paused");
+        if (Loggerdef.isLoggerOn) {
+          Loggerdef.logger.i("paused");
+        }
           var obj = lGameSession.getGamePositionsForSaveGame();
           di<LGameDataService>().setActiveGame(obj);
           di<LGameDataService>().saveLGameSessionData(obj);
@@ -228,6 +249,8 @@ class _LGamePageState extends State<MyHomePage>
   final double containerWidth = 200;
   final double containerHeight = 200;
   bool bInitGameBoard = true;
+  bool _bUpdateUI = false;
+  ValueNotifier<bool> _notifier = ValueNotifier(false);
 
   Widget? buttonUp;
   Widget? buttonDown;
@@ -239,7 +262,7 @@ class _LGamePageState extends State<MyHomePage>
   Widget? buttonTurn90Degree;
   Widget? buttonMoveDone;
   Widget? buttonHelp;
-  Text? textMessage;
+  Widget? textMessage;
   // bool bScreenReaderIsUsed = true;
 
   Color player1Color = Colors.redAccent;
@@ -260,9 +283,11 @@ class _LGamePageState extends State<MyHomePage>
           bContinueReturnValue);
   }
 
-  buttonStartGamePressed()
-  async {
-    logger.i("buttonStartGamePressed");
+  buttonStartGamePressed() async
+  {
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonStartGamePressed");
+    }
     if (lGameSession.bGameStarted)
     {
       bool stopToStartNewGame = await showStartNewGameDialog();
@@ -282,7 +307,10 @@ class _LGamePageState extends State<MyHomePage>
     di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame());
     if (bValue) {
       setState(() {
-      _buildBoard = buildGameBoard();
+        _bUpdateUI = true;
+        lGameSession.setListBoardPiecesUpdated(true);
+        _buildBoard = buildGameBoard();
+        _notifier.value = _bUpdateUI;
     });
     }
   }
@@ -475,7 +503,9 @@ class _LGamePageState extends State<MyHomePage>
       bool bValue = lGameSession.moveDone();
       if (bValue) {
         setState(() {
+          _bUpdateUI = true;
           _buildBoard = buildGameBoard();
+          _notifier.value = _bUpdateUI;
         });
         return true;
       }
@@ -485,7 +515,9 @@ class _LGamePageState extends State<MyHomePage>
   }
 
   buttonMoveDonePressed() async {
-    logger.i("buttonMoveDonePressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonMoveDonePressed");
+    }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
     if (bValue == null) {
       return;
@@ -495,14 +527,22 @@ class _LGamePageState extends State<MyHomePage>
       {
      */
         setState(() {
+          _bUpdateUI = true;
+          lGameSession.setListBoardPiecesUpdated(true);
           _buildBoard = buildGameBoard();
-        });
+          _notifier.value = _bUpdateUI;
+       });
    // }
   }
 
   buttonHelpEnabledPressed()
   {
-    logger.i("buttonHelpEnabledPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonHelpEnabledPressed");
+    }
+    var obj = lGameSession.getGamePositionsForSaveGame();
+    di<LGameDataService>().setActiveGame(obj);
+    di<LGameDataService>().saveLGameSessionData(obj);
     Navigator.pushNamed(context, "/help");
     /*
     Navigator.push(
@@ -518,21 +558,27 @@ class _LGamePageState extends State<MyHomePage>
       lGameSession.name1 = _textFieldName1Controller.text;
       lGameSession.name2 = _textFieldName2Controller.text;
       bEditPlayerNames = false;
+      _bUpdateUI = true;
       _buildBoard = buildGameBoard();
+      _notifier.value = _bUpdateUI;
     });
   }
 
   buttonReturnFromEditPressed()
   {
-    setState(() {
+    setState(()  {
       bEditPlayerNames = false;
+      _bUpdateUI = true;
       _buildBoard = buildGameBoard();
-    });
+      _notifier.value = _bUpdateUI;
+   });
   }
 
   buttonTurn90DegreePressed() async
   {
-    logger.i("buttonTurn90GradePressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonTurn90GradePressed");
+    }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.turn90Degree);
     if (bValue == null) {
       return;
@@ -541,15 +587,20 @@ class _LGamePageState extends State<MyHomePage>
     if (bValue)
     {
      */
-      setState(() {
+     setState(() {
+        _bUpdateUI = true;
+        lGameSession.setListMovePiecesUpdated(true);
         _buildBoard = buildGameBoard();
-      });
+        _notifier.value = _bUpdateUI;
+     });
   //  }
   }
 
   buttonUpPressed() async
   {
-     logger.i("buttonUpPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonUpPressed");
+    }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.up);
      if (bValue == null) {
        return;
@@ -558,15 +609,20 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
     // }
   }
 
   buttonDownPressed() async
   {
-     logger.i("buttonDownPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonDownPressed");
+    }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.down);
      if (bValue == null) {
        return;
@@ -575,15 +631,20 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
     // }
   }
 
   buttonLeftPressed() async
   {
-     logger.i("buttonLeftPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonLeftPressed");
+    }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.left);
      if (bValue == null) {
        return;
@@ -592,15 +653,20 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
     // }
   }
 
   buttonRightPressed() async
   {
-     logger.i("buttonRightPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonRightPressed");
+    }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.right);
      if (bValue == null) {
        return;
@@ -609,15 +675,20 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
     // }
   }
 
   buttonWrapUpPressed() async
   {
-     logger.i("buttonWrapUpPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonWrapUpPressed");
+    }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.wrap);
      if (bValue == null) {
        return;
@@ -626,15 +697,20 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
     // }
   }
 
   buttonSwitchNeutralPressed() async
   {
-     logger.i("buttonSwitchNeutralPressed");
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buttonSwitchNeutralPressed");
+    }
      bool? bValue = await lGameSession.
           calculatePossibleMovePieces(ButtonPressed.swiftIntoNextNeutral);
      if (bValue == null) {
@@ -644,9 +720,12 @@ class _LGamePageState extends State<MyHomePage>
      if (bValue)
      {
       */
-       setState(() {
+      setState(() {
+         _bUpdateUI = true;
+         lGameSession.setListBoardPiecesUpdated(true);
          _buildBoard = buildGameBoard();
-       });
+         _notifier.value = _bUpdateUI;
+      });
      // }
   }
 
@@ -683,9 +762,11 @@ class _LGamePageState extends State<MyHomePage>
         lGameSession.setStartGameAfterOldGame(active);
       }
     }
-      setState(() {
+     setState(() {
+        _bUpdateUI = true;
         _buildBoard = buildGameBoard();
-      });
+        _notifier.value = _bUpdateUI;
+     });
   }
 
   initAudioService() async {
@@ -699,6 +780,15 @@ class _LGamePageState extends State<MyHomePage>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     initAudioService();
+    final availableWidth = widget.availableWidth;
+    final padding_right = widget.padding_right;
+    final padding_left = widget.padding_left;
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("padding_right=$padding_right");
+      Loggerdef.logger.i("padding_left=$padding_left");
+      Loggerdef.logger.i("widget.availableWidth=$availableWidth");
+    }
+
 
     /*
     // Create the audio player.
@@ -715,10 +805,37 @@ class _LGamePageState extends State<MyHomePage>
   final double buttonRowBetweenHeight = 40;
   final double buttonIconSize = 35.0;
 
-  Widget buildGameBoard()
+  void setListMovePiecesUpdated(bool bValue)
   {
+     lGameSession.setListMovePiecesUpdated(bValue);
+  }
 
-     logger.i("buildGameBoard");
+  void setListBoardPiecesUpdated(bool bValue)
+  {
+    lGameSession.setListBoardPiecesUpdated(bValue);
+  }
+
+  /*
+  Future<Widget?> buildGameBoard2() async {
+    final Widget? ret = await Isolate.run(buildGameBoard2);
+    return ret;
+  }
+   */
+
+  Widget buildGameBoard2()
+  {
+    lGameSession.setListBoardPiecesUpdated(false);
+    lGameSession.setListMovePiecesUpdated(false);
+    return LGameBoard(lGameSession: lGameSession,
+    bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
+        availableWidth: widget.availableWidth);
+  }
+
+  Widget? buildGameBoard()
+  {
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buildGameBoard");
+    }
 
      /*
     _listBoardSquares = List.generate(16,  (index) {
@@ -855,7 +972,7 @@ class _LGamePageState extends State<MyHomePage>
   child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
-      icon: Icon(Icons.arrow_outward, size: buttonIconSize,),
+      icon: Icon(Icons.subdirectory_arrow_right, size: buttonIconSize,),
       label: const Text('Turn 90º'),
     ),
   );
@@ -884,9 +1001,15 @@ class _LGamePageState extends State<MyHomePage>
 
      if (lGameSession.bGameIsOver)
      {
-       textMessage = Text(lGameSession.msg,
+       textMessage = /* Text(lGameSession.msg,
          style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15),
              backgroundColor: Colors.yellowAccent),
+       );
+       */
+       RoundedBackgroundText(
+         lGameSession.msg,
+         style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),
+         backgroundColor: Colors.yellowAccent,
        );
      }
      else {
@@ -894,8 +1017,6 @@ class _LGamePageState extends State<MyHomePage>
          style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15)),
        );
      }
-
-     const double buttonBetweenWidth = 5;
 
      if (bEditPlayerNames) {
        /*
@@ -985,7 +1106,7 @@ class _LGamePageState extends State<MyHomePage>
 
        _buttonsEditRow1 = Row(children: [
          _buttonSaveEdit!,
-         const SizedBox(height: 40, width: buttonBetweenWidth,),
+          SizedBox(height: 40, width: buttonBetweenWidth,),
          _buttonReturnFromEdit!,
        ],
        );
@@ -1090,7 +1211,7 @@ class _LGamePageState extends State<MyHomePage>
           children: listBoardStack,
         );
     */
-    Column? editOrButtonContainer;
+     editOrButtonContainer = null;
      if (bEditPlayerNames)
      {
        editOrButtonContainer = Column(children: [
@@ -1105,38 +1226,44 @@ class _LGamePageState extends State<MyHomePage>
         ],);
        }
 
+    if (lGameBoard == null || bInitGameBoard || _bUpdateUI) {
+      lGameBoard = LGameBoard(lGameSession: lGameSession,
+          bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
+          availableWidth: widget.availableWidth);
+       lGameSession.setListBoardPiecesUpdated(false);
+       lGameSession.setListMovePiecesUpdated(false);
+    }
 
     Widget ret = Column (
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         /* Expanded( // wrap in Expanded
-          child: */LGameBoard(lGameSession: lGameSession,
-              bScreenReaderIsUsed: widget.bScreenReaderIsUsed) /* _gameBoardGrid! */,
+          child: */ /* lGameBoard! */ buildGameBoard2(),
+       /* _gameBoardGrid!, */
        // ),
 //        SizedBox(height: 20,),
     Padding(
     padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-    child: Container(
-    //  color: Colors.black87,
-      child:  Column (
-     crossAxisAlignment: CrossAxisAlignment.center,
-     mainAxisSize: MainAxisSize.min,
-     children: <Widget>[
-       const SizedBox(height: 40),
-      Center( child: Semantics(
-        liveRegion: true,
-        child: textMessage!,),
-       ),
-       const SizedBox(height: 20, width: buttonBetweenWidth,),
-       editOrButtonContainer,
-    ],),
-    ),
+    child: Column (
+         crossAxisAlignment: CrossAxisAlignment.center,
+         mainAxisSize: MainAxisSize.min,
+         children: <Widget>[
+     const SizedBox(height: 40),
+    Center( child: Semantics(
+      liveRegion: true,
+      child: textMessage!,),
+     ),
+     SizedBox(height: 10, width: buttonBetweenWidth,),
+     editOrButtonContainer!,
+        ],),
     ),
         if (isSystemNavigateMenu) const SizedBox(height: 30, ),
     ],
     );
 
+   // lGameSession.setListBoardPiecesUpdated(false);
+   // lGameSession.setListMovePiecesUpdated(false);
    return ret; // Column(children: <Widget>[_gameBoardGrid!, ],);
   }
 
@@ -1218,9 +1345,11 @@ class _LGamePageState extends State<MyHomePage>
       );
       if (!bSaved)
       {
-        setState(() {
+       setState(() {
+          _bUpdateUI = true;
           lGameSession.msg = "Cannot save the current game.";
           _buildBoard = buildGameBoard();
+          _notifier.value = _bUpdateUI;
         });
         return;
       }
@@ -1229,9 +1358,11 @@ class _LGamePageState extends State<MyHomePage>
       oldSelectedLGameSessionData = selectedLGameSessionData;
       lGameSession.setStartGameAfterOldGame(
           selectedLGameSessionData!.gameSessionData!);
-      setState(() {
+     setState(() {
+        _bUpdateUI = true;
         _buildBoard = buildGameBoard();
-      });
+        _notifier.value = _bUpdateUI;
+     });
     }
     // final result = await = Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) =>
     //   OldGamesPage()), (route) => false);
@@ -1248,6 +1379,9 @@ class _LGamePageState extends State<MyHomePage>
 
   void callAboutGame()
   {
+    var obj = lGameSession.getGamePositionsForSaveGame();
+    di<LGameDataService>().setActiveGame(obj);
+    di<LGameDataService>().saveLGameSessionData(obj);
     Navigator.pushNamed(context, "/about");
   }
 
@@ -1257,6 +1391,9 @@ class _LGamePageState extends State<MyHomePage>
     await Navigator.pushNamedAndRemoveUntil(
         context, "/finishedgames", ModalRoute.withName('/finishedgames'));
      */
+    var obj = lGameSession.getGamePositionsForSaveGame();
+    di<LGameDataService>().setActiveGame(obj);
+    di<LGameDataService>().saveLGameSessionData(obj);
     Navigator.pushNamed(context, "/remotegames");
   }
 
@@ -1266,6 +1403,9 @@ class _LGamePageState extends State<MyHomePage>
     await Navigator.pushNamedAndRemoveUntil(
         context, "/finishedgames", ModalRoute.withName('/finishedgames'));
      */
+    var obj = lGameSession.getGamePositionsForSaveGame();
+    di<LGameDataService>().setActiveGame(obj);
+    di<LGameDataService>().saveLGameSessionData(obj);
     Navigator.pushNamed(context, "/finishedgames");
   }
 
@@ -1278,6 +1418,19 @@ class _LGamePageState extends State<MyHomePage>
    // thisContext = context;
   }
 
+  Widget? initBoard(){
+    var ret = _buildBoard;
+    bInitGameBoard = false;
+    return ret;
+  }
+
+  Widget? buildUpdatedBoard()
+  {
+    var ret = _buildBoard;
+    _bUpdateUI = false;
+    return ret;
+  }
+
   @override
   Widget build(BuildContext context) {
     /*
@@ -1288,6 +1441,7 @@ class _LGamePageState extends State<MyHomePage>
     if (bGameIsFormat)
       {
         _buildBoard = buildGameBoard();
+        _notifier.value = _bUpdateUI;
         bGameIsFormat = false;
       }
 
@@ -1302,7 +1456,11 @@ class _LGamePageState extends State<MyHomePage>
 
     double height = MediaQuery.sizeOf(context).height;
     var padding = MediaQuery.paddingOf(context);
-    double newHeight = height - padding.top - padding.bottom;
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final availableHeight = deviceHeight - AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top;
+   // double newHeight = height - padding.top - padding.bottom;
+    double newHeight = availableHeight - padding.top - padding.bottom;
     Color? playerColor = lGameSession.playerTurn == null ? null :
     (lGameSession.playerTurn == GamePlayerTurn.player1 ?
     player1Color : player2Color);
@@ -1336,6 +1494,7 @@ class _LGamePageState extends State<MyHomePage>
             initialValue: selectedMenuButton,
             onSelected: (MenuButtonSelected item) {
               setState(() {
+                _bUpdateUI = true;
                 selectedMenuButton = item;
                 if (selectedMenuButton ==
                     MenuButtonSelected.oldUnFinishedGames)
@@ -1346,10 +1505,12 @@ class _LGamePageState extends State<MyHomePage>
                 if (selectedMenuButton ==
                     MenuButtonSelected.editPlayerNames)
                 {
-                  setState(() {
+                 // setState(() {
+                    _bUpdateUI = true;
                     bEditPlayerNames = true;
                     _buildBoard = buildGameBoard();
-                  });
+                    _notifier.value = _bUpdateUI;
+                 // });
                 }
                 else
                     if (selectedMenuButton ==
@@ -1443,6 +1604,7 @@ class _LGamePageState extends State<MyHomePage>
                    if (!bSaved)
                    {
                      setState(() {
+                     _bUpdateUI = true;
                        lGameSession.strMsg = "Cannot save the current game.";
                        _buildBoard = buildGameBoard();
                      });
@@ -1451,6 +1613,7 @@ class _LGamePageState extends State<MyHomePage>
 
                    oldSelectedLGameSessionData = selectedLGameSessionData;
                    setState(() {
+                   _bUpdateUI = true;
                      lGameSession.setStartGameAfterOldGame(
                          selectedLGameSessionData!.gameSessionData!);
                      _buildBoard = buildGameBoard();
@@ -1463,19 +1626,69 @@ class _LGamePageState extends State<MyHomePage>
         ],
       ),
       backgroundColor: Colors.white70,
-      body: Container(
-        height: newHeight,
+      body: SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
+          child: /* ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+              minHeight: newHeight /* MediaQuery.of(context).size.height */,
+            ),
+            child: IntrinsicHeight(
+              child: */ Container(
+       height: newHeight,
     decoration: BoxDecoration(
-    color: Colors.white70,
+    color:  Colors.white70,
     border: Border.all(
       color: Theme.of(context).colorScheme.inversePrimary,
       width: 15,
       ),
     ),
-    child: /* buildGameBoard() */ _buildBoard ,
+    child:
+    /* buildGameBoard() */ bInitGameBoard ? initBoard() :
+     /* _bUpdateUI ? */ /*buildUpdatedBoard() */
+       Column (
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        /* Expanded( // wrap in Expanded
+          child: */
+        ValueListenableBuilder<bool>(
+          valueListenable: _notifier,
+          builder: (BuildContext context, bool value, child) {
+            return lGameBoard!;
+          },
+        ),
+        // lGameBoard!,
+         /* buildGameBoard2() */  /* _gameBoardGrid!, */
+
+        // ),
+//        SizedBox(height: 20,),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+          child: Center(child: Column (
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(height: 40),
+              Center( child: Semantics(
+                liveRegion: true,
+                child: textMessage!,),
+              ),
+              SizedBox(height: 20, width: buttonBetweenWidth,),
+              editOrButtonContainer!,
+            ],),
+          ),
+        ),
+        if (isSystemNavigateMenu) const SizedBox(height: 30, ),
+      ],
+    )
+
+       /* : _buildBoard */ ),
         //   if (isSystemNavigateMenu) SizedBox(height: 30,),
       ),
-        ),
+      ),
+    //  ),
+      //  ),
     );
   }
 }
@@ -1488,11 +1701,13 @@ class _PopupMenuExampleState  {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('PopupMenuButton')),
+      resizeToAvoidBottomInset : false,
       body: Center(
         child: PopupMenuButton<MenuButtonSelected>(
           initialValue: selectedMenuButton,
           onSelected: (MenuButtonSelected item) {
             setState(() {
+            _bUpdateUI = true;
               selectedMenuButton = item;
             });
           },

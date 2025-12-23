@@ -266,10 +266,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_soloud
-      sha256: e9b9da5f38af4946b5496276a932c63aea4780986c104e30c75f75d3c77ef22a
+      sha256: "09116b29197d7ecb63bd43cfc0a28a463a1559f75a6da4a6ebb75e880deeb9ee"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.5"
+    version: "3.4.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -287,10 +287,10 @@ packages:
     dependency: "direct main"
     description:
       name: get_it
-      sha256: "2c120112e34bbd5f4ce2ca1ad3076a5b2068eb1e48aae8dd7b717b26cdd38543"
+      sha256: "1d648d2dd2047d7f7450d5727ca24ee435f240385753d90b49650e3cdff32e56"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.1"
+    version: "9.2.0"
   glob:
     dependency: transitive
     description:
@@ -367,10 +367,10 @@ packages:
     dependency: "direct main"
     description:
       name: injectable
-      sha256: "32e9bac6fe9c84339c5add60478d27a01e363ce1ad5c22ca7e525c6b28a7559c"
+      sha256: "8fc24421cfeff76d1d38484d8b9617beeb54a58b6edfd002b10cc896b8b8f3fe"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "2.7.1+2"
   intl:
     dependency: "direct main"
     description:
@@ -595,6 +595,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  rounded_background_text:
+    dependency: "direct main"
+    description:
+      name: rounded_background_text
+      sha256: "48c16d7e1159a7c2801b7310a3f00eed9adfdfd231919d699b53f9875775b6b7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
   shelf:
     dependency: transitive
     description:
@@ -724,10 +732,10 @@ packages:
     dependency: transitive
     description:
       name: watcher
-      sha256: "592ab6e2892f67760543fb712ff0177f4ec76c031f02f5b4ff8d3fc5eb9fb61a"
+      sha256: f52385d4f73589977c80797e60fe51014f7f2b957b5e9a62c3f6ada439889249
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.4"
+    version: "1.2.0"
   web:
     dependency: transitive
     description:
