@@ -167,7 +167,7 @@ class _LGamePageState extends State<MyHomePage>
   LGameBoard? lGameBoard;
  // late AudioPlayer player = AudioPlayer();
   final double buttonBetweenWidth = 5;
-  Column? editOrButtonContainer;
+  Widget? editOrButtonContainer;
   /*
   Future beep(bool bValue) async {
     if (!bValue) {
@@ -1214,9 +1214,15 @@ class _LGamePageState extends State<MyHomePage>
      editOrButtonContainer = null;
      if (bEditPlayerNames)
      {
-       editOrButtonContainer = Column(children: [
-         _textFieldName1!, _textFieldName2!, _buttonsEditRow1!,
-       ],);
+       editOrButtonContainer = Container(
+           margin: EdgeInsets.all(8.0),
+           child: Column(children: [
+             SizedBox(height: 15,),
+         _textFieldName1!, _textFieldName2!,
+             SizedBox(height: 15,),
+             _buttonsEditRow1!,
+         SizedBox(height: 15,)
+       ],),);
      }
      else
        {
@@ -1254,9 +1260,9 @@ class _LGamePageState extends State<MyHomePage>
       liveRegion: true,
       child: textMessage!,),
      ),
-     SizedBox(height: 10, width: buttonBetweenWidth,),
-     editOrButtonContainer!,
-        ],),
+   //  if (!bEditPlayerNames) SizedBox(height: 30, ),
+     if (!bEditPlayerNames) editOrButtonContainer!,
+         ],),
     ),
         if (isSystemNavigateMenu) const SizedBox(height: 30, ),
     ],
@@ -1652,6 +1658,9 @@ class _LGamePageState extends State<MyHomePage>
       children: <Widget>[
         /* Expanded( // wrap in Expanded
           child: */
+        if (bEditPlayerNames)
+            //  SizedBox(height: 10, width: buttonBetweenWidth,),
+            editOrButtonContainer!,
         ValueListenableBuilder<bool>(
           valueListenable: _notifier,
           builder: (BuildContext context, bool value, child) {
@@ -1675,7 +1684,7 @@ class _LGamePageState extends State<MyHomePage>
                 child: textMessage!,),
               ),
               SizedBox(height: 20, width: buttonBetweenWidth,),
-              editOrButtonContainer!,
+              if (!bEditPlayerNames) editOrButtonContainer!,
             ],),
           ),
         ),
