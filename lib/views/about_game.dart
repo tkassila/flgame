@@ -59,7 +59,9 @@ class AboutRoute extends StatelessWidget {
                 child: Text('L Game',
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
-              Image( image:
+              Image(width: 150,
+                height: 150,
+                image:
               AssetImage('assets/L_Game_start_position.svg.png', ),
               ),
               Center(
@@ -67,7 +69,7 @@ class AboutRoute extends StatelessWidget {
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1.3',
+                child: Text('version 1.1.4',
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

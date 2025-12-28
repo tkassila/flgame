@@ -1,5 +1,6 @@
 import 'dart:isolate';
 
+import 'package:flgame/ParameterValues.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,7 @@ import './views/about_game.dart';
 import './LoggerDef.dart';
 import 'services/AudioPlayerService.dart' as audioPlayerService;
 import './LoggerDef.dart';
+import './ParameterValues.dart';
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
@@ -59,6 +61,7 @@ void main() async {
 
 const String strAppTitle = 'LGame for creativity';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+ParameterValues? parameterValues;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -66,6 +69,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    parameterValues = ParameterValues.of(context);
     final mediaQueryData = MediaQuery.of(context);
     bool bScreenReaderIsUsed = false;
     if (mediaQueryData.accessibleNavigation) {
@@ -77,20 +81,27 @@ class MyApp extends StatelessWidget {
       bScreenReaderIsUsed = false;
     }
 
-
 // Device width
     final deviceWidth =   MediaQuery.of(context).size.width;
 // Subtract paddings to calculate available dimensions
     final padding_right = MediaQuery.of(context).padding.right;
     final padding_left = MediaQuery.of(context).padding.left;
+//    final ScreenValues screenValues = new ScreenValues();
 
-    final availableWidth = deviceWidth - padding_right - padding_left;
+    final double availableWidth = deviceWidth - padding_right - padding_left;
 //Inside Build function since we need context.
 // This is device height
     final deviceHeight = MediaQuery.of(context).size.height;
     final availableHeight = deviceHeight - AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top
         - MediaQuery.of(context).padding.bottom;
+    /*
+    ScreenValues.screenValues.bScreenReaderIsUsed = bScreenReaderIsUsed;
+    ScreenValues.screenValues.availableHeight = availableHeight;
+    ScreenValues.screenValues.availableWidth = availableWidth;
+    ScreenValues.screenValues.padding_left =  padding_left;
+    ScreenValues.screenValues.padding_right = padding_right;
+    */
     return ScreenUtilInit(
         designSize: Size(availableHeight * .4 ,availableWidth * .5),
          // const Size(448, 998), // Size(360, 690),
@@ -111,7 +122,15 @@ class MyApp extends StatelessWidget {
     home: child,
     );
     },
-    child: MaterialApp(
+    child: ParameterValues(screenValues: ScreenValues(
+        bScreenReaderIsUsed: bScreenReaderIsUsed,
+        deviceWidth: deviceWidth,
+        padding_left: padding_left,
+        padding_right: padding_right,
+        availableWidth: availableWidth,
+        deviceHeight: deviceHeight,
+        availableHeight: availableHeight),
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: strAppTitle,
       initialRoute: '/',
@@ -120,9 +139,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoadingScreen(),
         '/lgamefor2': (context) => MyHomePage(title: strAppTitle,
             bScreenReaderIsUsed: bScreenReaderIsUsed,
-            availableWidth: availableWidth,
-            padding_right: padding_right,
-            padding_left: padding_left),
+          /* screenValues: screenValues, */),
         '/help': (context) => const HelpRoute(),
         '/about': (context) => const AboutRoute(),
         '/oldgames': (context) => const OldGamesRoute(),
@@ -133,6 +150,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: 
       Colors.deepPurple).copyWith(surface: Colors.blueGrey),
       ),
+    ),
     ),
      // home: const MyHomePage(title: strAppTitle),
     );
@@ -146,14 +164,12 @@ class MyHomePage extends StatefulWidget {
   // ChildWidget({Key key, @required this.notifyParent}) : super(key: key);
   const MyHomePage({super.key,
     required this.title, required this.bScreenReaderIsUsed,
-    required this.availableWidth,
-    required this.padding_right,
-    required this.padding_left,/*, @required this.notifyParent} */});
+   // required this.screenValues, /*, @required this.notifyParent} */
+  });
   final String title;
   final bool bScreenReaderIsUsed;
-  final double availableWidth;
-  final double padding_right;
-  final double padding_left;
+//  final ScreenValues screenValues;
+
 
   @override
   State<MyHomePage> createState() => _LGamePageState();
@@ -161,13 +177,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _LGamePageState extends State<MyHomePage>
-    with WidgetsBindingObserver
+    with WidgetsBindingObserver /*, AutomaticKeepAliveClientMixin */
 {
 
+  bool get wantKeepAlive => true;
+
+  final int minusDynamicContainerSizeOfLGame = 18;
   LGameBoard? lGameBoard;
  // late AudioPlayer player = AudioPlayer();
   final double buttonBetweenWidth = 5;
   Widget? editOrButtonContainer;
+  ParameterValues? parameterValues;
   /*
   Future beep(bool bValue) async {
     if (!bValue) {
@@ -238,7 +258,7 @@ class _LGamePageState extends State<MyHomePage>
   Widget? _buttonsRow4;
   Widget? _buildBoard;
   Widget? _buttonsEditRow1;
-  TextField? _textFieldName1, _textFieldName2;
+  Widget? _textFieldName1, _textFieldName2;
   Widget? _buttonSaveEdit, _buttonReturnFromEdit;
   final TextEditingController _textFieldName1Controller = TextEditingController();
   final TextEditingController _textFieldName2Controller = TextEditingController();
@@ -780,13 +800,10 @@ class _LGamePageState extends State<MyHomePage>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     initAudioService();
-    final availableWidth = widget.availableWidth;
-    final padding_right = widget.padding_right;
-    final padding_left = widget.padding_left;
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("padding_right=$padding_right");
-      Loggerdef.logger.i("padding_left=$padding_left");
-      Loggerdef.logger.i("widget.availableWidth=$availableWidth");
+      Loggerdef.logger.i("padding_right=$ScreenValues.padding_right");
+      Loggerdef.logger.i("padding_left=$ScreenValues.padding_left");
+      Loggerdef.logger.i("widget.availableWidth=$ScreenValues.availableWidth");
     }
 
 
@@ -828,7 +845,8 @@ class _LGamePageState extends State<MyHomePage>
     lGameSession.setListMovePiecesUpdated(false);
     return LGameBoard(lGameSession: lGameSession,
     bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
-        availableWidth: widget.availableWidth);
+      minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame,
+    );
   }
 
   Widget? buildGameBoard()
@@ -1006,10 +1024,15 @@ class _LGamePageState extends State<MyHomePage>
              backgroundColor: Colors.yellowAccent),
        );
        */
-       RoundedBackgroundText(
+       Semantics(
+           readOnly: true,
+           label: "Message",
+           hint: 'Message label',
+           child: RoundedBackgroundText(
          lGameSession.msg,
          style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),
          backgroundColor: Colors.yellowAccent,
+       ),
        );
      }
      else {
@@ -1048,22 +1071,24 @@ class _LGamePageState extends State<MyHomePage>
        );
 
        _textFieldName1Controller.text = lGameSession.name1;
-
        _textFieldName1 = TextField(
          controller: _textFieldName1Controller,
-         decoration: const InputDecoration(
+         decoration: InputDecoration(
            label: Text.rich(
              TextSpan(
                children: <InlineSpan>[
                  WidgetSpan(
                    child: Text(
                      'Player 1',
+                    style: TextStyle(fontWeight: FontWeight.bold,
+                        fontSize: ScreenUtil().setSp(15), color: Colors.red),
                    ),
                  ),
                  WidgetSpan(
                    child: Text(
                      '*',
-                     style: TextStyle(color: Colors.red),
+                     style: TextStyle(fontWeight: FontWeight.bold,
+                         fontSize: ScreenUtil().setSp(15),),
                    ),
                  ),
                ],
@@ -1072,23 +1097,31 @@ class _LGamePageState extends State<MyHomePage>
          ),
        );
 
+       if (widget.bScreenReaderIsUsed)
+         _textFieldName1 = Semantics( readOnly: false,
+             label: 'Player 1', hint: 'Player 1 text field',
+             child: _textFieldName1);
+
        _textFieldName2Controller.text = lGameSession.name2;
 
        _textFieldName2 = TextField(
          controller: _textFieldName2Controller,
-         decoration: const InputDecoration(
+         decoration: InputDecoration(
            label: Text.rich(
              TextSpan(
                children: <InlineSpan>[
                  WidgetSpan(
                    child: Text(
                      'Player 2',
+                     style: TextStyle(fontWeight: FontWeight.bold,
+                       fontSize: ScreenUtil().setSp(15), color: Colors.blue),
                    ),
                  ),
                  WidgetSpan(
                    child: Text(
                      '*',
-                     style: TextStyle(color: Colors.red),
+                     style: TextStyle(fontWeight: FontWeight.bold,
+                         fontSize: ScreenUtil().setSp(15), ),
                    ),
                  ),
                ],
@@ -1096,6 +1129,11 @@ class _LGamePageState extends State<MyHomePage>
            ),
          ),
        );
+
+       if (widget.bScreenReaderIsUsed)
+         _textFieldName2 = Semantics( readOnly: false,
+       label: 'Player 2', hint: 'Player 2 text field',
+       child: _textFieldName2);
 
        /*
        _editRow1 = Row(children: [
@@ -1235,14 +1273,15 @@ class _LGamePageState extends State<MyHomePage>
     if (lGameBoard == null || bInitGameBoard || _bUpdateUI) {
       lGameBoard = LGameBoard(lGameSession: lGameSession,
           bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
-          availableWidth: widget.availableWidth);
+          minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame -20,
+          /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
        lGameSession.setListBoardPiecesUpdated(false);
        lGameSession.setListMovePiecesUpdated(false);
     }
 
     Widget ret = Column (
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         /* Expanded( // wrap in Expanded
           child: */ /* lGameBoard! */ buildGameBoard2(),
@@ -1465,7 +1504,11 @@ class _LGamePageState extends State<MyHomePage>
     final deviceHeight = MediaQuery.of(context).size.height;
     final availableHeight = deviceHeight - AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top;
-   // double newHeight = height - padding.top - padding.bottom;
+    /*
+    ScreenValues screenValues = ScreenValues();
+    screenValues.availableHeight = deviceHeight;
+     */
+    // double newHeight = height - padding.top - padding.bottom;
     double newHeight = availableHeight - padding.top - padding.bottom;
     Color? playerColor = lGameSession.playerTurn == null ? null :
     (lGameSession.playerTurn == GamePlayerTurn.player1 ?

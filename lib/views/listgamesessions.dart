@@ -193,11 +193,15 @@ class _ListGameSessionsState
          value: item.id,
          headerBuilder: (BuildContext context, bool isExpanded) {
            return ListTile(
-             title: Text(formatTitle(item.title), style: TextStyle(backgroundColor:
+             title: Semantics(
+               readOnly: true,
+               label: "Unfinished game",
+               hint: 'Unfinished game name',
+               child: Text(formatTitle(item.title), style: TextStyle(backgroundColor:
              isExpanded ? Colors.lightGreen :
              Colors.white, fontWeight: FontWeight.bold,
                  fontSize: ScreenUtil().setSp(16) ),
-             ),
+             ),),
              //   },),
              onTap: () {
                // setState(() {

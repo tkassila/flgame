@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 */
 import 'dart:async';
+import 'dart:ffi';
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -264,41 +265,43 @@ class HelpPage4 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container( color: Colors.white, child:
+    final width = MediaQuery.of(context).size.width;
+    return SingleChildScrollView(child: Container(
+    color: Colors.white, child:
     Column(
+        spacing: 0.0,
         children:  [
-             const Image(
+             const Padding(
+               padding: EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
+               child: Image(
               width: 150,
               height: 150,
             image: AssetImage(
             'assets/L_Game_start_position.svg.png',
+        ),),
         ),
-        ),
-         Text("Start position of L game", style: textStyleHtml,),
-           const Image(
-            width: 150,
-            height: 150,
-            image: AssetImage(
+          Text("Start position of L game", style: textStyleHtml,),
+          const SizedBox(height: 20.0,),
+         Image(
+             width: width -30.0,
+            image: const AssetImage(
               'assets/560px-L_Game_mate_positions.svg.png',
             ),
           ),
           const Padding(
-            padding: EdgeInsets.all(17.0),
-            child: Center(
-              child: Text("All positions, Red to move, where Red will lose " +
+            padding: EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
+            child: const Text("All positions, Red to move, where Red will lose " +
                   "to a perfect Blue, and maximum number of moves remaining " +
                       "for Red. By looking ahead one move and ensuring " +
                           "one never ends up in any of the above positions,"
                               " one can avoid losing.", style: textStyleHtml,),
                 ),
-            ),
-           const Image(
-            width: 150,
-            height: 150,
+
+       Image(
+        width: width -30.0,
             image: AssetImage(
               'assets/560px-L_Game_all_final_positions.svg.png',
             ),
-
           ),
           const Text("All possible final positions, Blue has won",
             style: textStyleHtml,),
@@ -318,7 +321,9 @@ class HelpPage4 extends StatelessWidget {
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
                */
+              const SizedBox(height: 20.0,)
             ],
+    ),
     ),
     );
   }

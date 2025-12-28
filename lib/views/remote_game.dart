@@ -93,7 +93,9 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
                 child: Text('L Game',
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
-              Image( image:
+              Image( width: 150,
+                height: 150,
+                image:
               AssetImage('assets/L_Game_start_position.svg.png', ),
               ),
               Center(

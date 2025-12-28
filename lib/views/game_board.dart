@@ -6,6 +6,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../ParameterValues.dart';
 import '../services/AudioPlayerService.dart' as LoggerDef;
 import '../models/lgame_data.dart';
 import '../LoggerDef.dart';
@@ -14,7 +15,7 @@ import '../LoggerDef.dart';
 var logger = Logger(
   printer: PrettyPrinter(),
 );
-
+mi
 var loggerNoStack = Logger(
   printer: PrettyPrinter(methodCount: 0),
 );
@@ -26,6 +27,17 @@ enum INNERCORNERPOSITION {
 
 enum SHADOWBOXPOSITION {
   TOPSHADOWBOX, LEFTSHADOWBOX, BOTTOMSHADOWBOX, RIGHTSHADOWBOX
+}
+
+class StackWidget extends StatelessWidget {
+  StackWidget({super.key, required this.child});
+  final Stack child;
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return RepaintBoundary(child: child);
+  }
 }
 
 class BorderInnerSquarePosition {
@@ -41,10 +53,13 @@ class BorderInnerSquarePosition {
 
 class LGameBoard extends StatelessWidget {
   LGameBoard({super.key, required this.lGameSession,
-  required this.bScreenReaderIsUsed, required this.availableWidth});
+  required this.bScreenReaderIsUsed,
+  required this.minusDynamicContainerSize
+  });
   final bool bScreenReaderIsUsed;
-  final double availableWidth;
   final LGameSession lGameSession;
+  final int minusDynamicContainerSize;
+
   Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
   late List<Container>  _listBoardPieces;
@@ -60,8 +75,8 @@ class LGameBoard extends StatelessWidget {
   final Color player1Color = Colors.redAccent;
   final Color player2Color = Colors.blueAccent;
   final Color neutralColor = Colors.black;
-  double containerWidth = 80;
-  double containerHeight = 80;
+//  double containerWidth = 80;
+//  double containerHeight = 80;
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
   bool callInit = true;
@@ -78,13 +93,8 @@ class LGameBoard extends StatelessWidget {
     buttonStyleScreenReader = ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
         fontWeight: FontWeight.bold),
         backgroundColor: Colors.transparent);
-    final availableWidth = this.availableWidth;
-    containerWidth = (availableWidth / 4).ceilToDouble() -18;
-    containerHeight = (availableWidth / 4).ceilToDouble() -18;
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("containerWidth=$containerWidth");
-      Loggerdef.logger.i("containerWidth=$containerWidth");
-      Loggerdef.logger.i("widget.availableWidth=$availableWidth");
+      Loggerdef.logger.i("containerWidth=$ScreenValues.containerWidth");
     }
 
     _listBoardSquares = List.generate(16,  (index) {
@@ -1029,8 +1039,8 @@ Border
     Widget ret = Container(
       // padding: const EdgeInsets.all(8),
       color: modeColor /* modeColor.withOpacity(0.1) */,
-      width: containerWidth,
-      height: containerHeight,
+      width: ScreenValues.containerWidth,
+      height: ScreenValues.containerWidth,
       child: /** textWidget ?? */ text,
     );
     return ret;
@@ -1113,8 +1123,8 @@ Border
     Container ret = Container(
       //  padding: const EdgeInsets.all(8),
       color: Colors.transparent,
-      width: containerWidth,
-      height: containerHeight,
+      width: ScreenValues.containerWidth,
+      height: ScreenValues.containerWidth,
       child: modeContainerChild,
     );
      /*
@@ -1298,16 +1308,16 @@ Border
       container = Container(
         //  padding: const EdgeInsets.all(8),
         color: modeColor,
-        width: containerWidth,
-        height: containerHeight,
+        width: ScreenValues.containerWidth,
+        height: ScreenValues.containerWidth,
         child: modeContainerChild,
       );
     } else {
       container = Container(
         //   padding: const EdgeInsets.all(8),
         decoration: boxDecoration,
-        width: containerWidth,
-        height: containerHeight,
+        width: ScreenValues.containerWidth,
+        height: ScreenValues.containerWidth,
         child: modeContainerChild,
       );
     }
@@ -1318,8 +1328,8 @@ Border
   {
     return Container(
       padding: const EdgeInsets.all(1),
-      width: containerWidth,
-      height: containerHeight,
+      width: ScreenValues.containerWidth,
+      height: ScreenValues.containerWidth,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -1330,8 +1340,8 @@ Border
       child: Container(
       // padding: const EdgeInsets.all(8),
 
-      width: containerWidth -20,
-      height: containerHeight -20,
+      width: ScreenValues.containerWidth -20,
+      height: ScreenValues.containerWidth -20,
       decoration: BoxDecoration(
         color: Colors.orange[200],
         border: Border.all(
@@ -1607,9 +1617,9 @@ Border
         //    duration: const Duration(seconds: 1),
         //  padding: const EdgeInsets.all(8),
        // color: Colors.transparent,
-        width: containerWidth,
+        width: ScreenValues.containerWidth,
         clipBehavior: Clip.none,
-        height: containerHeight,
+        height: ScreenValues.containerWidth,
         decoration: decoration,
             child: Opacity(
         opacity: 1.0,
@@ -1630,8 +1640,8 @@ Border
           //    duration: const Duration(seconds: 1),
           //  padding: const EdgeInsets.all(8),
           color: Colors.transparent,
-          width: containerWidth,
-          height: containerHeight,
+          width: ScreenValues.containerWidth,
+          height: ScreenValues.containerWidth,
         );
       }
       return ret;
@@ -1858,8 +1868,8 @@ Border
       //    duration: const Duration(seconds: 1),
       //  padding: const EdgeInsets.all(8),
       color: Colors.transparent,
-      width: containerWidth,
-      height: containerHeight,
+      width: ScreenValues.containerWidth,
+      height: ScreenValues.containerWidth,
     );
     bool isInMoveList = lGameSession.iArrPlayerMovePieces == null ? false :
                     lGameSession.iArrPlayerMovePieces!.contains(index);
@@ -1870,8 +1880,8 @@ Border
       //    duration: const Duration(seconds: 1),
       //  padding: const EdgeInsets.all(8),
       color: Colors.yellow[200],
-      width: containerWidth,
-      height: containerHeight,
+      width: ScreenValues.containerWidth,
+      height: ScreenValues.containerWidth,
     );
     return ret;
   }
@@ -1899,8 +1909,8 @@ Border
         //    duration: const Duration(seconds: 1),
         //  padding: const EdgeInsets.all(8),
         color: cColor,
-        width: containerWidth,
-        height: containerHeight,
+        width: ScreenValues.containerWidth,
+        height: ScreenValues.containerWidth,
         decoration: listBoxDecoration,
         child: getTextChild(index, true),
       );
@@ -2053,10 +2063,11 @@ Border
           AbsorbPointer(
             child: Container(
             color: Colors.transparent,
-            width: containerWidth,
-            height: containerHeight,
+            width: ScreenValues.containerWidth,
+            height: ScreenValues.containerWidth,
             //      decoration: listBoxDecoration,
-            child: Stack(clipBehavior: Clip.none,
+            child: StackWidget(child:  Stack(clipBehavior: Clip.none,
+           //  fit: StackFit.loose,
                 children: [_listBoardSquares[i],
                //  _listMovePieceShadowContainers[i],
               //    _listMovePieceShadowCenterContainers[i],
@@ -2082,19 +2093,23 @@ Border
           ),
           ),
          ),
+         ),
         );
         }
     }
     else {
       for (int i = 0; i < _listBoardSquares.length; i++) {
-        listBoardStack.add(
-          Stack(children: [_listBoardSquares[i],
+        listBoardStack.add(StackWidget(child:
+          Stack(clipBehavior: Clip.none,
+             // fit: StackFit.loose,
+              children: [_listBoardSquares[i],
       //      _listMovePieceShadowContainers[i],
       //      _listMovePieceShadowCenterContainers[i],
             _listBoardPieces[i],
             _listMoveSquares[i],
-            _listMoveBorderSquares[i]]))
-            ;
+            _listMoveBorderSquares[i]
+            ]), ),
+        );
       }
    }
 
@@ -2160,36 +2175,54 @@ Border
       // padding: const EdgeInsets.all(20),
       children: buildGameBoard(),
     ) */
-          RepaintBoundary(child: Column(
+        /*  Center(child:
+        */
+          /*
+         IntrinsicWidth(
+            child: */
+          Column(
+           // mainAxisAlignment: MainAxisAlignment.center,
        // padding: EdgeInsets.all(8.0),
       children: [
-          RepaintBoundary(child: Row(children: [
-          RepaintBoundary(child: listBoardStack[0]),
-          RepaintBoundary(child: listBoardStack[1]),
-        RepaintBoundary(child: listBoardStack[2]),
-        RepaintBoundary(child: listBoardStack[3]),
-           ],),),
-        RepaintBoundary(child: Row(children: [
-        RepaintBoundary(child: listBoardStack[4]),
-           RepaintBoundary(child: listBoardStack[5]),
-           RepaintBoundary(child: listBoardStack[6]),
-           RepaintBoundary(child: listBoardStack[7]),
-        ],),),
-        RepaintBoundary(child: Row(children: [
-           RepaintBoundary(child: listBoardStack[8]),
-           RepaintBoundary(child: listBoardStack[9]),
-           RepaintBoundary(child: listBoardStack[10]),
-           RepaintBoundary(child: listBoardStack[11]),
-        ],),),
-        RepaintBoundary(child: Row(children: [
-           RepaintBoundary(child: listBoardStack[12]),
-           RepaintBoundary(child: listBoardStack[13]),
-           RepaintBoundary(child: listBoardStack[14]),
-           RepaintBoundary(child: listBoardStack[15]),
-        ],),)
+           Row(
+         //    mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+        /*  RepaintBoundary(child: */ listBoardStack[0], //),
+        /*  RepaintBoundary(child: */listBoardStack[1], //),
+        /*  RepaintBoundary(child: */listBoardStack[2], //),
+        /*  RepaintBoundary(child: */listBoardStack[3], //),
+           ],),
+        Row(
+         // mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /*  RepaintBoundary(child: */listBoardStack[4], // ),
+            /*  RepaintBoundary(child: */listBoardStack[5], //),
+        /*  RepaintBoundary(child: */listBoardStack[6], // ),
+            /*  RepaintBoundary(child: */listBoardStack[7], //),
+        ],),
+        Row(
+         // mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /*  RepaintBoundary(child: */listBoardStack[8], // ),
+            /*  RepaintBoundary(child: */listBoardStack[9], //),
+        /*  RepaintBoundary(child: */listBoardStack[10], // ),
+            /*  RepaintBoundary(child: */listBoardStack[11], //),
+        ],),
+        Row(
+        //  mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            /*  RepaintBoundary(child: */ listBoardStack[12], //),
+          /*  RepaintBoundary(child: */ listBoardStack[13], //),
+        /*  RepaintBoundary(child: */ listBoardStack[14], //),
+        /*  RepaintBoundary(child: */ listBoardStack[15], // ),
+        ],)
         ],
-          ),
-      );
+        // ),
+          );
       },
     )
     ;

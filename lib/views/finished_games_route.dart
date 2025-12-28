@@ -22,6 +22,7 @@ import '../di.dart';
 import 'listgamesessions.dart';
 import 'game_board.dart';
 import './utils/util_dialog.dart';
+import '../ParameterValues.dart';
 
 class FinishedGamesRoute extends StatefulWidget {
   const FinishedGamesRoute({super.key});
@@ -44,6 +45,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
   bool bUnderCollapse = false;
   SelectedLGameSessionData? selectedLGameSessionData;
   bool bScreenReaderIsUsed = false;
+  ParameterValues? parameterValues;
 
   int getModified(LGameSessionData a, LGameSessionData b)
   {
@@ -86,6 +88,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
 
   @override
   Widget build(BuildContext context) {
+    parameterValues = ParameterValues.of(context);
     final mediaQueryData = MediaQuery.of(context);
     if (mediaQueryData.accessibleNavigation) {
       bScreenReaderIsUsed = true;
@@ -98,6 +101,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
         listDataSessions: listDataSessions,
         lGameSessionRemoveFunctionCallback: lGameSessionRemoveFunctionCallback,
         bScreenReaderIsUsed: bScreenReaderIsUsed, bCalledFromFinishedGames: true,
+      //  screenValues: ScreenValues.screenValues
     );
 
   }

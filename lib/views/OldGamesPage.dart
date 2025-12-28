@@ -13,6 +13,7 @@ import 'dart:async';
 // import 'dart:js_interop_unsafe';
 import 'package:flutter_html/flutter_html.dart';
 
+import '../ParameterValues.dart';
 import '../models/LGameDataService.dart';
 import 'package:intl/intl.dart';
 import 'package:flgame/models/lgame_data.dart';
@@ -37,12 +38,15 @@ class OldGamesPage extends StatefulWidget {
   final LGameSessionFunctionCallback lGameSessionRemoveFunctionCallback;
   final bool bScreenReaderIsUsed;
   final bool bCalledFromFinishedGames;
+ // final ScreenValues? screenValues;
   OldGamesPage({super.key, required this.strDeleteTitle,
     required this.strDeleteAsk,
     required this.listDataSessions,
     required this.lGameSessionRemoveFunctionCallback,
     required this.bScreenReaderIsUsed,
-    required this.bCalledFromFinishedGames});
+    required this.bCalledFromFinishedGames,
+  //  required this.screenValues
+  });
 
   @override
   State<OldGamesPage> createState() => _OldGamesPageState();
@@ -69,6 +73,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
   SelectedLGameSessionData? selectedLGameSessionData;
   bool bScreenReaderIsUsed = false;
   int indexBackgroundColor = -1;
+  ParameterValues? parameterValues;
 
   @override
   void initState() {
@@ -84,6 +89,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
 
   @override
   Widget build(BuildContext context) {
+    parameterValues = ParameterValues.of(context);
     final mediaQueryData = MediaQuery.of(context);
     if (mediaQueryData.accessibleNavigation) {
       bScreenReaderIsUsed = true;
@@ -161,7 +167,11 @@ class _OldGamesPageState extends State<OldGamesPage> {
       ),
       body:   widget.listDataSessions == null || widget.listDataSessions!.isEmpty ?
       Card(child: Padding(padding: EdgeInsets.all(5),
-        child: const Text("No unfinished games"),),)
+        child: Semantics(
+          readOnly: true,
+          label: "Unfinished games",
+          hint: 'List of unfinished games',
+          child: Text("Unfinished games"),),),)
           : SafeArea(
           minimum: const EdgeInsets.all(16.0),
           child: /* ListView( crossAxisAlignment: CrossAxisAlignment.center,
@@ -213,11 +223,13 @@ class _OldGamesPageState extends State<OldGamesPage> {
               /* Expanded( // Expanded_A
       child: */ LGameBoard(lGameSession: lGameSession,
                   bScreenReaderIsUsed: bScreenReaderIsUsed,
-                availableWidth: 0
+                  minusDynamicContainerSize:
+                  ScreenValues.minusDynamicContainerSizeOfLGame +10
               ),
               // ),
             ],
           )
+        ),
       ),
 
       /* ListView.builder(
@@ -233,7 +245,6 @@ class _OldGamesPageState extends State<OldGamesPage> {
           );
         },
       ) */
-        ),
     );
 
   }
