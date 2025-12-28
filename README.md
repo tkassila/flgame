@@ -2,6 +2,12 @@
 
 A L game for flutter android after Edward Bono, see wikipedia, L game. And help button of the game.
 
+<div class="image">
+        <img alt="L game board and starting setup, with neutral pieces shown as black discs"
+             aria-hidden="true"
+             height="150" src="assets/L_Game_start_position.svg.png" text width="150">
+    </div>
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
