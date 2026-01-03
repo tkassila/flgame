@@ -3,14 +3,9 @@
 import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../di.dart';
 import './utils/util_dialog.dart';
 import 'package:intl/intl.dart';
 
-import '../models/LGameDataService.dart';
-import 'package:flgame/models/lgame_data.dart';
-import 'game_board.dart';
-import '../main.dart';
 
 class LGameSessionTitle {
   String title;

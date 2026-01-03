@@ -11,7 +11,6 @@ import 'dart:async';
 // import 'dart:ffi';
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 // import 'dart:js_interop_unsafe';
-import 'package:flutter_html/flutter_html.dart';
 
 import '../ParameterValues.dart';
 import '../models/LGameDataService.dart';
@@ -20,7 +19,6 @@ import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // import 'package:flutter/cupertino.dart';
-import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -39,7 +37,7 @@ class OldGamesPage extends StatefulWidget {
   final bool bScreenReaderIsUsed;
   final bool bCalledFromFinishedGames;
  // final ScreenValues? screenValues;
-  OldGamesPage({super.key, required this.strDeleteTitle,
+  const OldGamesPage({super.key, required this.strDeleteTitle,
     required this.strDeleteAsk,
     required this.listDataSessions,
     required this.lGameSessionRemoveFunctionCallback,
@@ -67,8 +65,8 @@ class _OldGamesPageState extends State<OldGamesPage> {
   LGameSessionData? selectedSessionData;
   LGameSession lGameSession = LGameSession();
   int selectedIndex = -1, prevIndexExpanded = -1;
-  ExpansionTileController? selectedExpansionTile;
-  List<ExpansionTileController>? expansionControllers;
+  ExpansibleController? selectedExpansionTile;
+  List<ExpansibleController>? expansionControllers;
   bool bUnderCollapse = false;
   SelectedLGameSessionData? selectedLGameSessionData;
   bool bScreenReaderIsUsed = false;
@@ -98,8 +96,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
     }
 
     String strPageTitle = 'Unfinished games';
-    if (widget.bCalledFromFinishedGames)
+    if (widget.bCalledFromFinishedGames) {
       strPageTitle = 'Finished games';
+    }
 
     ScrollController scrollController = ScrollController();
 
@@ -333,7 +332,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
     }
     */
 
-  setInitDataList() async
+  Future<void> setInitDataList() async
   {
     //   _dataTitles = null;
     setState(() {
@@ -454,12 +453,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
      */
 
   void lGameSessionSelectedFunctionCallback(LGameSessionData? selectedThis,
-      int p_indexBackgroundColor)
+      int pIndexbackgroundcolor)
   {
     if (selectedThis != null) {
       setState(() {
         selectedSessionData = selectedThis;
-        indexBackgroundColor = p_indexBackgroundColor;
+        indexBackgroundColor = pIndexbackgroundcolor;
         lGameSession.setStartGameAfterOldGame(selectedSessionData!);
       });
     }

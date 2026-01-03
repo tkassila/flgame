@@ -35,7 +35,7 @@ class ParameterValues extends InheritedWidget {
  // static final int minusDynamicContainerSizeOfLGame = 18;
 //  static ScreenValues screenValues = new ScreenValues();
 
-  const ParameterValues({ required this.screenValues,
+  const ParameterValues({super.key,  required this.screenValues,
     required super.child });
   final ScreenValues screenValues;
 

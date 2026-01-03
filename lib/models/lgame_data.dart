@@ -287,7 +287,7 @@ class LGameSession {
      _screenReaderAnnounce(pMsg);
   }
 
-  _screenReaderAnnounce(String msg)
+  void _screenReaderAnnounce(String msg)
   {
     if (bScreenReaderIsUsed && _strMsg.isNotEmpty)
     {
@@ -303,8 +303,7 @@ class LGameSession {
     if (pos == null) {
       return "";
     }
-    return 'Row: ' + (pos!.iRow+1).toString() + ' column: '
-        +(pos!.iCol+1).toString() ;
+    return 'Row: ${pos.iRow+1} column: ${pos.iCol+1}' ;
   }
 
   String getScreenReaderSquareValue(int index)
@@ -375,7 +374,7 @@ class LGameSession {
     return "$strTop\n$strBottom";
   }
 
-  disAbleButtonsForGameOver()
+  void disAbleButtonsForGameOver()
   {
     bButtonUpEnabled = false;
     bButtonDownEnabled = false;
@@ -516,7 +515,7 @@ class LGameSession {
   }
 
  /* String? */
-  setStartGameAfterOldGame(LGameSessionData data/* )int oldIActiveNeutral,
+  void setStartGameAfterOldGame(LGameSessionData data/* )int oldIActiveNeutral,
       List<int> oldIArrPlayer1Pieces, List<int> oldIArrPlayer2Pieces,
       int oldIPlayerNeutral1Piece, int oldIPlayerNeutral2Piece */
       )
@@ -634,7 +633,7 @@ class LGameSession {
       ret = GameBoardPositionSeries();
       ret.iRow = iRow;
       GameBoardPosition gps;
-      for (int i = 0; i < gpsList!.length; i++) {
+      for (int i = 0; i < gpsList.length; i++) {
         gps = gpsList[i];
         if (gps == null) {
           continue;
@@ -681,7 +680,7 @@ class LGameSession {
       if (bAdded)
       {
         prevGs = okItems.last;
-        if (prevGs != null && gp != null && (prevGs!.iCol +1) == gp!.iCol)
+        if (prevGs != null && gp != null && (prevGs.iCol +1) == gp.iCol)
         {
           okItems.add(gp);
         }
@@ -1394,8 +1393,9 @@ class LGameSession {
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
        bool bValue = moveDone();
-       if (!bValue)
+       if (!bValue) {
          beep(false);
+       }
        /*
        if (bValue) {
          await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
@@ -1653,13 +1653,13 @@ class LGameSession {
      return ret;
   }
 
-  switchIntoNeutral(int iParamActiveNeutral)
+  void switchIntoNeutral(int iParamActiveNeutral)
   {
      iActiveNeutral = iParamActiveNeutral;
      initNeutralData();
   }
 
-  initNeutralData()
+  void initNeutralData()
   {
     bButtonTurn90DegreeEnabled = false;
     if (iActiveNeutral == 1) {

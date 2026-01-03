@@ -12,7 +12,6 @@ import 'dart:async';
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 // import 'dart:js_interop_unsafe';
 import 'package:flgame/views/OldGamesPage.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import '../models/LGameDataService.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +19,6 @@ import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // import 'package:flutter/cupertino.dart';
-import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/widgets.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -28,7 +26,6 @@ import 'package:flutter/material.dart';
 import '../di.dart';
 
 import 'listgamesessions.dart';
-import 'game_board.dart';
 import './utils/util_dialog.dart';
 import '../ParameterValues.dart';
 
@@ -76,8 +73,8 @@ class _OldGamesState extends State<OldGamesRoute> {
   List<LGameSessionData>? listDataSessions;
  // List<LGameSessionTitle>? _dataTitles;
   LGameSessionData? selectedSessionData;
-  ExpansionTileController? selectedExpansionTile;
-  List<ExpansionTileController>? expansionControllers;
+  ExpansibleController? selectedExpansionTile;
+  List<ExpansibleController>? expansionControllers;
   bool bUnderCollapse = false;
   SelectedLGameSessionData? selectedLGameSessionData;
   bool bScreenReaderIsUsed = false;
@@ -155,7 +152,7 @@ class _OldGamesState extends State<OldGamesRoute> {
       return ret;
     }
 
-    setInitDataList() async
+    Future<void> setInitDataList() async
     {
    //   _dataTitles = null;
       setState(() {

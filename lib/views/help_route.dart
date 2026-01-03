@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 */
 import 'dart:async';
-import 'dart:ffi';
 
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -290,10 +289,7 @@ class HelpPage4 extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
-            child: const Text("All positions, Red to move, where Red will lose " +
-                  "to a perfect Blue, and maximum number of moves remaining " +
-                      "for Red. By looking ahead one move and ensuring " +
-                          "one never ends up in any of the above positions,"
+            child: Text("All positions, Red to move, where Red will lose " "to a perfect Blue, and maximum number of moves remaining " "for Red. By looking ahead one move and ensuring " "one never ends up in any of the above positions,"
                               " one can avoid losing.", style: textStyleHtml,),
                 ),
 

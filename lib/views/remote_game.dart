@@ -1,9 +1,7 @@
 
 //import 'package:flgame/main.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RemoteGamesRoute extends StatefulWidget {
@@ -21,14 +19,14 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
     super.initState();
   }
 
-  bool _visible = true;
+  final bool _visible = true;
 
   @override
   void dispose() {
     super.dispose();
   }
 
-  callMainPage()
+  void callMainPage()
   {
     Navigator.pop(context, );
   }

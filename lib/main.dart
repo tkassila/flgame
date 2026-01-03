@@ -1,4 +1,3 @@
-import 'dart:isolate';
 
 import 'package:flgame/ParameterValues.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +30,6 @@ import './services/navigation_service.dart';
 import './views/about_game.dart';
 import './LoggerDef.dart';
 import 'services/AudioPlayerService.dart' as audioPlayerService;
-import './LoggerDef.dart';
-import './ParameterValues.dart';
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
@@ -84,11 +81,11 @@ class MyApp extends StatelessWidget {
 // Device width
     final deviceWidth =   MediaQuery.of(context).size.width;
 // Subtract paddings to calculate available dimensions
-    final padding_right = MediaQuery.of(context).padding.right;
-    final padding_left = MediaQuery.of(context).padding.left;
+    final paddingRight = MediaQuery.of(context).padding.right;
+    final paddingLeft = MediaQuery.of(context).padding.left;
 //    final ScreenValues screenValues = new ScreenValues();
 
-    final double availableWidth = deviceWidth - padding_right - padding_left;
+    final double availableWidth = deviceWidth - paddingRight - paddingLeft;
 //Inside Build function since we need context.
 // This is device height
     final deviceHeight = MediaQuery.of(context).size.height;
@@ -125,8 +122,8 @@ class MyApp extends StatelessWidget {
     child: ParameterValues(screenValues: ScreenValues(
         bScreenReaderIsUsed: bScreenReaderIsUsed,
         deviceWidth: deviceWidth,
-        padding_left: padding_left,
-        padding_right: padding_right,
+        padding_left: paddingLeft,
+        padding_right: paddingRight,
         availableWidth: availableWidth,
         deviceHeight: deviceHeight,
         availableHeight: availableHeight),
@@ -270,7 +267,7 @@ class _LGamePageState extends State<MyHomePage>
   final double containerHeight = 200;
   bool bInitGameBoard = true;
   bool _bUpdateUI = false;
-  ValueNotifier<bool> _notifier = ValueNotifier(false);
+  final ValueNotifier<bool> _notifier = ValueNotifier(false);
 
   Widget? buttonUp;
   Widget? buttonDown;
@@ -303,7 +300,7 @@ class _LGamePageState extends State<MyHomePage>
           bContinueReturnValue);
   }
 
-  buttonStartGamePressed() async
+  Future<void> buttonStartGamePressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonStartGamePressed");
@@ -534,7 +531,7 @@ class _LGamePageState extends State<MyHomePage>
       }
   }
 
-  buttonMoveDonePressed() async {
+  Future<void> buttonMoveDonePressed() async {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonMoveDonePressed");
     }
@@ -555,7 +552,7 @@ class _LGamePageState extends State<MyHomePage>
    // }
   }
 
-  buttonHelpEnabledPressed()
+  void buttonHelpEnabledPressed()
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonHelpEnabledPressed");
@@ -572,7 +569,7 @@ class _LGamePageState extends State<MyHomePage>
      */
   }
 
-  buttonSaveEditPressed()
+  void buttonSaveEditPressed()
   {
     setState(() {
       lGameSession.name1 = _textFieldName1Controller.text;
@@ -584,7 +581,7 @@ class _LGamePageState extends State<MyHomePage>
     });
   }
 
-  buttonReturnFromEditPressed()
+  void buttonReturnFromEditPressed()
   {
     setState(()  {
       bEditPlayerNames = false;
@@ -594,7 +591,7 @@ class _LGamePageState extends State<MyHomePage>
    });
   }
 
-  buttonTurn90DegreePressed() async
+  Future<void> buttonTurn90DegreePressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonTurn90GradePressed");
@@ -616,7 +613,7 @@ class _LGamePageState extends State<MyHomePage>
   //  }
   }
 
-  buttonUpPressed() async
+  Future<void> buttonUpPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonUpPressed");
@@ -638,7 +635,7 @@ class _LGamePageState extends State<MyHomePage>
     // }
   }
 
-  buttonDownPressed() async
+  Future<void> buttonDownPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonDownPressed");
@@ -660,7 +657,7 @@ class _LGamePageState extends State<MyHomePage>
     // }
   }
 
-  buttonLeftPressed() async
+  Future<void> buttonLeftPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonLeftPressed");
@@ -682,7 +679,7 @@ class _LGamePageState extends State<MyHomePage>
     // }
   }
 
-  buttonRightPressed() async
+  Future<void> buttonRightPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonRightPressed");
@@ -704,7 +701,7 @@ class _LGamePageState extends State<MyHomePage>
     // }
   }
 
-  buttonWrapUpPressed() async
+  Future<void> buttonWrapUpPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonWrapUpPressed");
@@ -726,7 +723,7 @@ class _LGamePageState extends State<MyHomePage>
     // }
   }
 
-  buttonSwitchNeutralPressed() async
+  Future<void> buttonSwitchNeutralPressed() async
   {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("buttonSwitchNeutralPressed");
@@ -759,7 +756,7 @@ class _LGamePageState extends State<MyHomePage>
     return ret;
   }
 
-  getLastDataSession() async
+  Future<void> getLastDataSession() async
   {
     LGameSessionData? active = di<LGameDataService>().getActiveGame();
     List<LGameSessionData>? cList =
@@ -789,7 +786,7 @@ class _LGamePageState extends State<MyHomePage>
      });
   }
 
-  initAudioService() async {
+  Future<void> initAudioService() async {
     await SoLoud.instance.init();
     audioPlayerService.audioPlayerService = audioPlayerService.AudioPlayerService();
     audioPlayerService.audioPlayerService.initState();
@@ -1097,10 +1094,11 @@ class _LGamePageState extends State<MyHomePage>
          ),
        );
 
-       if (widget.bScreenReaderIsUsed)
+       if (widget.bScreenReaderIsUsed) {
          _textFieldName1 = Semantics( readOnly: false,
              label: 'Player 1', hint: 'Player 1 text field',
              child: _textFieldName1);
+       }
 
        _textFieldName2Controller.text = lGameSession.name2;
 
@@ -1130,10 +1128,11 @@ class _LGamePageState extends State<MyHomePage>
          ),
        );
 
-       if (widget.bScreenReaderIsUsed)
+       if (widget.bScreenReaderIsUsed) {
          _textFieldName2 = Semantics( readOnly: false,
        label: 'Player 2', hint: 'Player 2 text field',
        child: _textFieldName2);
+       }
 
        /*
        _editRow1 = Row(children: [
@@ -1492,8 +1491,8 @@ class _LGamePageState extends State<MyHomePage>
 
     String strPlayer = _getPlayerName();
     String homeTitle = widget.title;
-    if (strPlayer != null && !strPlayer.isEmpty) {
-      homeTitle = "Turn: " + strPlayer;
+    if (strPlayer != null && strPlayer.isNotEmpty) {
+      homeTitle = "Turn: $strPlayer";
     }
 
     final TextStyle menuTextStyle = TextStyle(fontSize: ScreenUtil().setSp(16),

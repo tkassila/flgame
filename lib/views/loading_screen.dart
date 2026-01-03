@@ -31,13 +31,13 @@ class _LoadingScreenState extends State<LoadingScreen>
     super.dispose();
   }
 
-    handleTimeout2()
+    void handleTimeout2()
   {
     Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2",
             (Route<dynamic> route) => false);
   }
 
-  handleTimeout()
+  void handleTimeout()
   {
     setState(() {
       _visible = !_visible;

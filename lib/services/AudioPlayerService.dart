@@ -1,8 +1,7 @@
-library my_project.global;
+library;
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 // import 'package:logger/logger.dart';
-import 'dart:isolate';
 import '../LoggerDef.dart';
 
 // import 'package:flutter_beep/flutter_beep.dart';
@@ -51,7 +50,7 @@ class AudioPlayerService {
       }
     }catch(e)
     {
-      Loggerdef.logger.i("Audio error: " +e.toString());
+      Loggerdef.logger.i("Audio error: $e");
     }
   }
 

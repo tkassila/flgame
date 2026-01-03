@@ -1,5 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:logger/logger.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../ParameterValues.dart';
-import '../services/AudioPlayerService.dart' as LoggerDef;
 import '../models/lgame_data.dart';
 import '../LoggerDef.dart';
 
@@ -30,7 +28,7 @@ enum SHADOWBOXPOSITION {
 }
 
 class StackWidget extends StatelessWidget {
-  StackWidget({super.key, required this.child});
+  const StackWidget({super.key, required this.child});
   final Stack child;
 
   @override
@@ -81,7 +79,7 @@ class LGameBoard extends StatelessWidget {
   bool bChangeScreenReaderTextIntoTop = false;
   bool callInit = true;
   late ButtonStyle buttonStyleScreenReader;
-  ValueNotifier<bool> _notifier = ValueNotifier(true);
+  final ValueNotifier<bool> _notifier = ValueNotifier(true);
 //  bool listBoardPiecesUpdated = false;
 //  bool listMovePiecesUpdated = false;
 
@@ -537,7 +535,7 @@ Border
           return ret;
         }
         if (Loggerdef.isLoggerOn) {
-          Loggerdef.logger.i("rowSeries ${rowSeries!.series.length}");
+          Loggerdef.logger.i("rowSeries ${rowSeries.series.length}");
         }
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
@@ -608,7 +606,7 @@ Border
           return ret;
         }
         if (Loggerdef.isLoggerOn) {
-          Loggerdef.logger.i("colSeries ${colSeries!.series.length}");
+          Loggerdef.logger.i("colSeries ${colSeries.series.length}");
         }
         GameBoardPosition? gp, seriesGp, forthLPieceGp;
         bool bFounded = false;
@@ -691,7 +689,7 @@ Border
     );
     if (isCalledFromBorderMoveContainer) {
       ret = null;
-    };
+    }
 
     if (l3SeriesList == null) {
       return ret;
@@ -816,7 +814,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null && !neighBourIsLeftGp!
+      if (neighBourIsLeftGp != null && !neighBourIsLeftGp
           && forthLPieceGp.iRow > rightGp.iRow)
       {
         ret = const Border(
@@ -841,7 +839,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null && !neighBourIsLeftGp!
+      if (neighBourIsLeftGp != null && !neighBourIsLeftGp
           && forthLPieceGp.iRow < rightGp.iRow)
       {
         ret = const Border(
@@ -1064,7 +1062,7 @@ Border
 
   Alignment? getCornerContainerAlignment(int index)
   {
-     var ret = null;
+     var ret;
      /*
      if (isInnerCornerOfContainer(index)) {
          ret = _getMoveDecorationBorder(index, boxDecorationColor, true);
@@ -1077,14 +1075,14 @@ Border
   Container getBorderMoveContainer(int index)
   {
     // Container ret = _getPrivateMoveContainer(index, true);
-    Widget? modeContainerChild = null;
+    Widget? modeContainerChild;
     /*
     if (/* lGameSession.inMovingPiece == LGamePieceInMove.LPiece
         && */ lGameSession.iArrPlayerMovePieces != null
         && lGameSession.iArrPlayerMovePieces!.contains(index)) {
 
      */
-      Object? objAlignment = null; // _getPrivateMoveDecorationBorder(index,
+      Object? objAlignment; // _getPrivateMoveDecorationBorder(index,
       // boxDecorationColor, true) as Alignment?;
       if (innerSquarePosition?.iInnerSquareBorder == index) {
         if (innerSquarePosition?.innerCornerPosition ==
@@ -1179,7 +1177,7 @@ Border
     if (/* lGameSession.inMovingPiece == LGamePieceInMove.LPiece
         && */ lGameSession.iArrPlayerMovePieces != null
         && lGameSession.iArrPlayerMovePieces!.contains(index)) {
-      Border? boxBorder = null;
+      Border? boxBorder;
       if (!isCalledFromBorderMoveContainer)
       {
         boxBorder = getMoveDecorationBorder(index, boxDecorationColor);
@@ -1532,7 +1530,7 @@ Border
     return "";
   }
 
-  showSnapBar(int i)
+  void showSnapBar(int i)
   {
     if (bScreenReaderIsUsed) {
       String strLabel = lGameSession.getScreenReaderSquareLabel(i);
@@ -1558,7 +1556,7 @@ Border
 
   BorderInnerSquarePosition? _getInnerSquareBorder()
   {
-    BorderInnerSquarePosition? ret = null;
+    BorderInnerSquarePosition? ret;
     INNERCORNERPOSITION? position;
     BorderStyle? topColor, bottomColor, leftColor, rightColor;
     /* const */ BorderStyle TRANSPARENT = BorderStyle.none;
@@ -1596,7 +1594,7 @@ Border
            position = INNERCORNERPOSITION.BOTTOMRIGHTCORNER;
          }
          if (position != null) {
-           ret = BorderInnerSquarePosition(position!, i);
+           ret = BorderInnerSquarePosition(position, i);
          }
        }
      }
@@ -1710,7 +1708,7 @@ Border
     Decoration? ret;
     INNERCORNERPOSITION? position;
     BorderStyle? topStyle, bottomStyle, leftStyle, rightStyle;
-    /* const */ BorderStyle BORDERSTYLE_NONE = BorderStyle.none;
+    /* const */ BorderStyle borderstyleNone = BorderStyle.none;
     Border? border = _listMoveBorders[index];
     if (border == null) {
       return null;
@@ -1720,8 +1718,8 @@ Border
     bottomStyle = border.bottom.style;
     leftStyle = border.left.style;
     rightStyle = border.right.style;
-    if (topStyle == BORDERSTYLE_NONE && bottomStyle == BORDERSTYLE_NONE
-        && leftStyle == BORDERSTYLE_NONE && rightStyle == BORDERSTYLE_NONE) {
+    if (topStyle == borderstyleNone && bottomStyle == borderstyleNone
+        && leftStyle == borderstyleNone && rightStyle == borderstyleNone) {
       return null;
     }
 
@@ -2230,7 +2228,7 @@ Border
 }
 
 class BoardSquare extends StatelessWidget {
- /* const */ BoardSquare({super.key, required this.detector});
+ /* const */ const BoardSquare({super.key, required this.detector});
   final GestureDetector detector;
 
   @override

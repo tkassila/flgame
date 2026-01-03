@@ -73,7 +73,7 @@ class LGameDataService {
   }
    */
 
-  closeHive() async
+  Future<void> closeHive() async
   {
     if (_boxSessionHiveData!.isEmpty) {
       await _boxSessionHiveData!.put(_nameHiveDataBox, hiveLGameSessionData!);
@@ -90,16 +90,16 @@ class LGameDataService {
      */
   }
 
-  initHive() async
+  Future<void> initHive() async
   {
     var path = Directory.current.path;
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("var path = Directory.current.path: " +path);
+      Loggerdef.logger.i("var path = Directory.current.path: $path");
     }
     Directory directory = await pathProvider.getApplicationDocumentsDirectory();
 //  hiveDb = Directory('${appDir. path}/chosenPath');
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i(".current.path: " +directory.path);
+      Loggerdef.logger.i(".current.path: ${directory.path}");
     }
     await Hive.initFlutter();
     /*
@@ -149,7 +149,7 @@ class LGameDataService {
     return hiveLGameSessionData!.activeGame;
   }
 
-  setActiveGame(LGameSessionData? active)
+  void setActiveGame(LGameSessionData? active)
   {
       hiveLGameSessionData!.activeGame = active;
   }
@@ -215,7 +215,7 @@ class LGameDataService {
     return ret;
   }
 
-  checkInit() async {
+  Future<void> checkInit() async {
     if (!bInitHasDone) {
       initHive();
     }
@@ -267,7 +267,7 @@ class LGameDataService {
   }
 
 //  List<LGameSessionData>?
-  getSavingGamesList(LGameSessionData ds) {
+  void getSavingGamesList(LGameSessionData ds) {
    // checkInit();
     bool founded = false;
     List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
@@ -293,7 +293,7 @@ class LGameDataService {
     */
   }
 
-  saveIntoUnFinishedGamesList(LGameSessionData ds)
+  void saveIntoUnFinishedGamesList(LGameSessionData ds)
   {
     List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
     listGames ??= List<LGameSessionData>.empty(growable: true);
@@ -326,7 +326,7 @@ class LGameDataService {
     hiveLGameSessionData!.unFinishedGames = listGames;
   }
 
-  saveIntoFinishedGamesList(LGameSessionData ds) async
+  Future<void> saveIntoFinishedGamesList(LGameSessionData ds) async
   {
     List<LGameSessionData> listGames = hiveLGameSessionData!.finishedGames!;
     listGames ??= List<LGameSessionData>.empty(growable: true);
@@ -359,7 +359,7 @@ class LGameDataService {
     hiveLGameSessionData!.finishedGames = listGames;
   }
 
-  deleteFinishedGameSessionData(LGameSessionData ds) {
+  bool deleteFinishedGameSessionData(LGameSessionData ds) {
     List<LGameSessionData> listGames = hiveLGameSessionData!.finishedGames!;
     listGames ??= List<LGameSessionData>.empty(growable: true);
   //  checkInit();
@@ -387,9 +387,10 @@ class LGameDataService {
       }
       listGames.removeAt(iFounded);
       hiveLGameSessionData!.finishedGames = listGames;
+      return true;
   }
 
-  deleteUnFinishedGameSessionData(LGameSessionData ds) {
+  bool deleteUnFinishedGameSessionData(LGameSessionData ds) {
     List<LGameSessionData> listGames = hiveLGameSessionData!.unFinishedGames!;
     listGames ??= List<LGameSessionData>.empty(growable: true);
   //  checkInit();
@@ -417,6 +418,7 @@ class LGameDataService {
       }
      listGames.removeAt(iFounded);
      hiveLGameSessionData!.unFinishedGames = listGames;
+     return true;
   }
 
   Future<bool?> deleteUnFinishedLGameSessionData(LGameSessionData ds) async
