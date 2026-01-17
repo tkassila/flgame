@@ -36,6 +36,7 @@ class OldGamesPage extends StatefulWidget {
   final LGameSessionFunctionCallback lGameSessionRemoveFunctionCallback;
   final bool bScreenReaderIsUsed;
   final bool bCalledFromFinishedGames;
+ // final ValueNotifier<bool>? notifier;
  // final ScreenValues? screenValues;
   const OldGamesPage({super.key, required this.strDeleteTitle,
     required this.strDeleteAsk,
@@ -43,6 +44,7 @@ class OldGamesPage extends StatefulWidget {
     required this.lGameSessionRemoveFunctionCallback,
     required this.bScreenReaderIsUsed,
     required this.bCalledFromFinishedGames,
+  // required this.notifier,
   //  required this.screenValues
   });
 
@@ -222,8 +224,10 @@ class _OldGamesPageState extends State<OldGamesPage> {
               /* Expanded( // Expanded_A
       child: */ LGameBoard(lGameSession: lGameSession,
                   bScreenReaderIsUsed: bScreenReaderIsUsed,
+                 // notifier: ScreenValues.notifier!,
                   minusDynamicContainerSize:
-                  ScreenValues.minusDynamicContainerSizeOfLGame +10
+                  ScreenValues.minusDynamicContainerSizeOfLGame +10,
+                  isUpdated: true,
               ),
               // ),
             ],

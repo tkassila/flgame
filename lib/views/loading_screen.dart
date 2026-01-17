@@ -20,7 +20,7 @@ class _LoadingScreenState extends State<LoadingScreen>
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     super.initState();
-    Timer(const Duration(seconds: 2), handleTimeout);
+    Timer(const Duration(seconds: 1), handleTimeout);
   }
 
   bool _visible = true;
@@ -81,7 +81,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             ),
             AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 700),
             child: const Image(
             height: 300,
             width: 300,

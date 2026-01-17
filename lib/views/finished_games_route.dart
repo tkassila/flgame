@@ -96,6 +96,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
         listDataSessions: listDataSessions,
         lGameSessionRemoveFunctionCallback: lGameSessionRemoveFunctionCallback,
         bScreenReaderIsUsed: bScreenReaderIsUsed, bCalledFromFinishedGames: true,
+       // notifier: ScreenValues.notifier,
       //  screenValues: ScreenValues.screenValues
     );
 

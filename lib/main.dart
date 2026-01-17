@@ -1,8 +1,10 @@
 
 import 'package:flgame/ParameterValues.dart';
+import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:platform/platform.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
@@ -41,7 +43,12 @@ enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
-
+  
+  if (Loggerdef.isLoggerOn) {
+    Loggerdef.startTime = DateTime.now();
+    Loggerdef.logger.i("start: time 0");
+  }
+  WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'fi_FI';
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -134,7 +141,7 @@ class MyApp extends StatelessWidget {
    //   navigatorKey: navigatorKey, // important
       routes: {
         '/': (context) => const LoadingScreen(),
-        '/lgamefor2': (context) => MyHomePage(title: strAppTitle,
+        '/lgamefor2': (context) => LGeamePage(title: strAppTitle,
             bScreenReaderIsUsed: bScreenReaderIsUsed,
           /* screenValues: screenValues, */),
         '/help': (context) => const HelpRoute(),
@@ -154,12 +161,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class LGeamePage extends StatefulWidget {
 
 /// iArrPlayerPossibleMovePieces
  // final Function() notifyParent;
   // ChildWidget({Key key, @required this.notifyParent}) : super(key: key);
-  const MyHomePage({super.key,
+  const LGeamePage({super.key,
     required this.title, required this.bScreenReaderIsUsed,
    // required this.screenValues, /*, @required this.notifyParent} */
   });
@@ -169,11 +176,11 @@ class MyHomePage extends StatefulWidget {
 
 
   @override
-  State<MyHomePage> createState() => _LGamePageState();
+  State<LGeamePage> createState() => _LGamePageState();
 
 }
 
-class _LGamePageState extends State<MyHomePage>
+class _LGamePageState extends State<LGeamePage>
     with WidgetsBindingObserver /*, AutomaticKeepAliveClientMixin */
 {
 
@@ -253,7 +260,7 @@ class _LGamePageState extends State<MyHomePage>
   Widget? _buttonsRow2;
   Widget? _buttonsRow3;
   Widget? _buttonsRow4;
-  Widget? _buildBoard;
+  Widget? _buildBoard; // unused widget, part of function that rebuild now null"
   Widget? _buttonsEditRow1;
   Widget? _textFieldName1, _textFieldName2;
   Widget? _buttonSaveEdit, _buttonReturnFromEdit;
@@ -282,9 +289,9 @@ class _LGamePageState extends State<MyHomePage>
   Widget? textMessage;
   // bool bScreenReaderIsUsed = true;
 
-  Color player1Color = Colors.redAccent;
-  Color player2Color = Colors.blueAccent;
-  Color neutralColor = Colors.black;
+  final player1Color = Colors.redAccent;
+  final player2Color = Colors.blueAccent;
+  final neutralColor = Colors.black;
   final ButtonStyle buttonStyle =
          ElevatedButton.styleFrom(textStyle:
          TextStyle(fontSize: ScreenUtil().setSp(13),
@@ -328,6 +335,7 @@ class _LGamePageState extends State<MyHomePage>
         lGameSession.setListBoardPiecesUpdated(true);
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
+        ScreenValues.notifier = _notifier;
     });
     }
   }
@@ -523,6 +531,7 @@ class _LGamePageState extends State<MyHomePage>
           _bUpdateUI = true;
           _buildBoard = buildGameBoard();
           _notifier.value = _bUpdateUI;
+          ScreenValues.notifier = _notifier;
         });
         return true;
       }
@@ -548,6 +557,7 @@ class _LGamePageState extends State<MyHomePage>
           lGameSession.setListBoardPiecesUpdated(true);
           _buildBoard = buildGameBoard();
           _notifier.value = _bUpdateUI;
+          ScreenValues.notifier = _notifier;
        });
    // }
   }
@@ -578,6 +588,7 @@ class _LGamePageState extends State<MyHomePage>
       _bUpdateUI = true;
       _buildBoard = buildGameBoard();
       _notifier.value = _bUpdateUI;
+      ScreenValues.notifier = _notifier;
     });
   }
 
@@ -588,6 +599,7 @@ class _LGamePageState extends State<MyHomePage>
       _bUpdateUI = true;
       _buildBoard = buildGameBoard();
       _notifier.value = _bUpdateUI;
+      ScreenValues.notifier = _notifier;
    });
   }
 
@@ -609,6 +621,7 @@ class _LGamePageState extends State<MyHomePage>
         lGameSession.setListMovePiecesUpdated(true);
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
+        ScreenValues.notifier = _notifier;
      });
   //  }
   }
@@ -631,6 +644,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -653,6 +667,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -675,6 +690,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -697,6 +713,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -719,6 +736,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -742,6 +760,7 @@ class _LGamePageState extends State<MyHomePage>
          lGameSession.setListBoardPiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
+         ScreenValues.notifier = _notifier;
       });
      // }
   }
@@ -783,6 +802,7 @@ class _LGamePageState extends State<MyHomePage>
         _bUpdateUI = true;
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
+        ScreenValues.notifier = _notifier;
      });
   }
 
@@ -842,7 +862,9 @@ class _LGamePageState extends State<MyHomePage>
     lGameSession.setListMovePiecesUpdated(false);
     return LGameBoard(lGameSession: lGameSession,
     bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
+     // notifier: _notifier,
       minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame,
+      isUpdated: _bUpdateUI,
     );
   }
 
@@ -1272,7 +1294,10 @@ class _LGamePageState extends State<MyHomePage>
     if (lGameBoard == null || bInitGameBoard || _bUpdateUI) {
       lGameBoard = LGameBoard(lGameSession: lGameSession,
           bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
-          minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame -20,
+         // notifier: _notifier,
+          minusDynamicContainerSize:
+          ScreenValues.minusDynamicContainerSizeOfLGame -20,
+          isUpdated: _bUpdateUI,
           /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
        lGameSession.setListBoardPiecesUpdated(false);
        lGameSession.setListMovePiecesUpdated(false);
@@ -1394,6 +1419,7 @@ class _LGamePageState extends State<MyHomePage>
           lGameSession.msg = "Cannot save the current game.";
           _buildBoard = buildGameBoard();
           _notifier.value = _bUpdateUI;
+          ScreenValues.notifier = _notifier;
         });
         return;
       }
@@ -1406,6 +1432,7 @@ class _LGamePageState extends State<MyHomePage>
         _bUpdateUI = true;
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
+        ScreenValues.notifier = _notifier;
      });
     }
     // final result = await = Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) =>
@@ -1475,6 +1502,12 @@ class _LGamePageState extends State<MyHomePage>
     return ret;
   }
 
+  bool getCurrentUpdateUI()
+  {
+    bool ret = _bUpdateUI;
+    _bUpdateUI = false;
+    return ret;
+  }
   @override
   Widget build(BuildContext context) {
     /*
@@ -1486,6 +1519,7 @@ class _LGamePageState extends State<MyHomePage>
       {
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
+        ScreenValues.notifier = _notifier;
         bGameIsFormat = false;
       }
 
@@ -1513,6 +1547,10 @@ class _LGamePageState extends State<MyHomePage>
     (lGameSession.playerTurn == GamePlayerTurn.player1 ?
     player1Color : player2Color);
 
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.endTime = DateTime.now();
+      Loggerdef.logger.i("end duration: ${Loggerdef.getDurationString()}");
+    }
     return SafeArea(
         top: true, // applies padding at the top
         bottom: true, // applies padding at the bottom
@@ -1525,18 +1563,31 @@ class _LGamePageState extends State<MyHomePage>
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         titleSpacing: 23,
         title: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: /* Card(child: */ Text(homeTitle, style: TextStyle(fontSize: ScreenUtil().setSp(20),
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                color: playerColor!,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15.0),
+                ),
+              ),
+              child: Text(homeTitle, style:
+            TextStyle(fontSize: ScreenUtil().setSp(20),
             fontWeight: FontWeight.bold, background: Paint()
             /*
           ..strokeWidth = 12.0
           ..strokeMiterLimit = 0.0
              */
-          ..color = playerColor!
+          ..color = playerColor
           // ..style = PaintingStyle.stroke
-         ..strokeJoin = StrokeJoin.round),),
-        ),
+         ..strokeJoin = StrokeJoin.round,
+              height: 1.7,
+              letterSpacing: 1.5,
+            ),),
        // ),
+                ),
+        ),
         actions: [
           PopupMenuButton<MenuButtonSelected>(
             initialValue: selectedMenuButton,
@@ -1558,6 +1609,7 @@ class _LGamePageState extends State<MyHomePage>
                     bEditPlayerNames = true;
                     _buildBoard = buildGameBoard();
                     _notifier.value = _bUpdateUI;
+                    ScreenValues.notifier = _notifier;
                  // });
                 }
                 else
@@ -1694,6 +1746,19 @@ class _LGamePageState extends State<MyHomePage>
     child:
     /* buildGameBoard() */ bInitGameBoard ? initBoard() :
      /* _bUpdateUI ? */ /*buildUpdatedBoard() */
+
+    LGameContainer(isSystemNavigateMenu: isSystemNavigateMenu,
+        //  notifier: _notifier,
+        bEditPlayerNames: bEditPlayerNames,
+        editOrButtonContainer: editOrButtonContainer!,
+        bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
+       // lGameBoard: lGameBoard,
+        lGameSession: lGameSession,
+        buttonBetweenWidth: buttonBetweenWidth,
+        textMessage: textMessage,
+        isUpdated: getCurrentUpdateUI(),
+    ),
+     /*
        Column (
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -1733,7 +1798,7 @@ class _LGamePageState extends State<MyHomePage>
         if (isSystemNavigateMenu) const SizedBox(height: 30, ),
       ],
     )
-
+      */
        /* : _buildBoard */ ),
         //   if (isSystemNavigateMenu) SizedBox(height: 30,),
       ),

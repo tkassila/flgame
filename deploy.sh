@@ -1,1 +1,2 @@
 fvm flutter build apk --release
+# --no-tree-shake-icons

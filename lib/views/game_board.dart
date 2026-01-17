@@ -1,4 +1,7 @@
 
+import 'dart:math';
+
+import 'package:flgame/main.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:logger/logger.dart';
@@ -27,13 +30,43 @@ enum SHADOWBOXPOSITION {
   TOPSHADOWBOX, LEFTSHADOWBOX, BOTTOMSHADOWBOX, RIGHTSHADOWBOX
 }
 
-class StackWidget extends StatelessWidget {
-  const StackWidget({super.key, required this.child});
+class StackGridContainer extends StatelessWidget {
+  final int containerIndex = 16; // To differentiate containers
+  final List<Widget?> listContainers;
+  const StackGridContainer({super.key, required this.listContainers});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: ScreenValues.containerWidth *4,
+      height: ScreenValues.containerWidth *4,
+      child: GridView.builder( // The 16 smaller grid items
+        physics: const NeverScrollableScrollPhysics(), // Prevents inner scrolling
+        padding: const EdgeInsets.all(0),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4, // 4x4 grid
+          childAspectRatio: 1.0, // Square items
+//          crossAxisSpacing: 2.0,
+//          mainAxisSpacing: 2.0,
+        ),
+        itemCount: containerIndex,
+        itemBuilder: (context, index) {
+          return listContainers[index] ?? Container();
+          // return listContainers[index]!;
+        }
+      ),
+    );
+  }
+}
+
+class StackRepaintBoundary extends StatelessWidget {
+  const StackRepaintBoundary({super.key, required this.child});
   final Stack child;
 
   @override
   Widget build(BuildContext context)
   {
+   // print("StackRepaintBoundary painted at: ${DateTime.now()}");
     return RepaintBoundary(child: child);
   }
 }
@@ -49,25 +82,87 @@ class BorderInnerSquarePosition {
   }
 }
 
+/*
+class StackColumnRows extends StatelessWidget {
+  const StackColumnRows({super.key, required this.listBoardStack});
+  final List<Widget?> listBoardStack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.center,
+      // padding: EdgeInsets.all(8.0),
+      children: [
+        Row(
+          //    mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            listBoardStack[0]!,
+            listBoardStack[1]!,
+            listBoardStack[2]!,
+            listBoardStack[3]!,
+          ],),
+        Row(
+          // mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            listBoardStack[4]!,
+            listBoardStack[5]!,
+            listBoardStack[6]!,
+            listBoardStack[7]!,
+          ],),
+        Row(
+          // mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            listBoardStack[8]!,
+            listBoardStack[9]!,
+            listBoardStack[10]!,
+            listBoardStack[11]!,
+          ],),
+        Row(
+          //  mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            listBoardStack[12]!,
+            listBoardStack[13]!,
+            listBoardStack[14]!,
+            listBoardStack[15]!,
+          ],)
+      ],
+      // ),
+    );
+  }
+}
+*/
+
 class LGameBoard extends StatelessWidget {
   LGameBoard({super.key, required this.lGameSession,
-  required this.bScreenReaderIsUsed,
-  required this.minusDynamicContainerSize
+    required this.bScreenReaderIsUsed,
+    required this.minusDynamicContainerSize,
+    required this.isUpdated,
+   // required this.notifier,
   });
   final bool bScreenReaderIsUsed;
   final LGameSession lGameSession;
   final int minusDynamicContainerSize;
+  final bool isUpdated;
+ // final ValueNotifier<bool>? notifier;
 
   Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
-  late List<Container>  _listBoardPieces;
+ // late StackGridContainer _stackGridContainerOfListBoardSquares;
+  late List<Container?>  _listBoardPieces;
+ // late StackGridContainer _stackGridContainerOfListBoardPieces;
+
   // var _listBoardPieces = List<Container>.empty(growable: true);
 //  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
 //  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
   late List<Container> _listMoveBorderSquares;
+ // late StackGridContainer _stackGridContainerOfListMoveBorderSquares;
   late List<Border?>  _listMoveBorders;
   BorderInnerSquarePosition? innerSquarePosition;
-  late List<Container>  _listMoveSquares;
+  late List<Container?>  _listMoveSquares;
   late List<String> _iArrScreenReaderSquareText;
   late List<Widget> _listScreenReaderSquares;
   final Color player1Color = Colors.redAccent;
@@ -79,7 +174,6 @@ class LGameBoard extends StatelessWidget {
   bool bChangeScreenReaderTextIntoTop = false;
   bool callInit = true;
   late ButtonStyle buttonStyleScreenReader;
-  final ValueNotifier<bool> _notifier = ValueNotifier(true);
 //  bool listBoardPiecesUpdated = false;
 //  bool listMovePiecesUpdated = false;
 
@@ -98,6 +192,9 @@ class LGameBoard extends StatelessWidget {
     _listBoardSquares = List.generate(16,  (index) {
       return getBoardSquaresContainer(index);
     });
+
+    // _stackGridContainerOfListBoardSquares = StackGridContainer(listContainers: _listBoardSquares);
+
     _listMoveBorders = List.generate(16,  (index) {
       return null;
     });
@@ -1148,11 +1245,11 @@ Border
      return ret;
   }
 
-  Container getMoveContainer(int index) {
+  Container? getMoveContainer(int index) {
     return _getPrivateMoveContainer(index, false);
   }
 
-  Container _getPrivateMoveContainer(int index,
+  Container? _getPrivateMoveContainer(int index,
       bool isCalledFromBorderMoveContainer)
   {
     double dRadius = 0.0;
@@ -1303,6 +1400,8 @@ Border
      */
 
     if (modeContainerChild == null) {
+      container = null;
+      /*
       container = Container(
         //  padding: const EdgeInsets.all(8),
         color: modeColor,
@@ -1310,6 +1409,7 @@ Border
         height: ScreenValues.containerWidth,
         child: modeContainerChild,
       );
+       */
     } else {
       container = Container(
         //   padding: const EdgeInsets.all(8),
@@ -1903,6 +2003,11 @@ Border
         cColor = containerColor;
       }
 
+      Widget? child = getTextChild(index, true);
+      if (child == null) {
+        return null;
+      }
+
       return Container(
         //    duration: const Duration(seconds: 1),
         //  padding: const EdgeInsets.all(8),
@@ -1910,10 +2015,12 @@ Border
         width: ScreenValues.containerWidth,
         height: ScreenValues.containerWidth,
         decoration: listBoxDecoration,
-        child: getTextChild(index, true),
+        child: child,
       );
     });
 //   }
+
+   // _stackGridContainerOfListBoardPieces = StackGridContainer(listContainers: _listBoardPieces);
 
    // if (_listMoveBorders.isEmpty || lGameSession.listMovePiecesUpdated) {
       _listMoveBorders = List.generate(16,  (index) {
@@ -1922,8 +2029,10 @@ Border
    // }
 
     // if (_listMoveSquares.isEmpty || lGameSession.listMovePiecesUpdated) {
+      Container? currContainer;
       _listMoveSquares = List.generate(16,  (index) {
-      return getMoveContainer(index);
+        currContainer = getMoveContainer(index);
+        return currContainer;
     });
    // }
 
@@ -1978,6 +2087,8 @@ Border
       });
    // }
 
+   // _stackGridContainerOfListMoveBorderSquares = StackGridContainer(listContainers: _listMoveBorderSquares);
+
    /* List<Widget> */ listBoardStack = List<Widget>.empty(growable: true);
     //_listBoardStack.clear();
     if (bScreenReaderIsUsed) {
@@ -2012,7 +2123,7 @@ Border
                   getChangeScreenReaderText(i, false);
               _screenReaderAnnounce(_iArrScreenReaderSquareText[i]);
               callInit = true;
-              _notifier.value = true;
+             // notifier?.value = true;
             //      });
           } /*)*/,
       /*
@@ -2064,14 +2175,17 @@ Border
             width: ScreenValues.containerWidth,
             height: ScreenValues.containerWidth,
             //      decoration: listBoxDecoration,
-            child: StackWidget(child:  Stack(clipBehavior: Clip.none,
+            child: StackRepaintBoundary(child: Stack(clipBehavior: Clip.none,
            //  fit: StackFit.loose,
                 children: [_listBoardSquares[i],
                //  _listMovePieceShadowContainers[i],
               //    _listMovePieceShadowCenterContainers[i],
-                  _listBoardPieces[i],
-                 _listMoveBorderSquares[i],
-                  _listScreenReaderSquares[i]
+                  if (_listBoardPieces[i] != null)
+                    _listBoardPieces[i]!,
+                  if (_listMoveSquares[i] != null)
+                    _listMoveSquares[i]!,
+                  if (_listMoveSquares[i] != null)
+                    _listMoveBorderSquares[i]
                ]
             /*
             onFocusChange: (hasFocus) {
@@ -2096,16 +2210,27 @@ Border
         }
     }
     else {
-      for (int i = 0; i < _listBoardSquares.length; i++) {
-        listBoardStack.add(StackWidget(child:
+
+      Container currMoveBorderSquares;
+      Container? currMoveSquares, currBoardPieces;
+
+    for (int i = 0; i < _listBoardSquares.length; i++) {
+        currBoardPieces = _listBoardPieces[i];
+        currMoveSquares = _listMoveSquares[i];
+        currMoveBorderSquares = _listMoveBorderSquares[i];
+
+        listBoardStack.add(StackRepaintBoundary(child:
           Stack(clipBehavior: Clip.none,
              // fit: StackFit.loose,
               children: [_listBoardSquares[i],
       //      _listMovePieceShadowContainers[i],
       //      _listMovePieceShadowCenterContainers[i],
-            _listBoardPieces[i],
-            _listMoveSquares[i],
-            _listMoveBorderSquares[i]
+                if (currBoardPieces != null)
+                   currBoardPieces,
+                if (currMoveSquares != null)
+                   currMoveSquares,
+                if (currMoveSquares != null)
+                  currMoveBorderSquares
             ]), ),
         );
       }
@@ -2144,10 +2269,10 @@ Border
       listBoardStack = buildGameBoard();
     }
 
-    return ValueListenableBuilder<bool>(
-      valueListenable: _notifier,
+    return /* ValueListenableBuilder<bool>(
+      valueListenable: ScreenValues.notifier!,
       builder: (BuildContext context, bool value, child) {
-        return /* buildGameBoard() */
+        return */ /* buildGameBoard() */
       /*
       FlexibleGridViewPlus(
         shrinkWrap: true,
@@ -2178,6 +2303,11 @@ Border
           /*
          IntrinsicWidth(
             child: */
+
+      StackGridContainer(listContainers: listBoardStack,
+      );
+
+      /*
           Column(
            // mainAxisAlignment: MainAxisAlignment.center,
        // padding: EdgeInsets.all(8.0),
@@ -2186,44 +2316,43 @@ Border
          //    mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-        /*  RepaintBoundary(child: */ listBoardStack[0], //),
-        /*  RepaintBoundary(child: */listBoardStack[1], //),
-        /*  RepaintBoundary(child: */listBoardStack[2], //),
-        /*  RepaintBoundary(child: */listBoardStack[3], //),
+        listBoardStack[0],
+        listBoardStack[1],
+        listBoardStack[2],
+        listBoardStack[3],
            ],),
         Row(
          // mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*  RepaintBoundary(child: */listBoardStack[4], // ),
-            /*  RepaintBoundary(child: */listBoardStack[5], //),
-        /*  RepaintBoundary(child: */listBoardStack[6], // ),
-            /*  RepaintBoundary(child: */listBoardStack[7], //),
+            listBoardStack[4],
+            listBoardStack[5],
+            listBoardStack[6],
+            listBoardStack[7],
         ],),
         Row(
          // mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*  RepaintBoundary(child: */listBoardStack[8], // ),
-            /*  RepaintBoundary(child: */listBoardStack[9], //),
-        /*  RepaintBoundary(child: */listBoardStack[10], // ),
-            /*  RepaintBoundary(child: */listBoardStack[11], //),
+            listBoardStack[8],
+            listBoardStack[9],
+            listBoardStack[10],
+            listBoardStack[11],
         ],),
         Row(
         //  mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /*  RepaintBoundary(child: */ listBoardStack[12], //),
-          /*  RepaintBoundary(child: */ listBoardStack[13], //),
-        /*  RepaintBoundary(child: */ listBoardStack[14], //),
-        /*  RepaintBoundary(child: */ listBoardStack[15], // ),
+            listBoardStack[12],
+            listBoardStack[13],
+            listBoardStack[14],
+            listBoardStack[15],
         ],)
         ],
         // ),
           );
-      },
-    )
-    ;
+       */
+   //   },
   }
 }
 

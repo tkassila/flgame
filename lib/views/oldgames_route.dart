@@ -11,6 +11,7 @@ import 'dart:async';
 // import 'dart:ffi';
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 // import 'dart:js_interop_unsafe';
+import 'package:flgame/LoggerDef.dart';
 import 'package:flgame/views/OldGamesPage.dart';
 
 import '../models/LGameDataService.dart';
@@ -89,6 +90,9 @@ class _OldGamesState extends State<OldGamesRoute> {
   @override
   Widget build(BuildContext context) {
     parameterValues = ParameterValues.of(context);
+    if (parameterValues == null) {
+      Loggerdef.logger.e("parameterValues is null");
+    }
     final mediaQueryData = MediaQuery.of(context);
     if (mediaQueryData.accessibleNavigation) {
       bScreenReaderIsUsed = true;
@@ -102,6 +106,7 @@ class _OldGamesState extends State<OldGamesRoute> {
         lGameSessionRemoveFunctionCallback: lGameSessionRemoveFunctionCallback,
         bScreenReaderIsUsed: bScreenReaderIsUsed,
         bCalledFromFinishedGames: false,
+       // notifier: ScreenValues.notifier!,
      //   screenValues: ScreenValues.screenValues
     );
 

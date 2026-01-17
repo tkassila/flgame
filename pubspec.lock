@@ -141,10 +141,10 @@ packages:
     dependency: transitive
     description:
       name: code_builder
-      sha256: "11654819532ba94c34de52ff5feb52bd81cba1de00ef2ed622fd50295f9d4243"
+      sha256: "6a6cab2ba4680d6423f34a9b972a4c9a94ebe1b62ecec4e1a1f2cba91fd1319d"
       url: "https://pub.dev"
     source: hosted
-    version: "4.11.0"
+    version: "4.11.1"
   collection:
     dependency: "direct main"
     description:
@@ -205,10 +205,10 @@ packages:
     dependency: transitive
     description:
       name: ffi
-      sha256: "289279317b4b16eb2bb7e271abccd4bf84ec9bdcbe999e278a94b804f5630418"
+      sha256: d07d37192dbf97461359c1518788f203b0c9102cfd2c35a716b823741219542c
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   file:
     dependency: transitive
     description:
@@ -266,10 +266,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_soloud
-      sha256: "09116b29197d7ecb63bd43cfc0a28a463a1559f75a6da4a6ebb75e880deeb9ee"
+      sha256: "5d0277ab9e7516cc9c0558f739c158b638bb11ad2f4388a743d35eb3baf54b1c"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.7"
+    version: "3.4.8"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -367,10 +367,10 @@ packages:
     dependency: "direct main"
     description:
       name: injectable
-      sha256: "8fc24421cfeff76d1d38484d8b9617beeb54a58b6edfd002b10cc896b8b8f3fe"
+      sha256: "32b36a9d87f18662bee0b1951b81f47a01f2bf28cd6ea94f60bc5453c7bf598c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.1+2"
+    version: "2.7.1+4"
   intl:
     dependency: "direct main"
     description:
@@ -732,10 +732,10 @@ packages:
     dependency: transitive
     description:
       name: watcher
-      sha256: f52385d4f73589977c80797e60fe51014f7f2b957b5e9a62c3f6ada439889249
+      sha256: "1398c9f081a753f9226febe8900fce8f7d0a67163334e1c94a2438339d79d635"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.1"
   web:
     dependency: transitive
     description:
