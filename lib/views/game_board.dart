@@ -2177,15 +2177,27 @@ Border
             //      decoration: listBoxDecoration,
             child: StackRepaintBoundary(child: Stack(clipBehavior: Clip.none,
            //  fit: StackFit.loose,
-                children: [_listBoardSquares[i],
+                children: [Positioned( // Position each large container
+                    left: 0, // Simple horizontal placement
+                    top: 0, // Simple vertical placement
+                    child: _listBoardSquares[i]),
                //  _listMovePieceShadowContainers[i],
               //    _listMovePieceShadowCenterContainers[i],
                   if (_listBoardPieces[i] != null)
-                    _listBoardPieces[i]!,
+                    Positioned( // Position each large container
+                        left: 0, // Simple horizontal placement
+                        top: 0, // Simple vertical placement
+                        child: _listBoardPieces[i]!),
                   if (_listMoveSquares[i] != null)
-                    _listMoveSquares[i]!,
+                    Positioned( // Position each large container
+                        left: 0, // Simple horizontal placement
+                        top: 0, // Simple vertical placement
+                        child: _listMoveSquares[i]!),
                   if (_listMoveSquares[i] != null)
-                    _listMoveBorderSquares[i]
+            Positioned( // Position each large container
+            left: 0, // Simple horizontal placement
+            top: 0, // Simple vertical placement
+            child: _listMoveBorderSquares[i])
                ]
             /*
             onFocusChange: (hasFocus) {
