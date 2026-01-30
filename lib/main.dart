@@ -1291,7 +1291,7 @@ class _LGamePageState extends State<LGeamePage>
         ],);
        }
 
-    if (lGameBoard == null || bInitGameBoard || _bUpdateUI) {
+    if (lGameBoard == null || bInitGameBoard) {
       lGameBoard = LGameBoard(lGameSession: lGameSession,
           bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
          // notifier: _notifier,
@@ -1302,6 +1302,12 @@ class _LGamePageState extends State<LGeamePage>
        lGameSession.setListBoardPiecesUpdated(false);
        lGameSession.setListMovePiecesUpdated(false);
     }
+    else
+      {
+        lGameBoard!.updateParams(widget.bScreenReaderIsUsed,
+          lGameSession, ScreenValues.minusDynamicContainerSizeOfLGame -20,
+          _bUpdateUI,);
+      }
 
     Widget ret = Column (
       crossAxisAlignment: CrossAxisAlignment.center,

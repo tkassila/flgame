@@ -174,6 +174,10 @@ class LGameSessionData extends HiveObject {
 
   @HiveField(18)
   DateTime? modifiedAt;
+
+  @HiveField(19)
+  late String? msg;
+
 }
 
 @HiveType(typeId: 1) //typeId should be unique for each model
@@ -215,6 +219,12 @@ class LGameSession {
     // this.buttonStartGamePressed();
   }
 
+  ButtonPressed currentButtonPressed = ButtonPressed.up;
+  ButtonPressed getButtonPressed() {
+    return currentButtonPressed;
+  }
+
+  bool bButtonUpPressed = false;
   bool listBoardPiecesUpdated = false;
   void setListBoardPiecesUpdated(bool bValue)
   {
@@ -266,7 +276,7 @@ class LGameSession {
   List<int>? iPlayerPresentPos;
   List<int>? iPlayerOpponentPresentPos;
 
-  String _strMsg = "";
+  String? _strMsg = "";
   int iNextFortLPosition = 0;
   int? iPlayerNeutral1Piece;
   int? iPlayerNeutral1PieceInBeginningMove;
@@ -289,13 +299,13 @@ class LGameSession {
 
   void _screenReaderAnnounce(String msg)
   {
-    if (bScreenReaderIsUsed && _strMsg.isNotEmpty)
+    if (bScreenReaderIsUsed && (_strMsg != null && _strMsg!.isNotEmpty))
     {
-      SemanticsService.announce(_strMsg, TextDirection.ltr);
+      SemanticsService.announce(_strMsg!, TextDirection.ltr);
     }
   }
 
-  String get msg => _strMsg;
+  String get msg => (_strMsg == null || _strMsg!.isEmpty) ? "" : _strMsg!;
 
   String getScreenReaderSquareLabel(int index)
   {
@@ -510,6 +520,7 @@ class LGameSession {
     data.oldIPlayerNeutral1PieceInBeginningMove = iPlayerNeutral1PieceInBeginningMove;
     data.oldIPlayerNeutral2PieceInBeginningMove = iPlayerNeutral2PieceInBeginningMove;
     data.modifiedAt = modifiedAt;
+    data.msg = msg;
 
     return data;
   }
@@ -570,6 +581,11 @@ class LGameSession {
     iPlayerNeutral1PieceInBeginningMove = data.oldIPlayerNeutral1PieceInBeginningMove;
     iPlayerNeutral2PieceInBeginningMove = data.oldIPlayerNeutral2PieceInBeginningMove;
     modifiedAt = data.modifiedAt;
+    msg = data.msg == null ? "" : data.msg!;
+    if (bGameIsOver) {
+      disAbleButtonsForGameOver();
+    }
+
     if (inMovingPiece == LGamePieceInMove.neutral)
     {
       initNeutralData();
@@ -1401,6 +1417,9 @@ class LGameSession {
          await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
        }
         */
+       if (bValue) {
+         currentButtonPressed = buttonTypePressed;
+       }
        return bValue;
     }
     else
@@ -1438,6 +1457,7 @@ class LGameSession {
         */
         //  calculatePossibleMovePieces(DirectionButtonPressed.wrapDown
         // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
+        currentButtonPressed = buttonTypePressed;
         return true;
       }
 
@@ -1523,6 +1543,7 @@ class LGameSession {
          }
        }
       // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
+       currentButtonPressed = buttonTypePressed;
        return true;
     }
     else
@@ -1561,6 +1582,7 @@ class LGameSession {
               }
           }
          // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
+            currentButtonPressed = buttonTypePressed;
             return true;
       }
       beep(false);

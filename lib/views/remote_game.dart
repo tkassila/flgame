@@ -101,7 +101,7 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1',
+                child: Text('version 1.1.5',
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

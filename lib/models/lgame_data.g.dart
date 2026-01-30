@@ -35,13 +35,14 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..oldIArrPlayerPossibleMovePieces = (fields[15] as List?)?.cast<int>()
       ..oldIPlayerNeutral1PieceInBeginningMove = fields[16] as int?
       ..oldIPlayerNeutral2PieceInBeginningMove = fields[17] as int?
-      ..modifiedAt = fields[18] as DateTime?;
+      ..modifiedAt = fields[18] as DateTime?
+      ..msg = fields[19] as String?;
   }
 
   @override
   void write(BinaryWriter writer, LGameSessionData obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.name1)
       ..writeByte(1)
@@ -79,7 +80,9 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..writeByte(17)
       ..write(obj.oldIPlayerNeutral2PieceInBeginningMove)
       ..writeByte(18)
-      ..write(obj.modifiedAt);
+      ..write(obj.modifiedAt)
+      ..writeByte(19)
+      ..write(obj.msg);
   }
 
   @override

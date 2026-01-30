@@ -143,26 +143,26 @@ class LGameBoard extends StatelessWidget {
     required this.isUpdated,
    // required this.notifier,
   });
-  final bool bScreenReaderIsUsed;
-  final LGameSession lGameSession;
-  final int minusDynamicContainerSize;
-  final bool isUpdated;
+  bool bScreenReaderIsUsed;
+  LGameSession lGameSession;
+  int minusDynamicContainerSize;
+  bool isUpdated;
  // final ValueNotifier<bool>? notifier;
 
   Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
  // late StackGridContainer _stackGridContainerOfListBoardSquares;
-  late List<Container?>  _listBoardPieces;
+  late List<Container?> _listBoardPieces = List.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListBoardPieces;
 
   // var _listBoardPieces = List<Container>.empty(growable: true);
 //  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
 //  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
-  late List<Container> _listMoveBorderSquares;
+  late List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListMoveBorderSquares;
   late List<Border?>  _listMoveBorders;
   BorderInnerSquarePosition? innerSquarePosition;
-  late List<Container?>  _listMoveSquares;
+  late List<Container?> _listMoveSquares = List<Container?>.empty(growable: true);
   late List<String> _iArrScreenReaderSquareText;
   late List<Widget> _listScreenReaderSquares;
   final Color player1Color = Colors.redAccent;
@@ -173,9 +173,24 @@ class LGameBoard extends StatelessWidget {
   BuildContext? thisContext;
   bool bChangeScreenReaderTextIntoTop = false;
   bool callInit = true;
+  bool bDoNotCallInitState = false;
   late ButtonStyle buttonStyleScreenReader;
 //  bool listBoardPiecesUpdated = false;
 //  bool listMovePiecesUpdated = false;
+
+
+ void updateParams(bool p_bScreenReaderIsUsed,
+  LGameSession p_lGameSession, int p_minusDynamicContainerSize,
+  bool p_isUpdated)
+  {
+    bScreenReaderIsUsed = p_bScreenReaderIsUsed;
+    lGameSession = p_lGameSession;
+    minusDynamicContainerSize = p_minusDynamicContainerSize;
+    isUpdated = p_isUpdated;
+    callInit = true;
+    bDoNotCallInitState = true;
+    // listBoardStack = buildGameBoard();
+  }
 
   /*
   @override
@@ -1988,104 +2003,65 @@ Border
   buildGameBoard()
   {
  //  if (_listBoardPieces.isEmpty || lGameSession.listBoardPiecesUpdated) {
-     _listBoardPieces = List.generate(16,  (index) {
-      BoxDecoration? listBoxDecoration;
-      Color containerColor = getBoardPieceColor(index);
-      Color? cColor;
-      if (containerColor == Colors.black) {
-        listBoxDecoration = BoxDecoration(
-          color: containerColor,
-          shape: BoxShape.circle,
+    if (_listBoardPieces.isEmpty
+        || lGameSession.getButtonPressed() == ButtonPressed.moveDone) {
+      _listBoardPieces = List.generate(16, (index) {
+        BoxDecoration? listBoxDecoration;
+        Color containerColor = getBoardPieceColor(index);
+        Color? cColor;
+        if (containerColor == Colors.black) {
+          listBoxDecoration = BoxDecoration(
+            color: containerColor,
+            shape: BoxShape.circle,
+          );
+          cColor = null;
+        }
+        else {
+          cColor = containerColor;
+        }
+
+        Widget? child = getTextChild(index, true);
+        if (child == null) {
+          return null;
+        }
+
+        return Container(
+          //    duration: const Duration(seconds: 1),
+          //  padding: const EdgeInsets.all(8),
+          color: cColor,
+          width: ScreenValues.containerWidth,
+          height: ScreenValues.containerWidth,
+          decoration: listBoxDecoration,
+          child: child,
         );
-        cColor = null;
-      }
-      else {
-        cColor = containerColor;
-      }
-
-      Widget? child = getTextChild(index, true);
-      if (child == null) {
-        return null;
-      }
-
-      return Container(
-        //    duration: const Duration(seconds: 1),
-        //  padding: const EdgeInsets.all(8),
-        color: cColor,
-        width: ScreenValues.containerWidth,
-        height: ScreenValues.containerWidth,
-        decoration: listBoxDecoration,
-        child: child,
-      );
-    });
+      });
+    }
 //   }
 
    // _stackGridContainerOfListBoardPieces = StackGridContainer(listContainers: _listBoardPieces);
 
-   // if (_listMoveBorders.isEmpty || lGameSession.listMovePiecesUpdated) {
+   if (_listMoveBorders.isEmpty || lGameSession.listMovePiecesUpdated) {
       _listMoveBorders = List.generate(16,  (index) {
       return null;
     });
-   // }
+   }
 
-    // if (_listMoveSquares.isEmpty || lGameSession.listMovePiecesUpdated) {
       Container? currContainer;
+    if (_listMoveSquares.isEmpty || lGameSession.listMovePiecesUpdated) {
       _listMoveSquares = List.generate(16,  (index) {
         currContainer = getMoveContainer(index);
         return currContainer;
     });
-   // }
+    }
 
-   /*
-   // if (_listMovePieceShadowContainers.isEmpty || lGameSession.listMovePiecesUpdated) {
-      _listMovePieceShadowContainers = List.generate(16, (index) {
-        return getMovePieceShadowContainer(index);
-      });
-   // }
-    */
-
-     /*
-//    if (_listMovePieceShadowCenterContainers.isEmpty
-  //    || lGameSession.listMovePiecesUpdated) {
-      _listMovePieceShadowCenterContainers = List.generate(16, (index) {
-        return getMovePieceShadowCenterContainer(index);
-      });
-   // }
-      */
-
-    /*
-    Container(
-        decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(20.0),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 5,
-              color: Colors.black,
-              offset: Offset(0, 15), // changes position of shadow
-            ),
-              BoxShadow(
-                // color: Colors.green,
-                color: Colors.black,
-                offset: Offset(-5, 5),
-              ),
-              BoxShadow(
-                // color: Colors.green,
-                color: Colors.black,
-                offset: Offset(5, 5),
-              ),
-          ],
-        ),
-      ),
-     */
     innerSquarePosition = _getInnerSquareBorder();
 
-   // if (_listMoveBorderSquares.isEmpty
-     //   || lGameSession.listMovePiecesUpdated) {
+    if (_listMoveBorderSquares.isEmpty
+        || lGameSession.listMovePiecesUpdated) {
       _listMoveBorderSquares = List.generate(16, (index) {
         return getBorderMoveContainer(index);
       });
-   // }
+    }
 
    // _stackGridContainerOfListMoveBorderSquares = StackGridContainer(listContainers: _listMoveBorderSquares);
 
@@ -2234,13 +2210,14 @@ Border
         listBoardStack.add(StackRepaintBoundary(child:
           Stack(clipBehavior: Clip.none,
              // fit: StackFit.loose,
-              children: [_listBoardSquares[i],
+              children: [
+                _listBoardSquares[i],
       //      _listMovePieceShadowContainers[i],
       //      _listMovePieceShadowCenterContainers[i],
                 if (currBoardPieces != null)
-                   currBoardPieces,
+                 currBoardPieces,
                 if (currMoveSquares != null)
-                   currMoveSquares,
+                 currMoveSquares,
                 if (currMoveSquares != null)
                   currMoveBorderSquares
             ]), ),
@@ -2270,16 +2247,21 @@ Border
     return listBoardStack;
   }
 
-  late List<Widget> listBoardStack;
+  late List<Widget> listBoardStack = List<Widget>.empty(growable: true);
+
 
  @override
   Widget build(BuildContext context) {
     thisContext = context;
     lGameSession.setScreenReaderIsUsed(bScreenReaderIsUsed);
     if (callInit) {
-      initState();
+      if (!bDoNotCallInitState) {
+        initState();
+      }
       listBoardStack = buildGameBoard();
     }
+
+    bDoNotCallInitState = false;
 
     return /* ValueListenableBuilder<bool>(
       valueListenable: ScreenValues.notifier!,
