@@ -61,7 +61,7 @@ class GameBoardPositionValidate {
   int iPossibleCol = -1;
   bool bPossibleMove = false;
 
-  bool  calculatePossibleMove(ButtonPressed pressed) {
+  bool calculatePossibleMove(ButtonPressed pressed) {
     bool ret = false;
     iPossibleRow = gPos.iRow;
     iPossibleCol = gPos.iCol;
@@ -231,10 +231,12 @@ class LGameSession {
     listBoardPiecesUpdated = bValue;
   }
   bool listMovePiecesUpdated = false;
+  /*
   void setListMovePiecesUpdated(bool bValue)
   {
     listMovePiecesUpdated = bValue;
   }
+   */
 
   // var freeElements;
   bool bScreenReaderIsUsed = false;
@@ -1406,6 +1408,7 @@ class LGameSession {
       return false;
     }
 
+    listMovePiecesUpdated = false;
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
        bool bValue = moveDone();
@@ -1419,7 +1422,9 @@ class LGameSession {
         */
        if (bValue) {
          currentButtonPressed = buttonTypePressed;
+         listMovePiecesUpdated = true;
        }
+
        return bValue;
     }
     else
@@ -1556,6 +1561,7 @@ class LGameSession {
             return false;
           }
       }
+
       bool? bHorizon = moveArrayIsInHorizontal(iArrPlayerMovePieces!);
       if (bHorizon != null) {
           if (bHorizon) {

@@ -618,7 +618,7 @@ class _LGamePageState extends State<LGeamePage>
      */
      setState(() {
         _bUpdateUI = true;
-        lGameSession.setListMovePiecesUpdated(true);
+      //  lGameSession.setListMovePiecesUpdated(true);
         _buildBoard = buildGameBoard();
         _notifier.value = _bUpdateUI;
         ScreenValues.notifier = _notifier;
@@ -641,7 +641,7 @@ class _LGamePageState extends State<LGeamePage>
       */
       setState(() {
          _bUpdateUI = true;
-         lGameSession.setListMovePiecesUpdated(true);
+    //     lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
          ScreenValues.notifier = _notifier;
@@ -664,7 +664,7 @@ class _LGamePageState extends State<LGeamePage>
       */
       setState(() {
          _bUpdateUI = true;
-         lGameSession.setListMovePiecesUpdated(true);
+     //    lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
          ScreenValues.notifier = _notifier;
@@ -687,7 +687,7 @@ class _LGamePageState extends State<LGeamePage>
       */
       setState(() {
          _bUpdateUI = true;
-         lGameSession.setListMovePiecesUpdated(true);
+   //      lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
          ScreenValues.notifier = _notifier;
@@ -710,7 +710,7 @@ class _LGamePageState extends State<LGeamePage>
       */
       setState(() {
          _bUpdateUI = true;
-         lGameSession.setListMovePiecesUpdated(true);
+       //  lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
          ScreenValues.notifier = _notifier;
@@ -733,7 +733,7 @@ class _LGamePageState extends State<LGeamePage>
       */
       setState(() {
          _bUpdateUI = true;
-         lGameSession.setListMovePiecesUpdated(true);
+     //    lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
          _notifier.value = _bUpdateUI;
          ScreenValues.notifier = _notifier;
@@ -839,10 +839,12 @@ class _LGamePageState extends State<LGeamePage>
   final double buttonRowBetweenHeight = 40;
   final double buttonIconSize = 35.0;
 
+  /*
   void setListMovePiecesUpdated(bool bValue)
   {
      lGameSession.setListMovePiecesUpdated(bValue);
   }
+   */
 
   void setListBoardPiecesUpdated(bool bValue)
   {
@@ -858,8 +860,8 @@ class _LGamePageState extends State<LGeamePage>
 
   Widget buildGameBoard2()
   {
-    lGameSession.setListBoardPiecesUpdated(false);
-    lGameSession.setListMovePiecesUpdated(false);
+   // lGameSession.setListBoardPiecesUpdated(false);
+   // lGameSession.setListMovePiecesUpdated(false);
     return LGameBoard(lGameSession: lGameSession,
     bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
      // notifier: _notifier,
@@ -1299,8 +1301,8 @@ class _LGamePageState extends State<LGeamePage>
           ScreenValues.minusDynamicContainerSizeOfLGame -20,
           isUpdated: _bUpdateUI,
           /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
-       lGameSession.setListBoardPiecesUpdated(false);
-       lGameSession.setListMovePiecesUpdated(false);
+    //   lGameSession.setListBoardPiecesUpdated(false);
+     //  lGameSession.setListMovePiecesUpdated(false);
     }
     else
       {

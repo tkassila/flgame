@@ -2004,7 +2004,7 @@ Border
   {
  //  if (_listBoardPieces.isEmpty || lGameSession.listBoardPiecesUpdated) {
     if (_listBoardPieces.isEmpty
-        || lGameSession.getButtonPressed() == ButtonPressed.moveDone) {
+        || lGameSession.listMovePiecesUpdated /* lGameSession.getButtonPressed() == ButtonPressed.moveDone */) {
       _listBoardPieces = List.generate(16, (index) {
         BoxDecoration? listBoxDecoration;
         Color containerColor = getBoardPieceColor(index);
