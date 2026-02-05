@@ -1269,6 +1269,9 @@ Border
   {
     double dRadius = 0.0;
     Widget? modeContainerChild = getMoveChild(index);
+    if (modeContainerChild == null) {
+      return null;
+    }
     Color boxDecorationColor = getBoxDecorationColor();
     Color modeColor = getMovePieceColor(index);
     Container? container;
@@ -2004,8 +2007,13 @@ Border
   {
  //  if (_listBoardPieces.isEmpty || lGameSession.listBoardPiecesUpdated) {
     if (_listBoardPieces.isEmpty
-        || lGameSession.listMovePiecesUpdated /* lGameSession.getButtonPressed() == ButtonPressed.moveDone */) {
+        || lGameSession.getButtonPressed() == ButtonPressed.moveDone) {
       _listBoardPieces = List.generate(16, (index) {
+        Widget? child = getTextChild(index, true);
+        if (child == null) {
+          return null;
+        }
+
         BoxDecoration? listBoxDecoration;
         Color containerColor = getBoardPieceColor(index);
         Color? cColor;
@@ -2018,11 +2026,6 @@ Border
         }
         else {
           cColor = containerColor;
-        }
-
-        Widget? child = getTextChild(index, true);
-        if (child == null) {
-          return null;
         }
 
         return Container(
