@@ -104,6 +104,13 @@ const String strHelp = r"""
         option to see a list of store sessions and game boards. You can also remove old game 
         sessions to press garbage picture on the row. You can select some unfinished game 
         to continue the game where players left the selected game.</p>
+    
+    <h3>After started new L game</h3>
+    
+    <p>L piece for Player 1 has marked with number 1 and the same for Player 2 has been
+    marked with number 2. 2 neutral pieces has been marked with number 0. And in turn player's 
+    L move frame is marked with 1 or 2 number.
+    </p>    
 
     <h2>From Wikipedia</h2>
     <p>From Wikipedia, the free encyclopedia
