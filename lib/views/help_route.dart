@@ -107,9 +107,9 @@ const String strHelp = r"""
     
     <h3>After started new L game</h3>
     
-    <p>L piece for Player 1 has marked with number 1 and the same for Player 2 has been
-    marked with number 2. 2 neutral pieces has been marked with number 0. And in turn player's 
-    L move frame is marked with 1 or 2 number.
+    <p>L piece for Player 1 has marked with white numbers 1 and the same for Player 2 has been
+    marked with white numbers 2. 2 neutral pieces has been marked with white numbers 0. And in turn player's 
+    L move black frame is marked with black 1 or 2 numbers on each move frame square.
     </p>    
 
     <h2>From Wikipedia</h2>
