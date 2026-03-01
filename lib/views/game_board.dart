@@ -1429,6 +1429,10 @@ Border
       );
        */
     } else {
+        if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayerMovePieces)) {
+          modeContainerChild = null;
+        }
+
       container = Container(
         //   padding: const EdgeInsets.all(8),
         decoration: boxDecoration,
@@ -2002,6 +2006,43 @@ Border
     return ret;
   }
 
+  bool indexInTheMiddleOfLPiece(int index, List<int>? iArrPlayerPieces)
+  {
+     if (iArrPlayerPieces == null)
+      return false;
+     if (iArrPlayerPieces.isEmpty)
+       return false;
+     bool ret = false;
+     List<GameBoardPosition>? listGameBoardPosition = lGameSession.getGameBoardPositionList(iArrPlayerPieces);
+     if (listGameBoardPosition == null || listGameBoardPosition.isEmpty || listGameBoardPosition.length < 4)
+       return false;
+     if (listGameBoardPosition[0].iRow == listGameBoardPosition[1].iRow
+         && listGameBoardPosition[1].iRow == listGameBoardPosition[2].iRow
+         && listGameBoardPosition[1].iPos == index) {
+         ret = true;
+       }
+     else
+     if (listGameBoardPosition[0].iCol == listGameBoardPosition[1].iCol
+         && listGameBoardPosition[1].iCol == listGameBoardPosition[2].iCol
+         && listGameBoardPosition[1].iPos == index) {
+       ret = true;
+     }
+     else
+     if (listGameBoardPosition[1].iRow == listGameBoardPosition[2].iRow
+         && listGameBoardPosition[2].iRow == listGameBoardPosition[3].iRow
+         && listGameBoardPosition[2].iPos == index) {
+       ret = true;
+     }
+     else
+     if (listGameBoardPosition[1].iCol == listGameBoardPosition[2].iCol
+         && listGameBoardPosition[2].iCol == listGameBoardPosition[3].iCol
+         && listGameBoardPosition[2].iPos == index) {
+       ret = true;
+     }
+
+     return ret;
+  }
+
   List<Widget>
   buildGameBoard()
   {
@@ -2027,6 +2068,29 @@ Border
         else {
           cColor = containerColor;
         }
+
+        bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
+        lGameSession.iArrPlayer1Pieces!.contains(index);
+        bool isIn2List = lGameSession.iArrPlayer2Pieces == null ? false :
+        lGameSession.iArrPlayer2Pieces!.contains(index);
+        if (isIn1List)
+        {
+          if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer1Pieces)) {
+            child = null;
+          }
+        }
+        else
+        if (isIn2List)
+        {
+          if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer2Pieces)) {
+            child = null;
+          }
+        }
+        else
+        {
+          child = null;
+        }
+
 
         return Container(
           //    duration: const Duration(seconds: 1),
