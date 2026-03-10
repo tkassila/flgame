@@ -168,6 +168,7 @@ class LGameBoard extends StatelessWidget {
   final Color player1Color = Colors.redAccent;
   final Color player2Color = Colors.blueAccent;
   final Color neutralColor = Colors.black;
+  final Color moveFrameColor = Colors.black54;
 //  double containerWidth = 80;
 //  double containerHeight = 80;
   BuildContext? thisContext;
@@ -268,7 +269,7 @@ Border
       bool isCalledFromBorderMoveContainer)
   {
     Object? ret = Border.all(
-      color: Colors.black,
+      color: moveFrameColor,
       width: 7,
     );
     if (isCalledFromBorderMoveContainer) {
@@ -303,10 +304,10 @@ Border
 
     if (leftGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide.none /*BorderSide(
             width: 7,
@@ -314,11 +315,11 @@ Border
             style: BorderStyle.solid) **/,
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -327,10 +328,10 @@ Border
       if (neighBorIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol > leftGp.iCol)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide.none /* BorderSide(
               width: 7,
@@ -338,7 +339,7 @@ Border
               style: BorderStyle.solid) */ ,
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide.none /* BorderSide(
               width: 7,
@@ -352,10 +353,10 @@ Border
       if (neighBorIsLeftGp != null && leftGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol < leftGp.iCol)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide.none /* BorderSide(
               width: 7,
@@ -367,7 +368,7 @@ Border
               style: BorderStyle.solid) */,
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -377,22 +378,22 @@ Border
     else
     if (rightGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide.none /* BorderSide(
             width: 7,
             color: Colors.transparent,
             style: BorderStyle.solid) */,
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -401,18 +402,18 @@ Border
       if (neighBorIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol > rightGp.iCol)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide.none /*BorderSide(
               width: 7,
               color: Colors.transparent,
               style: BorderStyle.solid) */,
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide.none /* BorderSide(
               width: 7,
@@ -426,14 +427,14 @@ Border
       if (neighBorIsLeftGp != null && rightGp.iRow == forthLPieceGp.iRow
           && forthLPieceGp.iCol < rightGp.iCol)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide.none /* BorderSide(
               width: 7,
               color: Colors.transparent,
               style: BorderStyle.solid) */,
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide.none /* BorderSide(
               width: 7,
@@ -441,7 +442,7 @@ Border
               style: BorderStyle.solid) */,
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -452,7 +453,7 @@ Border
     else
     if (betweenGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide.none /* BorderSide(
             width: 7,
             color: Colors.transparent,
@@ -463,11 +464,11 @@ Border
             style: BorderStyle.solid) */,
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -476,22 +477,22 @@ Border
     else
     if(forthLPieceGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -503,14 +504,14 @@ Border
               || ( /*!neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
                   && forthLPieceGp.iCol > rightGp.iCol)))
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide.none /* BorderSide(
               width: 7,
@@ -518,7 +519,7 @@ Border
               style: BorderStyle.solid) */,
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -531,18 +532,18 @@ Border
               || (/* !neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
                   && forthLPieceGp.iCol < rightGp.iCol)))
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide.none /* BorderSide(
               width: 7,
@@ -796,7 +797,7 @@ Border
       bool isCalledFromBorderMoveContainer)
   {
     Object? ret = Border.all(
-      color: Colors.black,
+      color: moveFrameColor,
       width: 7,
     );
     if (isCalledFromBorderMoveContainer) {
@@ -831,18 +832,18 @@ Border
 
     if (leftGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide.none /* BorderSide(
             width: 7,
@@ -855,10 +856,10 @@ Border
       if (neighBourIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
           && forthLPieceGp.iRow > leftGp.iRow)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide.none  /* BorderSide(
               width: 7,
@@ -866,7 +867,7 @@ Border
               style: BorderStyle.solid) */,
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide.none /* BorderSide(
               width: 7,
@@ -880,18 +881,18 @@ Border
       if (neighBourIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
           && forthLPieceGp.iRow < leftGp.iRow)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide.none /* BorderSide(
               width: 7,
               color: Colors.transparent,
               style: BorderStyle.solid) */,
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide.none  /* BorderSide(
               width: 7,
@@ -905,14 +906,14 @@ Border
     else
     if (rightGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide.none /* BorderSide(
             width: 7,
@@ -920,7 +921,7 @@ Border
             style: BorderStyle.solid) */,
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -929,10 +930,10 @@ Border
       if (neighBourIsLeftGp != null && !neighBourIsLeftGp
           && forthLPieceGp.iRow > rightGp.iRow)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide.none /* BorderSide(
               width: 7,
@@ -944,7 +945,7 @@ Border
               style: BorderStyle.solid) */,
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -954,14 +955,14 @@ Border
       if (neighBourIsLeftGp != null && !neighBourIsLeftGp
           && forthLPieceGp.iRow < rightGp.iRow)
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide.none /* BorderSide(
               width: 7,
               color: Colors.transparent,
               style: BorderStyle.solid) */,
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide.none /* BorderSide(
               width: 7,
@@ -969,7 +970,7 @@ Border
               style: BorderStyle.solid) */,
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -980,14 +981,14 @@ Border
     else
     if (betweenGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide.none /* BorderSide(
             width: 7,
@@ -1004,22 +1005,22 @@ Border
     else
     if(forthLPieceGp.iPos == index)
     {
-      ret = const Border(
+      ret = Border(
         top: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         bottom: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         left: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid),
         right: BorderSide(
             width: 7,
-            color: Colors.black,
+            color: moveFrameColor,
             style: BorderStyle.solid), //BorderSide
         /* color: boxDecorationColor,
           width: 7,*/
@@ -1031,22 +1032,22 @@ Border
               || (!neighBourIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
                   && forthLPieceGp.iRow > rightGp.iRow)))
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide.none /* BorderSide(
               width: 7,
               color: Colors.transparent,
               style: BorderStyle.solid) */,
           bottom: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -1059,10 +1060,10 @@ Border
               || (!neighBourIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
                   && forthLPieceGp.iRow < rightGp.iRow)))
       {
-        ret = const Border(
+        ret = Border(
           top: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           bottom: BorderSide.none /* BorderSide(
               width: 7,
@@ -1070,11 +1071,11 @@ Border
               style: BorderStyle.solid) */,
           left: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid),
           right: BorderSide(
               width: 7,
-              color: Colors.black,
+              color: moveFrameColor,
               style: BorderStyle.solid), //BorderSide
           /* color: boxDecorationColor,
           width: 7,*/
@@ -1117,7 +1118,7 @@ Border
 
     Widget? textWidget = getTextChild(index, false);
 
-    Color textColor = Colors.black;
+    Color textColor = moveFrameColor;
     bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
            lGameSession.iArrPlayer1Pieces!.contains(index);
     bool isIn2List = lGameSession.iArrPlayer2Pieces == null ? false :
@@ -1223,7 +1224,7 @@ Border
             child: Container(
               height: 7,
               width: 7,
-              color: Colors.black /* boxDecorationColor */,
+              color: moveFrameColor /* boxDecorationColor */,
             ),
           );
         }
@@ -1274,9 +1275,10 @@ Border
     }
     Color boxDecorationColor = getBoxDecorationColor();
     Color modeColor = getMovePieceColor(index);
-    Container? container;
+    late Container? container;
 
-    BoxDecoration boxDecoration = BoxDecoration(
+    BoxDecoration boxDecoration =
+    BoxDecoration(
       color: modeColor,
       border: Border.all(
         color: boxDecorationColor,

@@ -1515,27 +1515,23 @@ class LGameSession {
          }
          if (moveLPieceSet.containsAll(foundedNumbersSet)) {
            if (bHorizon) {
-             /*
              if (iArrPlayerMovePieces!.equals([1,5,9,10]))
              {
                iArrPlayerMovePieces = [4,5,6,10];
              }
              else {
-              */
                iArrPlayerMovePieces = [1, 5, 9, 10];
-         //    }
+             }
            }
            else
              {
-               /*
                if (iArrPlayerMovePieces!.equals([4,5,6,10]))
                {
                  iArrPlayerMovePieces = [1,5,9,10];
                }
                else {
-                */
                  iArrPlayerMovePieces = [4, 5, 6, 10];
-             //  }
+               }
              }
          }
          else
@@ -1568,9 +1564,11 @@ class LGameSession {
             iArrPlayerMovePieces = [4, 5, 6, getNextFortLPosition(true)];
           }
           else {
-            iArrPlayerMovePieces = [1, 5, 9, getNextFortLPosition(true)];
+            iArrPlayerMovePieces = [1, 5, 9, getNextFortLPosition(false)];
             // iArrPlayerMovePieces!.add(getNextFortLPosition(true));
           }
+
+          /*
           Set moveLPieceSet = iArrPlayerMovePieces!.toSet();
           Set? foundedNumbersSet;
           if (playerTurn == GamePlayerTurn.player2) {
@@ -1584,9 +1582,11 @@ class LGameSession {
             }
             else
               {
-                iArrPlayerMovePieces = [1, 5, 9, getNextFortLPosition(true)];
+                iArrPlayerMovePieces = [1, 5, 9, getNextFortLPosition(false)];
               }
           }
+
+           */
          // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
             currentButtonPressed = buttonTypePressed;
             return true;

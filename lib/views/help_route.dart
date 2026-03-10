@@ -109,14 +109,16 @@ const String strHelp = r"""
     <h3>After started new L game</h3>
     
     <p>2 player has one L piece on each player. After a move L piece, a player can
-    move one of the neutral pieces. The aime of a move is showed with a move frame
+    move one of the neutral pieces. The aime of a move is showed with a black move frame
     around the piece. And a move frame is moving around the game table by pressing
-    on move yellow buttons. A move is done by pressing 'Move done' button.
-    The L piece for Player 1 has marked with one white number 1 and has color red. 
+    on move yellow buttons. When the move frame is on right place for a L move,
+    press Move done -button. The L piece for Player 1 has marked with one white number 1 and has color red. 
     And the same for Player 2 has been marked with one white number 2 and has 
-    color blue. 2 neutral pieces are black in a color. And in turn player's 
-    L move black frame is marked with black 1 or 2 number. When the hole move is
-    done, then the L move frame is around on L piece of in turn player's.
+    color blue. 2 neutral pieces has black color. And in turn player's 
+    L move black frame is marked with black 1 or 2 number. When a L move is
+    accepted, then L move frame disappears. And one neutral move frame is created
+    around one neutral button. When the hole move is done (the second done button press), 
+   then the L move frame is moved around another L piece of in turn player's.
     </p>    
 
     <h2>From Wikipedia</h2>
