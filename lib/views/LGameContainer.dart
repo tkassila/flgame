@@ -19,7 +19,8 @@ class LGameContainer extends StatelessWidget {
     required this.buttonBetweenWidth,
     required this.lGameSession,
     required this.bScreenReaderIsUsed,
-    required this.isUpdated
+    required this.isUpdated,
+    required this.gestureDetectedCallBack,
   });
   final bool isSystemNavigateMenu;
   final bool bEditPlayerNames;
@@ -31,6 +32,7 @@ class LGameContainer extends StatelessWidget {
   final Widget? textMessage;
   final double buttonBetweenWidth;
   final bool isUpdated;
+  final Function(ButtonPressed)? gestureDetectedCallBack;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,8 @@ class LGameContainer extends StatelessWidget {
         //  SizedBox(height: 10, width: buttonBetweenWidth,),
           editOrButtonContainer,
        /* RepaintBoundary(child: */ LGameBoard(lGameSession: lGameSession,
-    bScreenReaderIsUsed: bScreenReaderIsUsed,
+          bScreenReaderIsUsed: bScreenReaderIsUsed,
+          gestureDetectedCallBack: gestureDetectedCallBack,
     // notifier: _notifier,
     minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame -20,
     isUpdated: isUpdated,

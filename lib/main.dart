@@ -121,6 +121,7 @@ class MyApp extends StatelessWidget {
     // You can use the library anywhere in the app even in theme
     theme: ThemeData(
     primarySwatch: Colors.blue,
+      useMaterial3: true,
     ),
     navigatorKey: NavigationService.navigatorKey,
     home: child,
@@ -858,6 +859,35 @@ class _LGamePageState extends State<LGeamePage>
   }
    */
 
+  void gestureDetectedCallBack(ButtonPressed buttonPressed) async {
+     if (Loggerdef.isLoggerOn) {
+       Loggerdef.logger.i("gestureDetectedCallBack");
+     }
+     if (buttonPressed == ButtonPressed.left && lGameSession.bButtonLeftEnabled) {
+       buttonLeftPressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.right && lGameSession.bButtonRightEnabled) {
+       buttonRightPressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.up && lGameSession.bButtonUpEnabled) {
+       buttonUpPressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.down && lGameSession.bButtonDownEnabled) {
+       buttonDownPressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.wrap && lGameSession.bButtonWrapUpEnabled) {
+       buttonWrapUpPressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.turn90Degree && lGameSession.bButtonTurn90DegreeEnabled) {
+       buttonTurn90DegreePressed();
+     }
+  }
+
   Widget buildGameBoard2()
   {
    // lGameSession.setListBoardPiecesUpdated(false);
@@ -867,6 +897,7 @@ class _LGamePageState extends State<LGeamePage>
      // notifier: _notifier,
       minusDynamicContainerSize: ScreenValues.minusDynamicContainerSizeOfLGame,
       isUpdated: _bUpdateUI,
+      gestureDetectedCallBack: gestureDetectedCallBack,
     );
   }
 
@@ -1300,6 +1331,7 @@ class _LGamePageState extends State<LGeamePage>
           minusDynamicContainerSize:
           ScreenValues.minusDynamicContainerSizeOfLGame -20,
           isUpdated: _bUpdateUI,
+          gestureDetectedCallBack: gestureDetectedCallBack,
           /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
     //   lGameSession.setListBoardPiecesUpdated(false);
      //  lGameSession.setListMovePiecesUpdated(false);
@@ -1765,6 +1797,7 @@ class _LGamePageState extends State<LGeamePage>
         buttonBetweenWidth: buttonBetweenWidth,
         textMessage: textMessage,
         isUpdated: getCurrentUpdateUI(),
+        gestureDetectedCallBack: gestureDetectedCallBack,
     ),
      /*
        Column (

@@ -228,6 +228,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
                   minusDynamicContainerSize:
                   ScreenValues.minusDynamicContainerSizeOfLGame +10,
                   isUpdated: true,
+                  gestureDetectedCallBack: null,
               ),
               // ),
             ],

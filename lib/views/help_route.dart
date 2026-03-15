@@ -118,7 +118,13 @@ const String strHelp = r"""
     L move black frame is marked with black 1 or 2 number. When a L move is
     accepted, then L move frame disappears. And one neutral move frame is created
     around one neutral button. When the hole move is done (the second done button press), 
-   then the L move frame is moved around another L piece of in turn player's.
+   then the L move frame is moved around another L piece of in turn up's.
+   
+    In this version of the game, there are added diffrerent finger gestures over game board,
+    which are corresponding pressed move buttons: left swipe like press left button, 
+    right swipe like press right button, up swipe like press up button, 
+    down swipe like press down button, long press like press 90º button and double 
+    press like press wrap button,
     </p>    
 
     <h2>From Wikipedia</h2>
