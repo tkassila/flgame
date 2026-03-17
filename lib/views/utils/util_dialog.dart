@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../services/navigation_service.dart';
+import 'package:flutter/semantics.dart';
+import 'dart:ui';
+
+class AnnounceMessage {
+  static void announceMessage(BuildContext context, String message) {
+    // Use View.of(context) to get the current FlutterView for the announcement
+    SemanticsService.sendAnnouncement(
+      View.of(context),
+      message,
+      TextDirection.ltr,
+    );
+  }
+}
 
 Future<bool> showYesNoDialogWithContext(String strTitle, String strCancel,
     String strContinue, String strQuestion,

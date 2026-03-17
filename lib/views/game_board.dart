@@ -151,8 +151,8 @@ class LGameBoard extends StatelessWidget {
   void Function(ButtonPressed)? gestureDetectedCallBack;
  // final ValueNotifier<bool>? notifier;
 
-  int lastGestureOccurTime = 0;
-  int lastGestureOccurTime_intervalMs = 800;
+  static int lastGestureOccurTime = 0;
+  int lastGestureOccurTime_intervalMs = 500;
   Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
  // late StackGridContainer _stackGridContainerOfListBoardSquares;
@@ -2392,30 +2392,52 @@ Border
             gestureDetectedCallBack!(ButtonPressed.turn90Degree);
           }
         },
+        /*
+        onSecondaryLongPress: () {
+           if (gestureDetectedCallBack != null) {
+            final now = DateTime.now().millisecondsSinceEpoch;
+            if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+              return;
+            }
+            lastGestureOccurTime = now;
+            gestureDetectedCallBack!(ButtonPressed.moveDone);
+          }
+        },
+
+         */
         onPanUpdate: (details) {
+       // onVerticalDragUpdate: (DragUpdateDetails details) {
           // Delta dx < 0 means moving towards the left
           if (details.delta.dx < 0) {
-           // print("Dragging Left");
+            // print("Dragging Left");
             if (gestureDetectedCallBack != null) {
-              final now = DateTime.now().millisecondsSinceEpoch;
-              if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+              final now = DateTime
+                  .now()
+                  .millisecondsSinceEpoch;
+              if ((now - lastGestureOccurTime) <
+                  lastGestureOccurTime_intervalMs) {
                 return;
               }
               lastGestureOccurTime = now;
               gestureDetectedCallBack!(ButtonPressed.left);
             }
           } else if (details.delta.dx > 0) {
-           // print("Dragging Right");
+            // print("Dragging Right");
             if (gestureDetectedCallBack != null) {
-              final now = DateTime.now().millisecondsSinceEpoch;
-              if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+              final now = DateTime
+                  .now()
+                  .millisecondsSinceEpoch;
+              if ((now - lastGestureOccurTime) <
+                  lastGestureOccurTime_intervalMs) {
                 return;
               }
               lastGestureOccurTime = now;
               gestureDetectedCallBack!(ButtonPressed.right);
             }
           }
-          else
+      //  },
+       else
+//       onHorizontalDragUpdate: (DragUpdateDetails details) {
           if (details.delta.dy < 0) {
           //  print("Dragging up");
             if (gestureDetectedCallBack != null) {

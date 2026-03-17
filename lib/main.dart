@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:flgame/ParameterValues.dart';
 import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
@@ -251,6 +253,7 @@ class _LGamePageState extends State<LGeamePage>
   }
 
   bool bGameIsFormat = true;
+  String ? oldMsg = null;
  // BuildContext? thisContext;
   LGameSession lGameSession = LGameSession();
   SelectedLGameSessionData? selectedLGameSessionData;
@@ -281,11 +284,13 @@ class _LGamePageState extends State<LGeamePage>
   Widget? buttonDown;
   Widget? buttonWrapUp;
   Widget? buttonSwitchNeutral;
+  Widget? buttonSwitchNeutralScreenReader;
   Widget? buttonLeft;
   Widget? buttonRight;
   Widget? buttonStartGame;
   Widget? buttonTurn90Degree;
   Widget? buttonMoveDone;
+  Widget? buttonMoveDoneScreenReader;
   Widget? buttonHelp;
   Widget? textMessage;
   // bool bScreenReaderIsUsed = true;
@@ -1035,6 +1040,23 @@ class _LGamePageState extends State<LGeamePage>
     ),
   );
 
+    buttonSwitchNeutralScreenReader = null;
+    if (widget.bScreenReaderIsUsed) {
+      buttonSwitchNeutralScreenReader = Semantics(
+        readOnly: true,
+        label: strNeutral,
+        hint: "$strNeutral button",
+        child: ElevatedButton(
+          style: buttonStyle,
+          onPressed: lGameSession.bButtonSwitchNeutralEnabled ? () {} : null,
+          onLongPress: lGameSession.bButtonSwitchNeutralEnabled
+              ? buttonSwitchNeutralPressed
+              : null,
+          child: Text(strNeutral),
+        ),
+      );
+    }
+
     buttonTurn90Degree = Semantics(
       readOnly: true,
   label: "Turn 90º",
@@ -1068,6 +1090,22 @@ class _LGamePageState extends State<LGeamePage>
        child: const Text('Move Done'),
        ),
      );
+
+     buttonMoveDoneScreenReader = null;
+   if (widget.bScreenReaderIsUsed) {
+      buttonMoveDoneScreenReader = Semantics(
+      readOnly: true,
+      label: "Move Done",
+      hint: "Move Done button",
+      child: ElevatedButton(
+        style: buttonStyle,
+        onPressed: lGameSession.bButtonMoveDoneEnabled ? (){}
+              : null,
+        onLongPress: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
+        child: const Text('Move Done'),
+      ),
+    );
+   }
 
      if (lGameSession.bGameIsOver)
      {
@@ -1548,6 +1586,7 @@ class _LGamePageState extends State<LGeamePage>
     _bUpdateUI = false;
     return ret;
   }
+
   @override
   Widget build(BuildContext context) {
     /*
@@ -1555,6 +1594,7 @@ class _LGamePageState extends State<LGeamePage>
         MediaQuery.of(context).systemGestureInsets;
     isSystemNavigateMenu = systemGestureInsets.left > 0;
      */
+
     if (bGameIsFormat)
       {
         _buildBoard = buildGameBoard();
@@ -1577,6 +1617,7 @@ class _LGamePageState extends State<LGeamePage>
     final deviceHeight = MediaQuery.of(context).size.height;
     final availableHeight = deviceHeight - AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top;
+    final availableWidth = MediaQuery.of(context).size.width;
     /*
     ScreenValues screenValues = ScreenValues();
     screenValues.availableHeight = deviceHeight;
@@ -1591,6 +1632,13 @@ class _LGamePageState extends State<LGeamePage>
       Loggerdef.endTime = DateTime.now();
       Loggerdef.logger.i("end duration: ${Loggerdef.getDurationString()}");
     }
+
+    if (widget.bScreenReaderIsUsed && lGameSession.msg.isNotEmpty
+        && lGameSession.msg != oldMsg) {
+      AnnounceMessage.announceMessage(context, lGameSession.msg);
+      oldMsg = lGameSession.msg;
+    }
+
     return SafeArea(
         top: true, // applies padding at the top
         bottom: true, // applies padding at the bottom
@@ -1774,7 +1822,27 @@ class _LGamePageState extends State<LGeamePage>
               minHeight: newHeight /* MediaQuery.of(context).size.height */,
             ),
             child: IntrinsicHeight(
-              child: */ Container(
+              child: */
+          Column(children: [
+            if (buttonMoveDoneScreenReader != null)
+              Container(
+                width: availableWidth,
+             //   color: Theme.of(context).colorScheme.inversePrimary,
+                  decoration: BoxDecoration(
+                    color:  Theme.of(context).colorScheme.inversePrimary,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      width: 5,
+                    ),
+                  ),
+                child:
+                Row(children: [
+                buttonSwitchNeutralScreenReader!,
+                buttonMoveDoneScreenReader!,
+                ],
+                ),
+              ),
+          Container(
        height: newHeight,
     decoration: BoxDecoration(
     color:  Colors.white70,
@@ -1786,7 +1854,6 @@ class _LGamePageState extends State<LGeamePage>
     child:
     /* buildGameBoard() */ bInitGameBoard ? initBoard() :
      /* _bUpdateUI ? */ /*buildUpdatedBoard() */
-
     LGameContainer(isSystemNavigateMenu: isSystemNavigateMenu,
         //  notifier: _notifier,
         bEditPlayerNames: bEditPlayerNames,
@@ -1842,6 +1909,8 @@ class _LGamePageState extends State<LGeamePage>
       */
        /* : _buildBoard */ ),
         //   if (isSystemNavigateMenu) SizedBox(height: 30,),
+          ],
+      ),
       ),
       ),
     //  ),
