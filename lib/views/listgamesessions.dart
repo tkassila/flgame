@@ -51,8 +51,8 @@ class ListGameSessions extends StatefulWidget {
   final String strDeleteTitle;
   final String strDeleteAsk;
   final List<LGameSessionData> listDataSessions;
-  /* final */ LGameSessionFunctionCallback lGameSessionRemoveFunctionCallback;
-  /* final */ LGameSessionSelectedFunctionCallback lGameSessionSelectedFunctionCallback;
+  final LGameSessionFunctionCallback lGameSessionRemoveFunctionCallback;
+  final LGameSessionSelectedFunctionCallback lGameSessionSelectedFunctionCallback;
   final ScrollController scrollController;
   final bool bScreenReaderIsUsed;
   final int indexBackgroundColor;

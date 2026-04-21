@@ -1,4 +1,6 @@
 // import 'package:audioplayers/audioplayers.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
@@ -36,6 +38,82 @@ enum ButtonPressed {
   turn90Degree,
   moveDone,
   swiftIntoNextNeutral,
+}
+
+enum LGamePieceAndFrameFlow {
+  newGame,
+  lPieceFrameMove,
+  lPieceMoveDone,
+  neutralFrameMove,
+  neutralMoveDone,
+  gameOver
+}
+
+class ButtonFlowBeforeAndAfterCalculateMove {
+  int iFlowPlayer = 0;
+ // int iPrevFlowPlayer = 0;
+  LGamePieceAndFrameFlow currentFlow = LGamePieceAndFrameFlow.newGame;
+ // LGamePieceAndFrameFlow prevFlow = LGamePieceAndFrameFlow.gameOver;
+  Set iArrPlayer1PiecesSet = List.empty(growable: true).toSet();
+  Set iArrPlayer2PiecesSet = List.empty(growable: true).toSet();
+  Set before_iArrPlayer1PiecesSet = List.empty(growable: true).toSet();
+  Set before_iArrPlayer2PiecesSet = List.empty(growable: true).toSet();
+  Set iArrFrameMoveSet = List.empty(growable: true).toSet();
+  Set before_iArrFrameMoveSet = List.empty(growable: true).toSet();
+
+  /*
+  void copyOfArrCurrentPieceMove(List<int>? values, int pICurrentPlayer)
+  {
+    if (values == null)
+    {
+      return;
+    }
+    if (values.isNotEmpty) {
+      iArrCurrentPieceMove.clear();
+      iArrCurrentPieceMove.addAll(values);
+      iCurrentFlowPlayer = pICurrentPlayer;
+    }
+  }
+
+  void copyOfArrBeforeLastPieceMove(List<int>? values, int pICurrentPlayer)
+  {
+    if (values == null)
+    {
+      return;
+    }
+    if (values.isNotEmpty) {
+      iArrBeforeLastPieceMove.clear();
+      iArrBeforeLastPieceMove.addAll(values);
+      iCurrentFlowPlayer = pICurrentPlayer;
+    }
+  }
+
+  void copyOfArrCurrentFrameMove(List<int>? values, int pICurrentFlow)
+  {
+    if (values == null)
+    {
+      return;
+    }
+    if (values.isNotEmpty) {
+      iArrCurrentFrameMove.clear();
+      iArrCurrentFrameMove.addAll(values);
+      iCurrentFlowPlayer = pICurrentFlow;
+    }
+  }
+
+  void copyOfArrBeforeLastFrameMove(List<int>? values, int pICurrentFlow)
+  {
+    if (values == null)
+    {
+      return;
+    }
+    if (values.isNotEmpty) {
+      iArrBeforeLastFrameMove.clear();
+      iArrBeforeLastFrameMove.addAll(values);
+      pICurrentFlow = pICurrentFlow;
+    }
+  }
+   */
 }
 
 class  GameBoardPositionSeries {
@@ -190,7 +268,7 @@ class HiveLGameSessionData extends HiveObject {
   @HiveField(1)
   List<LGameSessionData>? unFinishedGames;
 
-  @HiveField(2) //uinque id for each field
+  @HiveField(2) //unique id for each field
   List<LGameSessionData>? finishedGames;
 
   @HiveField(3)
@@ -209,6 +287,20 @@ class SelectedLGameSessionData {
   final selectedAtTime = DateTime.now().toString();
   final LGameSessionData? gameSessionData;
   SelectedLGameSessionData(this.gameSessionData);
+}
+
+class LGameSessionUpdated {
+  static List<bool> listBoardSquareUpdated = List<bool>.filled(16, false);
+  static void setListBoardSquareUpdated(int index, bool bValue)
+  {
+    listBoardSquareUpdated[index] = bValue;
+  }
+  static void fillList16FalseValues()
+  {
+    // listBoardSquareUpdated.clear();
+    listBoardSquareUpdated = List<bool>.filled(16, false);
+  }
+
 }
 
 class LGameSession {
@@ -238,6 +330,20 @@ class LGameSession {
   }
    */
 
+  bool getUseEarlierStackWidget(int index)
+  {
+     bool ret = false;
+     if (index < 0 || index > 15) {
+       return false;
+     }
+     if (LGameSessionUpdated.listBoardSquareUpdated.isEmpty) {
+       return false;
+     }
+     Set listBoardPiecesUpdateSet = LGameSessionUpdated.listBoardSquareUpdated.toSet();
+   //  return listBoardPiecesUpdateSet[index];
+    return LGameSessionUpdated.listBoardSquareUpdated[index];
+  }
+
   // var freeElements;
   bool bScreenReaderIsUsed = false;
   void setScreenReaderIsUsed(bool bValue)
@@ -253,6 +359,7 @@ class LGameSession {
   List<int>? iArrPlayer1Pieces;
   List<int>? iArrPlayer2Pieces;
   List<int>? iArrPlayerMovePieces;
+  ButtonFlowBeforeAndAfterCalculateMove lGameButtonFlow = ButtonFlowBeforeAndAfterCalculateMove();
   List<int>? iArrPlayerPossibleMovePieces;
   List<GameBoardPosition>? arrBoardSquares;
   int? iPlayerMove;
@@ -282,7 +389,9 @@ class LGameSession {
   int iNextFortLPosition = 0;
   int? iPlayerNeutral1Piece;
   int? iPlayerNeutral1PieceInBeginningMove;
+//  int? iBeforeLastMovePlayerNeutral1PieceInBeginningMove = null;
   int? iPlayerNeutral2PieceInBeginningMove;
+//  int? iBeforeLastMovePlayerNeutral2PieceInBeginningMove = null;
   int? iPlayerNeutral2Piece;
   bool bGameIsOver = false;
   String? startedAt;
@@ -331,18 +440,18 @@ class LGameSession {
     String strTop = "";
     Set iArrPlayer1PieceSet = iArrPlayer1Pieces!.toSet();
     if (iArrPlayer1PieceSet.contains(index)) {
-      strBottom = " moved: L1";
+      strBottom = " L1";
     }
     Set iArrPlayer2PieceSet = iArrPlayer2Pieces!.toSet();
     if (iArrPlayer2PieceSet.contains(index)) {
-      strBottom = " moved: L2";
+      strBottom = " L2";
     }
     else {
       if (iPlayerNeutral1Piece != null && iPlayerNeutral1Piece! == index) {
-        strBottom = " moved: N1";
+        strBottom = " Neutral 1";
       }
       else if (iPlayerNeutral2Piece != null && iPlayerNeutral2Piece! == index) {
-        strBottom = " moved: N2";
+        strBottom = " Neutral 2";
       }
     }
 
@@ -370,20 +479,25 @@ class LGameSession {
           player = "2";
         }
         if (inMovingPiece == LGamePieceInMove.neutral) {
-          strMoving = "N";
+          strMoving = "Neutral";
         }
-        strTop = " moving: $strMoving$player";
+        strTop = " frame: $strMoving$player";
       }
     }
 
     if (strBottom.isEmpty && strTop.isEmpty) {
       return "Free";
     }
+
     if (strBottom.isEmpty) {
       strBottom = "bottom: Free";
     }
+    else
+    if (strTop.isNotEmpty) {
+      strBottom = "bottom: $strBottom";
+    }
 
-    return "$strTop\n$strBottom";
+    return "$strTop\n\n$strBottom";
   }
 
   void disAbleButtonsForGameOver()
@@ -419,7 +533,7 @@ class LGameSession {
     return ret;
   }
 
-  Future<bool?> switchTurn(bool bStartNewGame) async
+  Future<bool?> _switchTurn(bool bStartNewGame) async
    {
     bButtonSwitchNeutralEnabled = false;
     bButtonTurn90DegreeEnabled = true;
@@ -428,6 +542,7 @@ class LGameSession {
       playerTurn = GamePlayerTurn.player1;
       inMovingPiece = LGamePieceInMove.LPiece;
       bButtonWrapUpEnabled = true;
+    //  lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, 1);
       iArrPlayerMovePieces = [... iArrPlayer1Pieces!];
       iPlayerMove = 1;
       iActiveNeutral = 1;
@@ -439,6 +554,12 @@ class LGameSession {
         playerTurn = GamePlayerTurn.player2;
         inMovingPiece = LGamePieceInMove.LPiece;
         bButtonWrapUpEnabled = true;
+        int iPlayer = 1;
+        if (playerTurn == GamePlayerTurn.player2) {
+          iPlayer = 2;
+        }
+       // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!,
+         //   iPlayer);
         iArrPlayerMovePieces = [... iArrPlayer2Pieces!];
         msg = "Player 2: move L piece";
         iActiveNeutral = 1;
@@ -468,6 +589,7 @@ class LGameSession {
       playerTurn = GamePlayerTurn.player1;
       inMovingPiece = LGamePieceInMove.LPiece;
       bButtonWrapUpEnabled = true;
+     // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, 1);
       iArrPlayerMovePieces = [... iArrPlayer1Pieces!];
       msg = "Player 1: move L piece";
       iActiveNeutral = 1;
@@ -607,6 +729,11 @@ class LGameSession {
       bButtonTurn90DegreeEnabled = true;
       iArrPlayer1Pieces = [... startIArrPlayer1Pieces];
       iArrPlayer2Pieces = [... startIArrPlayer2Pieces];
+      int iPlayer = 1;
+      if (playerTurn == GamePlayerTurn.player2) {
+        iPlayer = 2;
+      }
+    //  lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!,iPlayer);
       iArrPlayerMovePieces = [... iArrPlayer1Pieces!];
 //    iArrPlayerMovePieces = [... startIArrPlayer2Pieces];
       bButtonUpEnabled = true;
@@ -619,7 +746,7 @@ class LGameSession {
       bButtonMoveDoneEnabled = true;
      iPlayerNeutral1Piece = startIPlayerNeutral1Piece;
      iPlayerNeutral2Piece = startIPlayerNeutral2Piece;
-      switchTurn(true);
+      _switchTurn(true);
       return true;
   }
 
@@ -1400,6 +1527,98 @@ class LGameSession {
     return ret;
   }
 
+  /*
+  bool _getPieceUpdated(int index)
+  {
+    bool ret = false;
+     if (index < 0 || index > 15) {
+       return ret;
+     }
+     // TODO: IMPLEMTATION!!
+     return ret;
+  }
+   */
+
+
+  void setBeforeVariableValues()
+  {
+    LGameSessionUpdated.fillList16FalseValues();
+    listBoardPiecesUpdated = true;
+    lGameButtonFlow.before_iArrPlayer1PiecesSet = iArrPlayer1Pieces!.toSet();
+    lGameButtonFlow.before_iArrPlayer2PiecesSet = iArrPlayer2Pieces!.toSet();
+    lGameButtonFlow.before_iArrFrameMoveSet = iArrPlayerMovePieces!.toSet();
+  }
+
+  void setAfterVariableValues() {
+    lGameButtonFlow.iArrPlayer1PiecesSet = iArrPlayer1Pieces!.toSet();
+    lGameButtonFlow.iArrPlayer2PiecesSet = iArrPlayer2Pieces!.toSet();
+    lGameButtonFlow.iArrFrameMoveSet = iArrPlayerMovePieces!.toSet();
+    if (!setEquals(lGameButtonFlow.iArrPlayer1PiecesSet,
+        lGameButtonFlow.before_iArrPlayer1PiecesSet))
+      {
+        listBoardPiecesUpdated = true;
+        List<dynamic> iArray = lGameButtonFlow.iArrPlayer1PiecesSet.toList();
+        bool lPieceMoved = false;
+        for(var i = 0; i < iArray.length; i++)
+        {
+          LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+          lPieceMoved = true;
+        }
+        iArray = lGameButtonFlow.before_iArrPlayer1PiecesSet.toList();
+        for(var i = 0; i < iArray.length; i++)
+          {
+            LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+          }
+          if (bScreenReaderIsUsed && lPieceMoved)
+          {
+             msg = "Player 1 has moved L Piece.";
+          }
+      }
+      if (!setEquals(lGameButtonFlow.iArrPlayer2PiecesSet,
+          lGameButtonFlow.before_iArrPlayer2PiecesSet))
+        {
+          listBoardPiecesUpdated = true;
+          bool lPieceMoved = false;
+          List<dynamic> iArray = lGameButtonFlow.iArrPlayer2PiecesSet.toList();
+          for(var i = 0; i < iArray.length; i++)
+            {
+              LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+              lPieceMoved = true;
+            }
+            iArray = lGameButtonFlow.before_iArrPlayer2PiecesSet.toList();
+            for(var i = 0; i < iArray.length; i++)
+              {
+                LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+              }
+          if (bScreenReaderIsUsed && lPieceMoved)
+          {
+            msg = "Player 2 has moved L Piece.";
+          }
+        }
+
+    if (!setEquals(lGameButtonFlow.iArrFrameMoveSet,
+        lGameButtonFlow.before_iArrFrameMoveSet))
+    {
+      listBoardPiecesUpdated = true;
+      List<dynamic> iArray = lGameButtonFlow.iArrFrameMoveSet.toList();
+      bool lPieceFrameMoved = false;
+      for(var i = 0; i < iArray.length; i++)
+      {
+        LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+        lPieceFrameMoved = true;
+      }
+      iArray = lGameButtonFlow.before_iArrFrameMoveSet.toList();
+      for(var i = 0; i < iArray.length; i++)
+      {
+        LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+      }
+      if (bScreenReaderIsUsed && lPieceFrameMoved)
+      {
+        msg = "Player has moved Piece frame.";
+      }
+    }
+  }
+
   Future<bool> calculatePossibleMovePieces(ButtonPressed buttonTypePressed) async
   {
     bool ret = true;
@@ -1408,6 +1627,7 @@ class LGameSession {
       return false;
     }
 
+    setBeforeVariableValues();
     listMovePiecesUpdated = false;
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
@@ -1423,6 +1643,7 @@ class LGameSession {
        if (bValue) {
          currentButtonPressed = buttonTypePressed;
          listMovePiecesUpdated = true;
+         setAfterVariableValues();
        }
 
        return bValue;
@@ -1463,11 +1684,25 @@ class LGameSession {
         //  calculatePossibleMovePieces(DirectionButtonPressed.wrapDown
         // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
         currentButtonPressed = buttonTypePressed;
+        /*
+              .asMap().forEach((index, value) {
+            if (value == true) {
+              data[index] = false;
+            }
+          });
+         */
+          setAfterVariableValues();
         return true;
       }
 
+    int iPlayer = 1;
+    if (playerTurn == GamePlayerTurn.player2) {
+      iPlayer = 2;
+    }
+   // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, iPlayer);
     iArrPlayerPossibleMovePieces = [... iArrPlayerMovePieces! ];
-    if (iArrPlayerPossibleMovePieces == null || iArrPlayerPossibleMovePieces!.isEmpty) {
+    if (iArrPlayerPossibleMovePieces == null
+        || iArrPlayerPossibleMovePieces!.isEmpty) {
       beep(false);
       return false;
     }
@@ -1545,6 +1780,7 @@ class LGameSession {
        }
       // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
        currentButtonPressed = buttonTypePressed;
+       setAfterVariableValues();
        return true;
     }
     else
@@ -1589,6 +1825,7 @@ class LGameSession {
            */
          // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
             currentButtonPressed = buttonTypePressed;
+          setAfterVariableValues();
             return true;
       }
       beep(false);
@@ -1625,6 +1862,7 @@ class LGameSession {
     }
       iArrPlayerMovePieces = iNewArrPlayerPossibleMovePieces;
 
+    setAfterVariableValues();
     ret = true;
    // await di<LGameDateService>().setActiveGame(getGamePositionsForSaveGame());
     return ret;
@@ -1692,16 +1930,32 @@ class LGameSession {
     bButtonTurn90DegreeEnabled = false;
     if (iActiveNeutral == 1) {
 //      iArrPlayer1Pieces = iArrPlayerMovePieces;
+      int iPlayer = 1;
+      if (playerTurn == GamePlayerTurn.player2) {
+        iPlayer = 2;
+      }
+     // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!,
+       //   iPlayer);
       iArrPlayerMovePieces = [ iPlayerNeutral1Piece!];
+  //    iBeforeLastMovePlayerNeutral1PieceInBeginningMove = iPlayerNeutral1Piece!;
       iPlayerNeutral1PieceInBeginningMove = iPlayerNeutral1Piece!;
       iPlayerNeutral2PieceInBeginningMove = null;
+     // iBeforeLastMovePlayerNeutral2PieceInBeginningMove = null;
     }
     else
     {
 //      iArrPlayer1Pieces = iArrPlayerMovePieces;
+      int iPlayer = 1;
+      if (playerTurn == GamePlayerTurn.player2) {
+        iPlayer = 2;
+      }
+    //  lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!,
+      //    iPlayer);
       iArrPlayerMovePieces = [ iPlayerNeutral2Piece!];
+     // iBeforeLastMovePlayerNeutral2PieceInBeginningMove = iPlayerNeutral2Piece!;
       iPlayerNeutral2PieceInBeginningMove = iPlayerNeutral2Piece!;
       iPlayerNeutral1PieceInBeginningMove = null;
+    //  iBeforeLastMovePlayerNeutral1PieceInBeginningMove = null;
     }
   //  calculateFreeElements();
   }
@@ -1719,9 +1973,11 @@ class LGameSession {
       }
        */
       if (playerTurn == GamePlayerTurn.player1) {
+      //  lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, 1);
         iPlayerPresentPos = [ ... iArrPlayer1Pieces!];
         iPlayerOpponentPresentPos = [ ... iArrPlayer2Pieces!];
       } else {
+       // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, 2);
         iPlayerPresentPos = [ ... iArrPlayer2Pieces!];
         iPlayerOpponentPresentPos = [ ... iArrPlayer1Pieces!];
       }
@@ -1775,7 +2031,7 @@ class LGameSession {
             iPlayerNeutral2PieceInBeginningMove = null;
              */
          // }
-          switchTurn(false);
+          _switchTurn(false);
        return true;
      }
 
@@ -1815,7 +2071,7 @@ class LGameSession {
           }
         }
         modifiedAt = DateTime.now();
-        switchTurn(false);
+        _switchTurn(false);
 
       ret = true;
     }
@@ -1869,9 +2125,6 @@ class LGameSession {
      */
 
     Set freeElements = calculateFreeElements();
-    if (freeElements == null) {
-      return true;
-    }
     if (freeElements.isEmpty) {
       return true;
     }
@@ -2130,7 +2383,6 @@ class LGameSession {
     */
   }
 
-  @override
   void dispose() {
   }
 
@@ -2170,3 +2422,9 @@ class LGameSession {
    */
 
 }
+
+/*
+Set<Bool> ddd extension on Set<dynamic> {
+  bool operator [](int other) {}
+}
+*/

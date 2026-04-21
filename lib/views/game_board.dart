@@ -1,16 +1,18 @@
 
-import 'dart:math';
 
-import 'package:flgame/main.dart';
+// import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:logger/logger.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:multi_finger_gesture_detector/multi_finger_gesture_detector.dart';
 
 import '../ParameterValues.dart';
 import '../models/lgame_data.dart';
 import '../LoggerDef.dart';
+// import 'utils/uniquegestructurehandler.dart';
 
 /*
 var logger = Logger(
@@ -30,6 +32,30 @@ enum SHADOWBOXPOSITION {
   TOPSHADOWBOX, LEFTSHADOWBOX, BOTTOMSHADOWBOX, RIGHTSHADOWBOX
 }
 
+/*
+class Disposer extends StatefulWidget {
+  final void Function() dispose;
+  const Disposer({super.key, required this.dispose});
+
+  @override
+  DisposerState createState() {
+    return DisposerState();
+  }
+}
+
+class DisposerState extends State<Disposer> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.shrink();
+  }
+
+  @override
+  void dispose() {
+    widget.dispose();
+    super.dispose();
+  }
+}
+ */
 class StackGridContainer extends StatelessWidget {
   final int containerIndex = 16; // To differentiate containers
   final List<Widget?> listContainers;
@@ -37,23 +63,26 @@ class StackGridContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: ScreenValues.containerWidth *4,
-      height: ScreenValues.containerWidth *4,
-      child: GridView.builder( // The 16 smaller grid items
-        physics: const NeverScrollableScrollPhysics(), // Prevents inner scrolling
-        padding: const EdgeInsets.all(0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4, // 4x4 grid
-          childAspectRatio: 1.0, // Square items
-//          crossAxisSpacing: 2.0,
-//          mainAxisSpacing: 2.0,
-        ),
-        itemCount: containerIndex,
-        itemBuilder: (context, index) {
-          return listContainers[index] ?? Container();
-          // return listContainers[index]!;
-        }
+    ObjectKey objectKey = ObjectKey(DateTime.now());
+    return /* RepaintBoundary(
+      child: */ SizedBox(key: objectKey,
+        width: ScreenValues.containerWidth * 4,
+        height: ScreenValues.containerWidth * 4,
+        child: /* Container(
+          color: Colors.black,
+          child: */ GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.all(0.5),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: containerIndex,
+          itemBuilder: (context, index) {
+            return listContainers[index] ?? SizedBox.shrink();
+          },
+     //   ),
+     //   ),
       ),
     );
   }
@@ -136,6 +165,13 @@ class StackColumnRows extends StatelessWidget {
 }
 */
 
+/*
+class EarlierStackWidgets {
+  static List<Widget> earlierListBoardStack =
+      List<Widget>.empty(growable: true);
+}
+ */
+
 class LGameBoard extends StatelessWidget {
   LGameBoard({super.key, required this.lGameSession,
     required this.bScreenReaderIsUsed,
@@ -152,9 +188,11 @@ class LGameBoard extends StatelessWidget {
  // final ValueNotifier<bool>? notifier;
 
   static int lastGestureOccurTime = 0;
+  static int oneTab_lastGestureOccurTime = 0;
   int lastGestureOccurTime_intervalMs = 500;
-  Widget? _gameBoardGrid;
+ // Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
+  late List<Widget> _listScreenReader = List<Widget>.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListBoardSquares;
   late List<Container?> _listBoardPieces = List.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListBoardPieces;
@@ -163,7 +201,11 @@ class LGameBoard extends StatelessWidget {
 //  List<Container> _listMovePieceShadowContainers = List<Container>.empty(growable: true);
 //  List<Container> _listMovePieceShadowCenterContainers = List<Container>.empty(growable: true);
   late List<Container> _listMoveBorderSquares = List<Container>.empty(growable: true);
- // late StackGridContainer _stackGridContainerOfListMoveBorderSquares;
+  late StackGridContainer? _stackMoveBorderSquares;
+  late StackGridContainer? _stackMoveSquares;
+  late StackGridContainer? _stackBoardSquares;
+  late StackGridContainer? _stackScreenReader;
+  late StackGridContainer? _stackBoardPieces;
   late List<Border?>  _listMoveBorders;
   BorderInnerSquarePosition? innerSquarePosition;
   late List<Container?> _listMoveSquares = List<Container?>.empty(growable: true);
@@ -210,8 +252,11 @@ class LGameBoard extends StatelessWidget {
     }
 
     _listBoardSquares = List.generate(16,  (index) {
-      return getBoardSquaresContainer(index);
+      return _getBoardSquaresContainer(index);
     });
+
+    ObjectKey objectKey = ObjectKey(DateTime.now());
+    _stackBoardSquares = StackGridContainer(key: objectKey, listContainers: _listBoardSquares);
 
     // _stackGridContainerOfListBoardSquares = StackGridContainer(listContainers: _listBoardSquares);
 
@@ -289,17 +334,17 @@ Border
     GameBoardPosition leftGp = l3SeriesList.first;
     GameBoardPosition rightGp = l3SeriesList.last;
     GameBoardPosition betweenGp = l3SeriesList[1];
-    GameBoardPosition? neighbour;
+    GameBoardPosition? neighbor;
     bool? neighBorIsLeftGp;
     if (leftGp.iRow == forthLPieceGp.iRow)
     {
       neighBorIsLeftGp = true;
-      neighbour = leftGp;
+      neighbor = leftGp;
     }
     else
     if (rightGp.iRow == forthLPieceGp.iRow)
     {
-      neighbour = rightGp;
+      neighbor = rightGp;
       neighBorIsLeftGp = false;
     }
     if (Loggerdef.isLoggerOn) {
@@ -503,9 +548,9 @@ Border
       );
 
       if (neighBorIsLeftGp != null
-          && (( /* neighBourIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
+          && (( /* neighBorIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
               && forthLPieceGp.iCol > leftGp.iCol)
-              || ( /*!neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
+              || ( /*!neighBorIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
                   && forthLPieceGp.iCol > rightGp.iCol)))
       {
         ret = Border(
@@ -531,9 +576,9 @@ Border
       }
 
       if (neighBorIsLeftGp != null
-          && ((/* neighBourIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
+          && ((/* neighBorIsLeftGp && */ forthLPieceGp.iRow == leftGp.iRow
               && forthLPieceGp.iCol < leftGp.iCol)
-              || (/* !neighBourIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
+              || (/* !neighBorIsLeftGp && */ forthLPieceGp.iRow == rightGp.iRow
                   && forthLPieceGp.iCol < rightGp.iCol)))
       {
         ret = Border(
@@ -597,9 +642,6 @@ Border
     {
       //  lGameSession.calculateFreeElements();
       Set freeElements = lGameSession.calculateFreeElements();
-      if (freeElements == null) {
-        return ret;
-      }
       if (freeElements.isEmpty) {
         return ret;
       }
@@ -685,7 +727,7 @@ Border
         }
 
         if (!isCalledFromBorderMoveContainer) {
-          ret = getMoveDecorationBorderWithBorderSidesForRow(
+          ret = _getMoveDecorationBorderWithBorderSidesForRow(
                   index, rowSeries.series, forthLPieceGp, boxDecorationColor);
         } else {
           ret = _getPrivateMoveDecorationBorderWithBorderSidesForRow(
@@ -774,7 +816,7 @@ Border
   }
 
   Border
-  getMoveDecorationBorderWithBorderSidesForRow(int index,
+  _getMoveDecorationBorderWithBorderSidesForRow(int index,
       List<GameBoardPosition>? l3SeriesList,
       GameBoardPosition forthLPieceGp,
       Color boxDecorationColor)
@@ -817,21 +859,21 @@ Border
     GameBoardPosition leftGp = l3SeriesList.first;
     GameBoardPosition rightGp = l3SeriesList.last;
     GameBoardPosition betweenGp = l3SeriesList[1];
-    GameBoardPosition? neighbour;
-    bool? neighBourIsLeftGp;
+    GameBoardPosition? neighbor;
+    bool? neighBorIsLeftGp;
     if (leftGp.iCol == forthLPieceGp.iCol)
     {
-      neighBourIsLeftGp = true;
-      neighbour = leftGp;
+      neighBorIsLeftGp = true;
+      neighbor = leftGp;
     }
     else
     if (rightGp.iCol == forthLPieceGp.iCol)
     {
-      neighbour = rightGp;
-      neighBourIsLeftGp = false;
+      neighbor = rightGp;
+      neighBorIsLeftGp = false;
     }
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("neighBourIsLeftGp $neighBourIsLeftGp");
+      Loggerdef.logger.i("neighBorIsLeftGp $neighBorIsLeftGp");
     }
 
     if (leftGp.iPos == index)
@@ -857,7 +899,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
+      if (neighBorIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
           && forthLPieceGp.iRow > leftGp.iRow)
       {
         ret = Border(
@@ -882,7 +924,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
+      if (neighBorIsLeftGp != null && leftGp.iCol == forthLPieceGp.iCol
           && forthLPieceGp.iRow < leftGp.iRow)
       {
         ret = Border(
@@ -931,7 +973,7 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null && !neighBourIsLeftGp
+      if (neighBorIsLeftGp != null && !neighBorIsLeftGp
           && forthLPieceGp.iRow > rightGp.iRow)
       {
         ret = Border(
@@ -956,7 +998,7 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null && !neighBourIsLeftGp
+      if (neighBorIsLeftGp != null && !neighBorIsLeftGp
           && forthLPieceGp.iRow < rightGp.iRow)
       {
         ret = Border(
@@ -1030,10 +1072,10 @@ Border
           width: 7,*/
       );
 
-      if (neighBourIsLeftGp != null
-          && ((neighBourIsLeftGp && forthLPieceGp.iCol == leftGp.iCol
+      if (neighBorIsLeftGp != null
+          && ((neighBorIsLeftGp && forthLPieceGp.iCol == leftGp.iCol
               && forthLPieceGp.iRow > leftGp.iRow)
-              || (!neighBourIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
+              || (!neighBorIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
                   && forthLPieceGp.iRow > rightGp.iRow)))
       {
         ret = Border(
@@ -1058,10 +1100,10 @@ Border
         );
       }
 
-      if (neighBourIsLeftGp != null
-          && ((neighBourIsLeftGp && forthLPieceGp.iCol == leftGp.iCol
+      if (neighBorIsLeftGp != null
+          && ((neighBorIsLeftGp && forthLPieceGp.iCol == leftGp.iCol
               && forthLPieceGp.iRow < leftGp.iRow)
-              || (!neighBourIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
+              || (!neighBorIsLeftGp && forthLPieceGp.iCol == rightGp.iCol
                   && forthLPieceGp.iRow < rightGp.iRow)))
       {
         ret = Border(
@@ -1091,7 +1133,7 @@ Border
     return ret;
   }
 
-  Color getMovePieceColor(int index)
+  Color _getMovePieceColor(int index)
   {
     Color ret = Colors.transparent;
     if (lGameSession.iPlayerMove == null) {
@@ -1113,14 +1155,14 @@ Border
     return ret;
   }
 
-  Widget? getMoveChild(int index)
+  Widget? _getMoveChild(int index)
   {
-    Color modeColor = getMovePieceColor(index);
+    Color modeColor = _getMovePieceColor(index);
     if (modeColor == Colors.transparent) {
       return null;
     }
 
-    Widget? textWidget = getTextChild(index, false);
+   // Widget? textWidget = _getTextChild(index, false);
 
     Color textColor = moveFrameColor;
     bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
@@ -1161,7 +1203,7 @@ Border
     return ret;
   }
 
-  bool isInnerCornerOfContainer(int index)
+  bool _isInnerCornerOfContainer(int index)
   {
     bool isInMoveList = lGameSession.iArrPlayerMovePieces == null ? false :
                         lGameSession.iArrPlayerMovePieces!.contains(index);
@@ -1177,7 +1219,7 @@ Border
     return false;
   }
 
-  Alignment? getCornerContainerAlignment(int index)
+  Alignment? _getCornerContainerAlignment(int index)
   {
      var ret;
      /*
@@ -1189,7 +1231,7 @@ Border
      return ret;
   }
 
-  Container getBorderMoveContainer(int index)
+  Container _getBorderMoveContainer(int index)
   {
     // Container ret = _getPrivateMoveContainer(index, true);
     Widget? modeContainerChild;
@@ -1235,7 +1277,8 @@ Border
       }
    // }
 
-    Container ret = Container(
+    String objID = "borderMoveContainer$index";
+    Container ret = Container(key: ObjectKey(objID),
       //  padding: const EdgeInsets.all(8),
       color: Colors.transparent,
       width: ScreenValues.containerWidth,
@@ -1265,7 +1308,7 @@ Border
      return ret;
   }
 
-  Container? getMoveContainer(int index) {
+  Container? _getMoveContainer(int index) {
     return _getPrivateMoveContainer(index, false);
   }
 
@@ -1273,12 +1316,12 @@ Border
       bool isCalledFromBorderMoveContainer)
   {
     double dRadius = 0.0;
-    Widget? modeContainerChild = getMoveChild(index);
+    Widget? modeContainerChild = _getMoveChild(index);
     if (modeContainerChild == null) {
       return null;
     }
-    Color boxDecorationColor = getBoxDecorationColor();
-    Color modeColor = getMovePieceColor(index);
+    Color boxDecorationColor = _getBoxDecorationColor();
+    Color modeColor = _getMovePieceColor(index);
     late Container? container;
 
     BoxDecoration boxDecoration =
@@ -1435,11 +1478,12 @@ Border
       );
        */
     } else {
-        if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayerMovePieces)) {
+        if (!_indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayerMovePieces)) {
           modeContainerChild = null;
         }
 
-      container = Container(
+      String objID = "moveContainer$index";
+      container = Container(key: ObjectKey(objID),
         //   padding: const EdgeInsets.all(8),
         decoration: boxDecoration,
         width: ScreenValues.containerWidth,
@@ -1450,9 +1494,10 @@ Border
     return container;
   }
 
-  Container getBoardSquaresContainer(int index)
+  Container _getBoardSquaresContainer(int index)
   {
-    return Container(
+    String objID = "boardcontainer$index";
+    return Container(key: ObjectKey(objID),
       padding: const EdgeInsets.all(1),
       width: ScreenValues.containerWidth,
       height: ScreenValues.containerWidth,
@@ -1487,7 +1532,7 @@ Border
     );
   }
 
-  Color getBoxDecorationColor()
+  Color _getBoxDecorationColor()
   {
     Color ret = lGameSession.playerTurn ==
         GamePlayerTurn.player1 ? player1Color
@@ -1516,7 +1561,7 @@ Border
   }
 
 
-  Color getBoardPieceColor(int index)
+  Color _getBoardPieceColor(int index)
   {
     Color ret = Colors.transparent;
     bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
@@ -1543,7 +1588,7 @@ Border
   }
 
 
-  Widget? getTextChild(int index, bool isBoardPiece) {
+  Widget? _getTextChild(int index, bool isBoardPiece) {
     String strText = "";
     bool isIn1List = lGameSession.iArrPlayer1Pieces == null ? false :
     lGameSession.iArrPlayer1Pieces!.contains(index);
@@ -1608,14 +1653,15 @@ Border
     }
      */
 
-    return Center(child: AutoSizeText(strText,
+    ObjectKey objectKey = ObjectKey(DateTime.now());
+    return Center(key: objectKey, child: AutoSizeText(strText,
       // This is some text that will resize based on the screen size.,
       style: TextStyle(fontSize: ScreenUtil().setSp(30), color: fontColor,
           fontWeight: FontWeight.bold),
       overflow: TextOverflow.ellipsis,));
   }
 
-  Widget getScreenReaderSquare(index)
+  Widget  _getScreenReaderSquare(index)
   {
     return Semantics(readOnly: true,
       child: /* InkWell( /* ElevatedButton(  style: buttonStyleScreenReader, */
@@ -1642,14 +1688,15 @@ Border
     );
   }
 
-  String getChangeScreenReaderText(int i, bool bInit)
+  String _getChangeScreenReaderText(int i, bool bInit)
   {
     if (bInit || bScreenReaderIsUsed) {
       String strLabel = "";
-      if (bChangeScreenReaderTextIntoTop) {
+      if (bInit) {
         strLabel = lGameSession.getScreenReaderSquareLabel(i);
-        String strExpr = "Position $strLabel";
-        return strExpr;
+        String strExpr = "Position  $strLabel ";
+        String strExpr2 = lGameSession.getScreenReaderSquareValue(i);
+        return "$strExpr\n$strExpr2";
       }
       else {
         return lGameSession.getScreenReaderSquareValue(i);
@@ -1658,7 +1705,7 @@ Border
     return "";
   }
 
-  void showSnapBar(int i)
+  void _showSnapBar(int i)
   {
     if (bScreenReaderIsUsed) {
       String strLabel = lGameSession.getScreenReaderSquareLabel(i);
@@ -1678,7 +1725,9 @@ Border
   {
     if (bScreenReaderIsUsed && msg.isNotEmpty)
     {
-      await SemanticsService.announce(msg, TextDirection.ltr);
+      // await SemanticsService.announce(msg, TextDirection.ltr);
+      await SemanticsService.sendAnnouncement( View.of(thisContext!),
+          msg, TextDirection.ltr);
     }
   }
 
@@ -1731,12 +1780,12 @@ Border
   }
 
   Container
-  getMovePieceShadowContainer(int index)
+  _getMovePieceShadowContainer(int index)
   {
       Decoration? decoration =
-           getMovePieceShadowContainerShadowDecoration(index);
+           _getMovePieceShadowContainerShadowDecoration(index);
       Container? ret;
-      Color containerColor = getBoardPieceColor(index);
+      Color containerColor = _getBoardPieceColor(index);
 
       if (decoration != null) {
         ret = Container(
@@ -1774,7 +1823,7 @@ Border
   }
 
   BoxShadow?
-  getBoxShadowOf(BorderStyle borderStyle, SHADOWBOXPOSITION shadowPosition)
+  _getBoxShadowOf(BorderStyle borderStyle, SHADOWBOXPOSITION shadowPosition)
   {
     BoxShadow? ret;
 
@@ -1831,12 +1880,12 @@ Border
   }
 
   Decoration?
-  getMovePieceShadowContainerShadowDecoration(int index)
+  _getMovePieceShadowContainerShadowDecoration(int index)
   {
     Decoration? ret;
     INNERCORNERPOSITION? position;
     BorderStyle? topStyle, bottomStyle, leftStyle, rightStyle;
-    /* const */ BorderStyle borderstyleNone = BorderStyle.none;
+    /* const */ BorderStyle borderStyleNone = BorderStyle.none;
     Border? border = _listMoveBorders[index];
     if (border == null) {
       return null;
@@ -1846,13 +1895,13 @@ Border
     bottomStyle = border.bottom.style;
     leftStyle = border.left.style;
     rightStyle = border.right.style;
-    if (topStyle == borderstyleNone && bottomStyle == borderstyleNone
-        && leftStyle == borderstyleNone && rightStyle == borderstyleNone) {
+    if (topStyle == borderStyleNone && bottomStyle == borderStyleNone
+        && leftStyle == borderStyleNone && rightStyle == borderStyleNone) {
       return null;
     }
 
     List<BoxShadow> shadows =  List<BoxShadow>.empty(growable: true);
-    BoxShadow? shadow = getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX);
+    BoxShadow? shadow = _getBoxShadowOf(leftStyle, SHADOWBOXPOSITION.LEFTSHADOWBOX);
     if (shadow != null) {
       shadows.add(shadow);
     }
@@ -1863,12 +1912,12 @@ Border
         print("kissa");
       }
      */
-    shadow = getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX);
+    shadow = _getBoxShadowOf(rightStyle, SHADOWBOXPOSITION.RIGHTSHADOWBOX);
     if (shadow != null) {
       shadows.add(shadow);
     }
 
-    shadow = getBoxShadowOf(topStyle, SHADOWBOXPOSITION.TOPSHADOWBOX);
+    shadow = _getBoxShadowOf(topStyle, SHADOWBOXPOSITION.TOPSHADOWBOX);
     if (shadow != null) {
       shadows.add(shadow);
     }
@@ -1988,7 +2037,7 @@ Border
       return ret;
   }
 
-  Container getMovePieceShadowCenterContainer(index)
+  Container _getMovePieceShadowCenterContainer(index)
   {
     Container ret = Container(
       //    duration: const Duration(seconds: 1),
@@ -2012,16 +2061,19 @@ Border
     return ret;
   }
 
-  bool indexInTheMiddleOfLPiece(int index, List<int>? iArrPlayerPieces)
+  bool _indexInTheMiddleOfLPiece(int index, List<int>? iArrPlayerPieces)
   {
-     if (iArrPlayerPieces == null)
-      return false;
-     if (iArrPlayerPieces.isEmpty)
+     if (iArrPlayerPieces == null) {
        return false;
+     }
+     if (iArrPlayerPieces.isEmpty) {
+       return false;
+     }
      bool ret = false;
      List<GameBoardPosition>? listGameBoardPosition = lGameSession.getGameBoardPositionList(iArrPlayerPieces);
-     if (listGameBoardPosition == null || listGameBoardPosition.isEmpty || listGameBoardPosition.length < 4)
+     if (listGameBoardPosition == null || listGameBoardPosition.isEmpty || listGameBoardPosition.length < 4) {
        return false;
+     }
      if (listGameBoardPosition[0].iRow == listGameBoardPosition[1].iRow
          && listGameBoardPosition[1].iRow == listGameBoardPosition[2].iRow
          && listGameBoardPosition[1].iPos == index) {
@@ -2049,20 +2101,37 @@ Border
      return ret;
   }
 
+  bool getUseOfEarlierStackWidgets(int index) {
+   return false;
+  // return lGameSession.getUseEarlierStackWidget(index);
+  }
+
+  /*
+  Widget? getEarlierListBoardStack(int index)
+  {
+     if (index < 0 || index > 15)
+       return null;
+     if (EarlierStackWidgets.earlierListBoardStack.isEmpty) {
+       return null;
+     }
+     return EarlierStackWidgets.earlierListBoardStack[index];
+  }
+   */
+
   List<Widget>
-  buildGameBoard()
+  _buildGameBoard()
   {
  //  if (_listBoardPieces.isEmpty || lGameSession.listBoardPiecesUpdated) {
     if (_listBoardPieces.isEmpty
         || lGameSession.getButtonPressed() == ButtonPressed.moveDone) {
       _listBoardPieces = List.generate(16, (index) {
-        Widget? child = getTextChild(index, true);
+        Widget? child = _getTextChild(index, true);
         if (child == null) {
           return null;
         }
 
         BoxDecoration? listBoxDecoration;
-        Color containerColor = getBoardPieceColor(index);
+        Color containerColor = _getBoardPieceColor(index);
         Color? cColor;
         if (containerColor == Colors.black) {
           listBoxDecoration = BoxDecoration(
@@ -2081,14 +2150,14 @@ Border
         lGameSession.iArrPlayer2Pieces!.contains(index);
         if (isIn1List)
         {
-          if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer1Pieces)) {
+          if (!_indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer1Pieces)) {
             child = null;
           }
         }
         else
         if (isIn2List)
         {
-          if (!indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer2Pieces)) {
+          if (!_indexInTheMiddleOfLPiece(index, lGameSession.iArrPlayer2Pieces)) {
             child = null;
           }
         }
@@ -2097,8 +2166,8 @@ Border
           child = null;
         }
 
-
-        return Container(
+        String objID = index.toString();
+        return Container(key: ObjectKey(objID),
           //    duration: const Duration(seconds: 1),
           //  padding: const EdgeInsets.all(8),
           color: cColor,
@@ -2108,6 +2177,9 @@ Border
           child: child,
         );
       });
+
+      ObjectKey objectKey = ObjectKey(DateTime.now());
+      _stackBoardPieces = StackGridContainer(key: objectKey, listContainers: _listBoardPieces);
     }
 //   }
 
@@ -2122,9 +2194,12 @@ Border
       Container? currContainer;
     if (_listMoveSquares.isEmpty || lGameSession.listMovePiecesUpdated) {
       _listMoveSquares = List.generate(16,  (index) {
-        currContainer = getMoveContainer(index);
+        currContainer = _getMoveContainer(index);
         return currContainer;
-    });
+      });
+      ObjectKey objectKey = ObjectKey(DateTime.now());
+      _stackMoveSquares = StackGridContainer(key: objectKey,
+          listContainers: _listMoveSquares);
     }
 
     innerSquarePosition = _getInnerSquareBorder();
@@ -2132,170 +2207,166 @@ Border
     if (_listMoveBorderSquares.isEmpty
         || lGameSession.listMovePiecesUpdated) {
       _listMoveBorderSquares = List.generate(16, (index) {
-        return getBorderMoveContainer(index);
+        return _getBorderMoveContainer(index);
       });
+      ObjectKey objectKey = ObjectKey(DateTime.now());
+      _stackMoveBorderSquares = StackGridContainer(key: objectKey,
+          listContainers: _listMoveBorderSquares);
     }
 
    // _stackGridContainerOfListMoveBorderSquares = StackGridContainer(listContainers: _listMoveBorderSquares);
 
-   /* List<Widget> */ listBoardStack = List<Widget>.empty(growable: true);
-    //_listBoardStack.clear();
-    if (bScreenReaderIsUsed) {
+   // listBoardStack = List<Widget>.empty(growable: true);
+    listBoardStack.clear();
+    bool newertrue = false;
+    if (newertrue) {
       if (_iArrScreenReaderSquareText.isEmpty) {
           _iArrScreenReaderSquareText = List.generate(16,  (index) {
-          return getChangeScreenReaderText(index, true);
+          return _getChangeScreenReaderText(index, true);
         });
      }
       else
         {
           _iArrScreenReaderSquareText = List.generate(16,  (index) {
-            return getChangeScreenReaderText(index, false);
+            return _getChangeScreenReaderText(index, false);
           });
         }
 
       _listScreenReaderSquares = List.generate(16,  (index) {
-        return getScreenReaderSquare(index);
+        return _getScreenReaderSquare(index);
       });
 
-      for (int i = 0; i < _listBoardSquares.length; i++) {
-        listBoardStack.add(BoardSquare(detector: GestureDetector( behavior:
-                   HitTestBehavior.translucent,
-          onTap: () => () {
-        //    setState(() {
-              //   logger.i(" onTap ->");
-              bChangeScreenReaderTextIntoTop =
-                 ! _iArrScreenReaderSquareText[i].contains("Position");
-              /*
-              ! _iArrScreenReaderSquareText[i].contains("Position");
-               */
-              _iArrScreenReaderSquareText[i] =
-                  getChangeScreenReaderText(i, false);
-              _screenReaderAnnounce(_iArrScreenReaderSquareText[i]);
-              callInit = true;
-             // notifier?.value = true;
-            //      });
-          } /*)*/,
+      String objID;
+      _listScreenReader.clear();
+      _listScreenReader.addAll(_listScreenReaderSquares);
+
+
       /*
-      onDoubleTap: () {
-          setState(() {
-            bChangeScreenReaderTextIntoTop = true;
-            /*
-              ! _iArrScreenReaderSquareText[i].contains("Position");
-               */
-            _iArrScreenReaderSquareText[i] =
-                getChangeScreenReaderText(i, false);
-            _screenReaderAnnounce(_iArrScreenReaderSquareText[i]);
-          });
-      },
-       */
-          child:
-            /*
-        onFocusChange: (hasFocus) {
-            if(hasFocus) {
-              bChangeScreenReaderTextIntoTop = true;
-            }
-          },
+      for (int i = 0; i < _listBoardSquares.length; i++) {
+        objID = DateTime.now().toString();
+        /*
+        if (EarlierStackWidgets.earlierListBoardStack.isNotEmpty
+            && getUseOfEarlierStackWidgets(i))
+          listBoardStack.add(EarlierStackWidgets.earlierListBoardStack![i]);
+        else
          */
-            // onTap: () => changeScreenReaderText(i),
-            // onLongPress: () => showSnapBar(i),
-            // onHover:  (val) { if (val) showSnapBar(i); },
-            //    onDoubleTap: () => showSnapBar(i),
-
-          /*
-     onLongPress: () async {
-       if (widget.bScreenReaderIsUsed) {
-         String strLabel = lGameSession.getScreenReaderSquareLabel(index);
-         String strExpr = "Position " +strLabel;
-         final snackBar = SnackBar(content: Semantics(liveRegion: true, child:  Text(strExpr)));
-         ScaffoldMessenger.of(thisContext!).showSnackBar(snackBar);
-         ?*
-         await SemanticsService.announce(
-             "Position " + lGameSession.getScreenReaderSquareLabel(index),
-             TextDirection.ltr, assertiveness: Assertiveness.assertive);
-         await Future.delayed(const Duration(seconds: 3));
-          *?
-       }
-      }
-      */
-          //   ),
-          AbsorbPointer(
-            child: Container(
-            color: Colors.transparent,
-            width: ScreenValues.containerWidth,
-            height: ScreenValues.containerWidth,
-            //      decoration: listBoxDecoration,
-            child: StackRepaintBoundary(child: Stack(clipBehavior: Clip.none,
-           //  fit: StackFit.loose,
-                children: [Positioned( // Position each large container
-                    left: 0, // Simple horizontal placement
-                    top: 0, // Simple vertical placement
-                    child: _listBoardSquares[i]),
-               //  _listMovePieceShadowContainers[i],
-              //    _listMovePieceShadowCenterContainers[i],
-                  if (_listBoardPieces[i] != null)
-                    Positioned( // Position each large container
-                        left: 0, // Simple horizontal placement
-                        top: 0, // Simple vertical placement
-                        child: _listBoardPieces[i]!),
-                  if (_listMoveSquares[i] != null)
-                    Positioned( // Position each large container
-                        left: 0, // Simple horizontal placement
-                        top: 0, // Simple vertical placement
-                        child: _listMoveSquares[i]!),
-                  if (_listMoveSquares[i] != null)
-            Positioned( // Position each large container
-            left: 0, // Simple horizontal placement
-            top: 0, // Simple vertical placement
-            child: _listMoveBorderSquares[i])
-               ]
-            /*
-            onFocusChange: (hasFocus) {
-              if(hasFocus) {
-                bChangeScreenReaderTextIntoTop = true;
-              }
-            },
-            // onTap: () => changeScreenReaderText(i),
-            // onLongPress: () => showSnapBar(i),
-            // onHover:  (val) { if (val) showSnapBar(i); },
-            //    onDoubleTap: () => showSnapBar(i),
+        listBoardStack.add(
+          BoardSquare(
+            key: ObjectKey(objID),
+            detector: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                bChangeScreenReaderTextIntoTop =
+                    !_iArrScreenReaderSquareText[i].contains("Position");
+                _iArrScreenReaderSquareText[i] =
+                    _getChangeScreenReaderText(i, false);
+                _screenReaderAnnounce(_iArrScreenReaderSquareText[i]);
+                callInit = true;
+              },
+              child: AbsorbPointer(
+                child: Container(
+                  color: Colors.transparent,
+                  width: ScreenValues.containerWidth,
+                  height: ScreenValues.containerWidth,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: _listBoardSquares[i],
+                      ),
+                      if (_listBoardPieces[i] != null)
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: _listBoardPieces[i]!,
+                        ),
+                      if (_listMoveSquares[i] != null)
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: _listMoveSquares[i]!,
+                        ),
+                      if (_listMoveSquares[i] != null)
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: _listMoveBorderSquares[i],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-
-             */
           ),
-          ),
-          ),
-          ),
-         ),
-         ),
         );
         }
+      */
+
+      ObjectKey objectKey = ObjectKey(DateTime.now());
+      _stackScreenReader = StackGridContainer(key: objectKey, listContainers: _listScreenReaderSquares);
+
+      listBoardStack.add(_stackBoardSquares!);
+      listBoardStack.add(_stackBoardPieces!);
+      listBoardStack.add(_stackMoveSquares!);
+      listBoardStack.add(_stackMoveBorderSquares!);
+     // listBoardStack.add(_stackScreenReader!);
+
     }
     else {
 
       Container currMoveBorderSquares;
       Container? currMoveSquares, currBoardPieces;
 
+    var objID;
+
+      listBoardStack.add(_stackBoardSquares!);
+      listBoardStack.add(_stackBoardPieces!);
+      listBoardStack.add(_stackMoveSquares!);
+      listBoardStack.add(_stackMoveBorderSquares!);
+
+      if (bScreenReaderIsUsed) {
+        _iArrScreenReaderSquareText = List.generate(16, (index) {
+          return _getChangeScreenReaderText(index, true);
+        });
+        _listScreenReaderSquares = List.generate(16,  (index) {
+          return _getScreenReaderSquare(index);
+        });
+        ObjectKey objectKey = ObjectKey(DateTime.now());
+        _stackScreenReader = StackGridContainer(key: objectKey, listContainers: _listScreenReaderSquares);
+        listBoardStack.add(_stackScreenReader!);
+      }
+
+    /*
     for (int i = 0; i < _listBoardSquares.length; i++) {
         currBoardPieces = _listBoardPieces[i];
         currMoveSquares = _listMoveSquares[i];
         currMoveBorderSquares = _listMoveBorderSquares[i];
 
-        listBoardStack.add(StackRepaintBoundary(child:
-          Stack(clipBehavior: Clip.none,
-             // fit: StackFit.loose,
-              children: [
-                _listBoardSquares[i],
-      //      _listMovePieceShadowContainers[i],
-      //      _listMovePieceShadowCenterContainers[i],
-                if (currBoardPieces != null)
-                 currBoardPieces,
-                if (currMoveSquares != null)
-                 currMoveSquares,
-                if (currMoveSquares != null)
-                  currMoveBorderSquares
-            ]), ),
+        objID = i.toString();
+        /*
+        if (EarlierStackWidgets.earlierListBoardStack.isNotEmpty &&
+            getUseOfEarlierStackWidgets(i)) {
+          listBoardStack.add(
+              EarlierStackWidgets.earlierListBoardStack[i]);
+        } else {
+         */
+          listBoardStack.add(
+          Stack(
+            key: ObjectKey(objID),
+            clipBehavior: Clip.none,
+            children: [
+              _listBoardSquares[i],
+              if (currBoardPieces != null) currBoardPieces,
+              if (currMoveSquares != null) currMoveSquares,
+              if (currMoveSquares != null) currMoveBorderSquares,
+            ],
+          ),
         );
-      }
+        }
+    */
+    //  }
    }
 
     /*
@@ -2317,11 +2388,13 @@ Border
     );
     return _gameBoardGrid!;
      */
+   // EarlierStackWidgets.earlierListBoardStack.clear();
+  //  EarlierStackWidgets.earlierListBoardStack.addAll(listBoardStack);
     return listBoardStack;
   }
 
   late List<Widget> listBoardStack = List<Widget>.empty(growable: true);
-
+  int iTabCounter = 0;
 
  @override
   Widget build(BuildContext context) {
@@ -2331,12 +2404,13 @@ Border
       if (!bDoNotCallInitState) {
         initState();
       }
-      listBoardStack = buildGameBoard();
+      listBoardStack = _buildGameBoard();
     }
 
     bDoNotCallInitState = false;
 
-    return /* ValueListenableBuilder<bool>(
+    Widget? ret = null;
+     /* ValueListenableBuilder<bool>(
       valueListenable: ScreenValues.notifier!,
       builder: (BuildContext context, bool value, child) {
         return */ /* buildGameBoard() */
@@ -2370,8 +2444,100 @@ Border
           /*
          IntrinsicWidth(
             child: */
+      /*
+      MultiFingerGestureDetector(
+        onGestureUpdate: (gestureType, offset) {
+          debugPrint('On Gesture Update');
+          debugPrint(gestureType.name);
+          debugPrint('offset: x=${offset.dx} y=${offset.dy}');
+          debugPrint('-------------------------');
+          if (gestureType.isTwoFingerDrag)
+          {
+            final now = DateTime.now().millisecondsSinceEpoch;
+            if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+              return;
+            }
+            lastGestureOccurTime = now;
+            gestureDetectedCallBack!(ButtonPressed.swiftIntoNextNeutral);
+          }
+          else
+          if (gestureType.isThreeFingerDrag)
+          {
+            final now = DateTime.now().millisecondsSinceEpoch;
+            if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+              return;
+            }
+            lastGestureOccurTime = now;
+            gestureDetectedCallBack!(ButtonPressed.moveDone);
+          }
+        },
+        onGestureStart: (GestureType gestureType, Offset offset)
+        {
 
-      GestureDetector(
+        },
+        onGestureEnd: (GestureType gestureType, Offset offset) {
+
+        },
+        child: */ /* GestureDetector(
+         behavior: HitTestBehavior.translucent,
+         */
+      /*
+      RawGestureDetector(
+          gestures: {
+            SerialTapGestureRecognizer: GestureRecognizerFactoryWithHandlers<SerialTapGestureRecognizer>(
+                  () => SerialTapGestureRecognizer(),
+                  (SerialTapGestureRecognizer instance) {
+                instance.onSerialTapDown = (SerialTapDownDetails details) {
+                  if (details.count == 4) {
+                    if (Loggerdef.isLoggerOn) {
+                      Loggerdef.logger.i('neljä napsautusta havaittu!');
+                    }
+                    if (gestureDetectedCallBack != null) {
+                      gestureDetectedCallBack!(ButtonPressed.swiftIntoNextNeutral);
+                    }
+                  }
+                  else
+                  // Tarkistetaan napautusten määrä
+                  if (details.count == 3) {
+                    if (Loggerdef.isLoggerOn) {
+                      Loggerdef.logger.i('Kolmoisnapsautus havaittu!');
+                    }
+                    if (gestureDetectedCallBack != null) {
+                      gestureDetectedCallBack!(ButtonPressed.moveDone);
+                    }
+                  }
+                  else
+                  if (details.count == 2) {
+                    if (Loggerdef.isLoggerOn) {
+                      Loggerdef.logger.i('Kaksoisnapsautus havaittu!');
+                    }
+                    if (gestureDetectedCallBack != null) {
+                      final now = DateTime
+                          .now()
+                          .millisecondsSinceEpoch;
+                      if ((now - lastGestureOccurTime) <
+                          lastGestureOccurTime_intervalMs) {
+                        return;
+                      }
+                      lastGestureOccurTime = now;
+                      gestureDetectedCallBack!(ButtonPressed.wrap);
+                    }
+                  }
+                  else
+                  if (details.count == 1) {
+                    if (Loggerdef.isLoggerOn) {
+                      Loggerdef.logger.i('napsautus 1 havaittu!');
+                    }
+                  }
+                };
+              },
+            ),
+          },
+          child: */
+          if (!bScreenReaderIsUsed) {
+            ret =
+             GestureDetector(
+            behavior: HitTestBehavior.translucent,
         onDoubleTap: (){
           if (gestureDetectedCallBack != null) {
             final now = DateTime.now().millisecondsSinceEpoch;
@@ -2392,19 +2558,14 @@ Border
             gestureDetectedCallBack!(ButtonPressed.turn90Degree);
           }
         },
-        /*
-        onSecondaryLongPress: () {
-           if (gestureDetectedCallBack != null) {
-            final now = DateTime.now().millisecondsSinceEpoch;
-            if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
-              return;
-            }
-            lastGestureOccurTime = now;
-            gestureDetectedCallBack!(ButtonPressed.moveDone);
+        onLongPressMoveUpdate: (details){
+          final now = DateTime.now().millisecondsSinceEpoch;
+          if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) {
+            return;
           }
+          lastGestureOccurTime = now;
+          gestureDetectedCallBack!(ButtonPressed.moveDone);
         },
-
-         */
         onPanUpdate: (details) {
        // onVerticalDragUpdate: (DragUpdateDetails details) {
           // Delta dx < 0 means moving towards the left
@@ -2460,9 +2621,19 @@ Border
             }
           }
         },
-          child: StackGridContainer(listContainers: listBoardStack,
-          ),
+          child: /* TransparentPointer(
+            child: */ RepaintBoundary(
+            child: Stack(children: listBoardStack,)) /* StackGridContainer(listContainers: listBoardStack,
+          ) */,
+     //   ),
+       // ),
       );
+          }
+          else
+          {
+            ret = RepaintBoundary(
+                child: Stack(children: listBoardStack,));
+          }
 
       /*
           Column(
@@ -2510,7 +2681,15 @@ Border
           );
        */
    //   },
+    return ret!;
   }
+
+  /*
+  List<Widget> getEarlierListBoardStack()
+  {
+      return listBoardStack;
+  }
+   */
 }
 
 class BoardSquare extends StatelessWidget {

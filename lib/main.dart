@@ -1,12 +1,10 @@
 
-import 'dart:ui';
 
 import 'package:flgame/ParameterValues.dart';
 import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:platform/platform.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
@@ -109,57 +107,47 @@ class MyApp extends StatelessWidget {
     ScreenValues.screenValues.padding_right = padding_right;
     */
     return ScreenUtilInit(
-        designSize: Size(availableHeight * .4 ,availableWidth * .5),
-         // const Size(448, 998), // Size(360, 690),
-    minTextAdapt: true,
-      enableScaleWH: ()=>true,
-      enableScaleText: ()=>true,
-    splitScreenMode: true,
-    // Use builder only if you need to use library outside ScreenUtilInit context
-    builder: (_ , child) {
-    return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: strAppTitle,
-    // You can use the library anywhere in the app even in theme
-    theme: ThemeData(
-    primarySwatch: Colors.blue,
-      useMaterial3: true,
-    ),
-    navigatorKey: NavigationService.navigatorKey,
-    home: child,
-    );
-    },
-    child: ParameterValues(screenValues: ScreenValues(
-        bScreenReaderIsUsed: bScreenReaderIsUsed,
-        deviceWidth: deviceWidth,
-        padding_left: paddingLeft,
-        padding_right: paddingRight,
-        availableWidth: availableWidth,
-        deviceHeight: deviceHeight,
-        availableHeight: availableHeight),
-      child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: strAppTitle,
-      initialRoute: '/',
-   //   navigatorKey: navigatorKey, // important
-      routes: {
-        '/': (context) => const LoadingScreen(),
-        '/lgamefor2': (context) => LGeamePage(title: strAppTitle,
-            bScreenReaderIsUsed: bScreenReaderIsUsed,
-          /* screenValues: screenValues, */),
-        '/help': (context) => const HelpRoute(),
-        '/about': (context) => const AboutRoute(),
-        '/oldgames': (context) => const OldGamesRoute(),
-        '/finishedgames': (context) => const FinishedGamesRoute(),
-       '/remotegames': (context) => const RemoteGamesRoute(),
+      designSize: Size(availableHeight * .4, availableWidth * .5),
+      minTextAdapt: true,
+      enableScaleWH: () => true,
+      enableScaleText: () => true,
+      splitScreenMode: true,
+      builder: (_, __) {
+        return ParameterValues(
+          screenValues: ScreenValues(
+              bScreenReaderIsUsed: bScreenReaderIsUsed,
+              deviceWidth: deviceWidth,
+              padding_left: paddingLeft,
+              padding_right: paddingRight,
+              availableWidth: availableWidth,
+              deviceHeight: deviceHeight,
+              availableHeight: availableHeight),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: strAppTitle,
+            navigatorKey: NavigationService.navigatorKey,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const LoadingScreen(),
+              '/lgamefor2': (context) => LGeamePage(
+                    title: strAppTitle,
+                    bScreenReaderIsUsed: bScreenReaderIsUsed,
+                  ),
+              '/help': (context) => const HelpRoute(),
+              '/about': (context) => const AboutRoute(),
+              '/oldgames': (context) => const OldGamesRoute(),
+              '/finishedgames': (context) => const FinishedGamesRoute(),
+              '/remotegames': (context) => const RemoteGamesRoute(),
+            },
+            theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
+                  .copyWith(surface: Colors.blueGrey),
+                useSystemColors: true,
+            ),
+          ),
+        );
       },
-      theme: ThemeData(
-        useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: 
-      Colors.deepPurple).copyWith(surface: Colors.blueGrey),
-      ),
-    ),
-    ),
-     // home: const MyHomePage(title: strAppTitle),
     );
   }
 }
@@ -214,6 +202,8 @@ class _LGamePageState extends State<LGeamePage>
     audioPlayerService.audioPlayerService.dispose();
     SoLoud.instance.deinit();
     WidgetsBinding.instance.removeObserver(this);
+    _textFieldName1Controller.dispose();
+    _textFieldName2Controller.dispose();
     super.dispose();
   }
 
@@ -868,6 +858,11 @@ class _LGamePageState extends State<LGeamePage>
      if (Loggerdef.isLoggerOn) {
        Loggerdef.logger.i("gestureDetectedCallBack");
      }
+     if (lGameSession.bGameIsOver)
+       {
+         return;
+       }
+
      if (buttonPressed == ButtonPressed.left && lGameSession.bButtonLeftEnabled) {
        buttonLeftPressed();
      }
@@ -891,10 +886,21 @@ class _LGamePageState extends State<LGeamePage>
      if (buttonPressed == ButtonPressed.turn90Degree && lGameSession.bButtonTurn90DegreeEnabled) {
        buttonTurn90DegreePressed();
      }
+     else
+     if (buttonPressed == ButtonPressed.moveDone && lGameSession.bButtonMoveDoneEnabled) {
+       buttonMoveDonePressed();
+     }
+     else
+     if (buttonPressed == ButtonPressed.swiftIntoNextNeutral && lGameSession.bButtonSwitchNeutralEnabled) {
+       buttonSwitchNeutralPressed();
+     }
+
   }
 
   Widget buildGameBoard2()
   {
+     return Container(child: null,);
+     /*
    // lGameSession.setListBoardPiecesUpdated(false);
    // lGameSession.setListMovePiecesUpdated(false);
     return LGameBoard(lGameSession: lGameSession,
@@ -904,13 +910,17 @@ class _LGamePageState extends State<LGeamePage>
       isUpdated: _bUpdateUI,
       gestureDetectedCallBack: gestureDetectedCallBack,
     );
+      */
   }
 
   Widget? buildGameBoard()
   {
+    /*
+    DateTime now = DateTime.now();
     if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("buildGameBoard");
+      Loggerdef.logger.i("buildGameBoard = $now");
     }
+     */
 
      /*
     _listBoardSquares = List.generate(16,  (index) {
@@ -1386,7 +1396,7 @@ class _LGamePageState extends State<LGeamePage>
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         /* Expanded( // wrap in Expanded
-          child: */ /* lGameBoard! */ buildGameBoard2(),
+          child: */ lGameBoard! /* buildGameBoard2() */,
        /* _gameBoardGrid!, */
        // ),
 //        SizedBox(height: 20,),
@@ -1409,6 +1419,12 @@ class _LGamePageState extends State<LGeamePage>
     ],
     );
 
+    /*
+    String duration = DateTime.now().difference(now).toString();
+    if (Loggerdef.isLoggerOn) {
+      Loggerdef.logger.i("buildGameBoard = $duration");
+    }
+     */
    // lGameSession.setListBoardPiecesUpdated(false);
    // lGameSession.setListMovePiecesUpdated(false);
    return ret; // Column(children: <Widget>[_gameBoardGrid!, ],);

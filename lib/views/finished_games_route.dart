@@ -42,6 +42,18 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
   bool bScreenReaderIsUsed = false;
   ParameterValues? parameterValues;
 
+  @override
+  void dispose() {
+    if (selectedExpansionTile != null) {
+      selectedExpansionTile!.dispose();
+    }
+    if (expansionControllers != null && expansionControllers!.isNotEmpty) {
+      for (int i = 0; i < expansionControllers!.length; i++) {
+        expansionControllers![i].dispose();
+      }
+    }
+  }
+
   int getModified(LGameSessionData a, LGameSessionData b)
   {
     // a.modifiedAt ??= DateTime.parse(a.startedAt!);

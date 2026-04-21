@@ -28,7 +28,9 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
 
   void callMainPage()
   {
-    Navigator.pop(context, );
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context,);
+    }
   }
 
   final ButtonStyle buttonStyle =

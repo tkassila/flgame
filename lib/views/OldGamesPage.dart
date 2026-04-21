@@ -87,6 +87,20 @@ class _OldGamesPageState extends State<OldGamesPage> {
     }
   }
 
+
+  @override
+  void dispose() {
+    if (selectedExpansionTile != null) {
+      selectedExpansionTile!.dispose();
+    }
+    if (expansionControllers != null && expansionControllers!.isNotEmpty) {
+      for (int i = 0; i < expansionControllers!.length; i++) {
+        expansionControllers![i].dispose();
+      }
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     parameterValues = ParameterValues.of(context);
@@ -129,12 +143,16 @@ class _OldGamesPageState extends State<OldGamesPage> {
                   ),
                   onPressed: () async {
                     if (widget.bCalledFromFinishedGames) {
-                      Navigator.pop(context);
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
                     } else {
                       selectedLGameSessionData = null;
                       di<LGameDataService>().selectedLGameSessionData = null;
                       // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
-                      Navigator.pop(context, selectedLGameSessionData);
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context, selectedLGameSessionData);
+                      }
                       //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
                     }
                   },
@@ -158,7 +176,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
                 }
                 di<LGameDataService>().selectedLGameSessionData = selectedSessionData;
                 // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
-                Navigator.pop(context, selectedLGameSessionData);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context, selectedLGameSessionData);
+                }
                 //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
               },
             ),
@@ -222,13 +242,17 @@ class _OldGamesPageState extends State<OldGamesPage> {
               const SizedBox(height: 10, width: 100,),
               if (selectedSessionData != null && widget.listDataSessions!.isNotEmpty)
               /* Expanded( // Expanded_A
-      child: */ LGameBoard(lGameSession: lGameSession,
+      child: */ Column(
+    children: <Widget>[
+                LGameBoard(lGameSession: lGameSession,
                   bScreenReaderIsUsed: bScreenReaderIsUsed,
                  // notifier: ScreenValues.notifier!,
                   minusDynamicContainerSize:
                   ScreenValues.minusDynamicContainerSizeOfLGame +10,
                   isUpdated: true,
                   gestureDetectedCallBack: null,
+              ),
+              ],
               ),
               // ),
             ],

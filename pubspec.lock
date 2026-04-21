@@ -274,10 +274,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_soloud
-      sha256: eb0e7816aaf326cac6a15b68ef6a249a30b18111a7b8fcb36a17b00d2cffb2e7
+      sha256: c97c6fbe9bf0960f5ec4dd12aa4f21a501d248da57fd482f9c078abb2b5e6d94
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.0"
+    version: "3.5.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -343,10 +343,10 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: "7a08a0d684cb3b8fb604b78455d5d352f502b68079f7b80b831c62220ab0a4f6"
+      sha256: e79ed1e8e1929bc6ecb6ec85f0cb519c887aa5b423705ded0d0f2d9226def388
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   html:
     dependency: transitive
     description:
@@ -463,10 +463,10 @@ packages:
     dependency: "direct main"
     description:
       name: logger
-      sha256: a7967e31b703831a893bbc3c3dd11db08126fe5f369b5c648a36f821979f5be3
+      sha256: "25aee487596a6257655a1e091ec2ae66bc30e7af663592cc3a27e6591e05035c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.2"
+    version: "2.7.0"
   logging:
     dependency: transitive
     description:
@@ -511,10 +511,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "89e83885ba09da5fdf2cdacc8002a712ca238c28b7f717910b34bcd27b0d03ac"
+      sha256: "6ba77bb18063eebe9de401f5e6437e95e1438af0a87a3a39084fbd37c90df572"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.4"
+    version: "0.17.6"
   objective_c:
     dependency: transitive
     description:
@@ -736,6 +736,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  transparent_pointer:
+    dependency: "direct main"
+    description:
+      name: transparent_pointer
+      sha256: "02b498db33f8a6a2f84bb6d27b64e9c27344aadf589c26084058a7845aa690cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   typed_data:
     dependency: transitive
     description:

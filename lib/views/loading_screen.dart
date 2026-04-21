@@ -16,17 +16,21 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin
 {
+  Timer ? timer;
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     super.initState();
-    Timer(const Duration(seconds: 1), handleTimeout);
+    timer = Timer(const Duration(seconds: 1), handleTimeout);
   }
 
   bool _visible = true;
 
   @override
   void dispose() {
+    if (timer != null) {
+      timer?.cancel();
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     super.dispose();
   }
