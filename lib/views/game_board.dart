@@ -192,7 +192,7 @@ class LGameBoard extends StatelessWidget {
   int lastGestureOccurTime_intervalMs = 500;
  // Widget? _gameBoardGrid;
   late List<Container> _listBoardSquares;
-  late List<Widget> _listScreenReader = List<Widget>.empty(growable: true);
+  late final List<Widget> _listScreenReader = List<Widget>.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListBoardSquares;
   late List<Container?> _listBoardPieces = List.empty(growable: true);
  // late StackGridContainer _stackGridContainerOfListBoardPieces;

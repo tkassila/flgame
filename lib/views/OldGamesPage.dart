@@ -118,7 +118,16 @@ class _OldGamesPageState extends State<OldGamesPage> {
 
     ScrollController scrollController = ScrollController();
 
-    return SafeArea(
+    return PopScope(
+        canPop: false, // Prevent back navigation
+        onPopInvokedWithResult: (bool didPop, dynamic result) async {
+          // Optional: Handle the attempt to go back
+          if (didPop) {
+            return;
+          }
+          print("Back button pressed, but disabled.");
+        },
+        child: SafeArea(
         minimum: const EdgeInsets.all(4.0),
         child: Scaffold(
       resizeToAvoidBottomInset: false,
@@ -259,6 +268,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
           )
         ),
       ),
+        ),
 
       /* ListView.builder(
         itemCount: listDataSessions!.length,

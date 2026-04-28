@@ -109,10 +109,30 @@ const String strHelp = r"""
     <h3>After started new L game</h3>
     
     <p>2 player has one L piece on each player. After a move L piece, a player can
-    move one of the neutral pieces. The aime of a move is showed with a black move frame
-    around the piece. And a move frame is moving around the game table by pressing
-    on move yellow buttons. When the move frame is on right place for a L move,
-    press Move done -button. The L piece for Player 1 has marked with one white number 1 and has color red. 
+    move one of the neutral pieces. The aim of a move is shown with a black move frame
+    around the current L piece. On the selected neutral piece, a move frame is either
+    blue or red after the player 1 or 2.</p>
+    
+    <p>And a move frame is moving around the game table by pressing
+    on move yellow buttons. When the move frame is on right place for the L move,
+    press Move done -button. If the move has accepted, the piece is moved into
+    the selected position. And the move is moved around a neutral piece. You can
+    change a selected neutral piece, if you will do that. When the move done -button
+    has pressed 2 times, the game turn is changed into opposite player and the move
+    frame is around his/her L piece.</p>
+    
+    <p>When tallback android application is not running, you can move frame around game board also with finger gestures 
+    instead of yellow move buttons, like:</p>
+    
+    <p><b>Up or down swipe</b> = the frame is moving up or down.</b>
+    
+    <p><b>Left or right swipe</b> = the frame is moving left or right.</p>
+    
+    <p><b>2 tap on the game board</b> = the frame is moving like in pressing 'wrap' button.</p>
+     
+     <p><b>Long press on the game board</b> = the frame is moving like in pressing 'turn 90º' button.</p>
+     
+    <p>The L piece for Player 1 has marked with one white number 1 and has color red. 
     And the same for Player 2 has been marked with one white number 2 and has 
     color blue. 2 neutral pieces has black color. And in turn player's 
     L move black frame is marked with black 1 or 2 number. When a L move is
@@ -120,10 +140,10 @@ const String strHelp = r"""
     around one neutral button. When the hole move is done (the second done button press), 
    then the L move frame is moved around another L piece of in turn up's.
    
-    In this version of the game, there are added diffrerent finger gestures over game board,
+    In this version of the game, there are added different finger gestures over game board,
     which are corresponding pressed move buttons: left swipe like press left button, 
     right swipe like press right button, up swipe like press up button, 
-    down swipe like press down button, long press like press 90º button and double 
+    down swipe like press down button, long press like press turn 90º button and double 
     press like press wrap button,
     </p>    
 

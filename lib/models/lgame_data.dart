@@ -1,5 +1,7 @@
 // import 'package:audioplayers/audioplayers.dart';
 
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
@@ -60,6 +62,8 @@ class ButtonFlowBeforeAndAfterCalculateMove {
   Set before_iArrPlayer2PiecesSet = List.empty(growable: true).toSet();
   Set iArrFrameMoveSet = List.empty(growable: true).toSet();
   Set before_iArrFrameMoveSet = List.empty(growable: true).toSet();
+  int before_iPlayerNeutral1Piece = 0;
+  int before_iPlayerNeutral2Piece = 0;
 
   /*
   void copyOfArrCurrentPieceMove(List<int>? values, int pICurrentPlayer)
@@ -405,7 +409,9 @@ class LGameSession {
   set msg(String pMsg)
   {
      _strMsg = pMsg;
-     _screenReaderAnnounce(pMsg);
+     if (bScreenReaderIsUsed && pMsg.isNotEmpty) {
+       _screenReaderAnnounce(pMsg);
+     }
   }
 
   void _screenReaderAnnounce(String msg)
@@ -517,17 +523,17 @@ class LGameSession {
   Future<bool> checkAllowToMoveOrGameOver() async
   {
     bool ret = true;
-    msg = "";
+    _strMsg = "";
     if (!bInitGameBoard && inMovingPiece == LGamePieceInMove.LPiece
         && noLPieceFreePositions())
     {
-      msg =
-      "There is no free positions for L piece. You had lost this game!";
       bGameIsOver = true;
       disAbleButtonsForGameOver();
       LGameSessionData obj = getGamePositionsForSaveGame();
       di<LGameDataService>().deleteFinishedGameSessionData(obj);
       di<LGameDataService>().saveIntoFinishedGamesList(obj);
+      msg =
+      "There is no free positions for L piece. You had lost this game!";
       return false;
     }
     return ret;
@@ -1547,6 +1553,8 @@ class LGameSession {
     lGameButtonFlow.before_iArrPlayer1PiecesSet = iArrPlayer1Pieces!.toSet();
     lGameButtonFlow.before_iArrPlayer2PiecesSet = iArrPlayer2Pieces!.toSet();
     lGameButtonFlow.before_iArrFrameMoveSet = iArrPlayerMovePieces!.toSet();
+    lGameButtonFlow.before_iPlayerNeutral1Piece = iPlayerNeutral1Piece!;
+    lGameButtonFlow.before_iPlayerNeutral2Piece = iPlayerNeutral2Piece!;
   }
 
   void setAfterVariableValues() {
@@ -1596,26 +1604,42 @@ class LGameSession {
           }
         }
 
+    if (bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral1Piece != iPlayerNeutral1Piece!)
+      {
+        msg = "Player has moved Neutral 1 Piece.";
+      }
+    else
+    if (bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral2Piece != iPlayerNeutral2Piece!)
+    {
+      msg = "Player has moved Neutral 2 Piece.";
+    }
+
     if (!setEquals(lGameButtonFlow.iArrFrameMoveSet,
         lGameButtonFlow.before_iArrFrameMoveSet))
     {
       listBoardPiecesUpdated = true;
       List<dynamic> iArray = lGameButtonFlow.iArrFrameMoveSet.toList();
-      bool lPieceFrameMoved = false;
+      int lPieceFrameMoved = 0;
       for(var i = 0; i < iArray.length; i++)
       {
         LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-        lPieceFrameMoved = true;
+        lPieceFrameMoved++;
       }
       iArray = lGameButtonFlow.before_iArrFrameMoveSet.toList();
       for(var i = 0; i < iArray.length; i++)
       {
         LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
       }
-      if (bScreenReaderIsUsed && lPieceFrameMoved)
+      if (bScreenReaderIsUsed && lPieceFrameMoved == 1)
       {
-        msg = "Player has moved Piece frame.";
+        msg = "Player has moved Neutral frame.";
       }
+      else
+      if (bScreenReaderIsUsed && lPieceFrameMoved == 3)
+      {
+        msg = "Player has moved L frame.";
+      }
+
     }
   }
 

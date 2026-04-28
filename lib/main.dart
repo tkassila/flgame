@@ -51,10 +51,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'fi_FI';
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  /*
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]);
+   is deprecated api calls!
+   */
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await setupDi();
   await di<LGameDataService>().checkInit();
@@ -129,7 +132,7 @@ class MyApp extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => const LoadingScreen(),
-              '/lgamefor2': (context) => LGeamePage(
+              '/lgamefor2': (context) => LGamePage(
                     title: strAppTitle,
                     bScreenReaderIsUsed: bScreenReaderIsUsed,
                   ),
@@ -152,12 +155,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LGeamePage extends StatefulWidget {
+class LGamePage extends StatefulWidget {
 
 /// iArrPlayerPossibleMovePieces
  // final Function() notifyParent;
   // ChildWidget({Key key, @required this.notifyParent}) : super(key: key);
-  const LGeamePage({super.key,
+  const LGamePage({super.key,
     required this.title, required this.bScreenReaderIsUsed,
    // required this.screenValues, /*, @required this.notifyParent} */
   });
@@ -167,11 +170,11 @@ class LGeamePage extends StatefulWidget {
 
 
   @override
-  State<LGeamePage> createState() => _LGamePageState();
+  State<LGamePage> createState() => _LGamePageState();
 
 }
 
-class _LGamePageState extends State<LGeamePage>
+class _LGamePageState extends State<LGamePage>
     with WidgetsBindingObserver /*, AutomaticKeepAliveClientMixin */
 {
 
@@ -932,10 +935,12 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
       label: 'Start game',
       hint: 'Start game button',
-      child: ElevatedButton(
+      child: Tooltip(message: "Start a new l game after the finished game.",
+        child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonStartGameEnabled ? buttonStartGamePressed : null,
       child: const Text('Start game'),
+      ),
       ),
     );
 
@@ -943,7 +948,8 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
       label: "Up",
       hint: 'Up button',
-      child: ElevatedButton.icon(
+      child: Tooltip(message: "Move L piece frame into the up.",
+        child: ElevatedButton.icon(
       style: buttonStyle,
       /*
       style: ElevatedButton.styleFrom(
@@ -953,6 +959,7 @@ class _LGamePageState extends State<LGeamePage>
       onPressed: lGameSession.bButtonUpEnabled ? buttonUpPressed : null,
       icon: Icon(Icons.arrow_upward, size: buttonIconSize,),
       label: const Text("Up"),
+      ),
       ),
     );
     /* Container(
@@ -988,48 +995,56 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
       label: "Down",
       hint: 'Down button',
-      child: ElevatedButton.icon(
+      child: Tooltip(message: "Move L piece frame into the down.",
+        child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonDownEnabled ? buttonDownPressed : null,
       icon: Icon(Icons.arrow_downward, size: buttonIconSize,),
       label: const Text('Down'),
     ),
+      ),
     );
 
     buttonLeft = Semantics(
       readOnly: true,
       label: "Left",
       hint: 'Left button',
-      child: ElevatedButton.icon(
+      child: Tooltip(message: "Move L piece frame into the left.",
+        child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonLeftEnabled ? buttonLeftPressed : null,
       icon: Icon(Icons.arrow_back, size: buttonIconSize,),
       label: const Text('Left'),
     ),
+      ),
     );
 
     buttonRight = Semantics(
       readOnly: true,
       label: "Right",
       hint: 'Right button',
-      child: ElevatedButton.icon(
+      child: Tooltip(message: "Move L piece frame into the right.",
+        child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonRightEnabled ? buttonRightPressed : null,
       icon: Icon(Icons.arrow_forward, size: buttonIconSize,),
       label: const Text('Right'),
     ),
+      ),
     );
 
     buttonWrapUp = Semantics(
       readOnly: true,
         label: "Wrap",
         hint: 'Wrap button',
-        child: ElevatedButton.icon(
+        child: Tooltip(message: "Wrap L piece frame in the game board.",
+          child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonWrapUpEnabled ? buttonWrapUpPressed : null,
       icon: Icon(Icons.autorenew, size: buttonIconSize,),
       label: const Text('Wrap'),
     ),
+        ),
     );
 
     String strNeutral;
@@ -1043,11 +1058,13 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
     label: strNeutral,
   hint: "$strNeutral button",
-  child: ElevatedButton(
+  child: Tooltip(message: "Change move frame into another neutral game piece.",
+    child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonSwitchNeutralEnabled ? buttonSwitchNeutralPressed : null,
       child: Text(strNeutral),
     ),
+  ),
   );
 
     buttonSwitchNeutralScreenReader = null;
@@ -1056,13 +1073,15 @@ class _LGamePageState extends State<LGeamePage>
         readOnly: true,
         label: strNeutral,
         hint: "$strNeutral button",
-        child: ElevatedButton(
+        child: Tooltip(message: "Change move frame into another neutral game piece.",
+          child: ElevatedButton(
           style: buttonStyle,
           onPressed: lGameSession.bButtonSwitchNeutralEnabled ? () {} : null,
           onLongPress: lGameSession.bButtonSwitchNeutralEnabled
               ? buttonSwitchNeutralPressed
               : null,
           child: Text(strNeutral),
+        ),
         ),
       );
     }
@@ -1071,33 +1090,39 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
   label: "Turn 90º",
   hint: "Turn 90º button",
-  child: ElevatedButton.icon(
+  child: Tooltip(message: "Turn l frame 90º in the board and prepare to a next move.",
+    child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
       icon: Icon(Icons.subdirectory_arrow_right, size: buttonIconSize,),
       label: const Text('Turn 90º'),
     ),
+  ),
   );
 
      buttonHelp = Semantics(
        readOnly: true,
        label: "Help",
        hint: "Help button",
-       child: ElevatedButton(
+       child: Tooltip(message: "Help pages for this l game.",
+         child: ElevatedButton(
        style: buttonStyle,
        onPressed: lGameSession.bButtonHelpEnabled ? buttonHelpEnabledPressed : null,
        child: const Text('Help'),
       ),
+       ),
      );
 
      buttonMoveDone = Semantics(
        readOnly: true,
          label: "Move Done",
          hint: "Move Done button",
-         child: ElevatedButton(
-       style: buttonStyle,
+         child: Tooltip(message: "When move frame is in the position in a next piece move.",
+          child: ElevatedButton(
+         style: buttonStyle,
        onPressed: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
        child: const Text('Move Done'),
+       ),
        ),
      );
 
@@ -1107,12 +1132,14 @@ class _LGamePageState extends State<LGeamePage>
       readOnly: true,
       label: "Move Done",
       hint: "Move Done button",
-      child: ElevatedButton(
+      child: Tooltip(message: "Move frame is in the right position and move a L piece or a neutral piece in this position.",
+        child: ElevatedButton(
         style: buttonStyle,
         onPressed: lGameSession.bButtonMoveDoneEnabled ? (){}
               : null,
         onLongPress: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
         child: const Text('Move Done'),
+      ),
       ),
     );
    }
@@ -1128,16 +1155,20 @@ class _LGamePageState extends State<LGeamePage>
            readOnly: true,
            label: "Message",
            hint: 'Message label',
-           child: RoundedBackgroundText(
+           child: Tooltip(message: "Messages of this game.",
+             child: RoundedBackgroundText(
          lGameSession.msg,
          style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),
          backgroundColor: Colors.yellowAccent,
        ),
+           ),
        );
      }
      else {
-       textMessage = Text(lGameSession.msg,
+       textMessage = Tooltip(message: "Messages of this game.",
+           child: Text(lGameSession.msg,
          style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15)),
+           ),
        );
      }
 
@@ -1152,10 +1183,12 @@ class _LGamePageState extends State<LGeamePage>
          readOnly: true,
          label: "Save names",
          hint: "Save names button",
-         child: ElevatedButton(
+         child: Tooltip(message: "Change and save player's names of this game.",
+           child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonSaveEditPressed : null,
          child: const Text('Save names'),
+         ),
          ),
        );
 
@@ -1163,15 +1196,18 @@ class _LGamePageState extends State<LGeamePage>
          readOnly: true,
          label: "No save",
          hint: "No save button",
-         child: ElevatedButton(
+         child: Tooltip(message: "No save for player's names of this game",
+           child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonReturnFromEditPressed : null,
          child: const Text('No save'),
          ),
+         ),
        );
 
        _textFieldName1Controller.text = lGameSession.name1;
-       _textFieldName1 = TextField(
+       _textFieldName1 = Tooltip(message: "A player's name of this session game",
+           child: TextField(
          controller: _textFieldName1Controller,
          decoration: InputDecoration(
            label: Text.rich(
@@ -1195,6 +1231,7 @@ class _LGamePageState extends State<LGeamePage>
              ),
            ),
          ),
+           ),
        );
 
        if (widget.bScreenReaderIsUsed) {
@@ -1205,7 +1242,8 @@ class _LGamePageState extends State<LGeamePage>
 
        _textFieldName2Controller.text = lGameSession.name2;
 
-       _textFieldName2 = TextField(
+       _textFieldName2 = Tooltip(message: "A player's name of this session game",
+           child: TextField(
          controller: _textFieldName2Controller,
          decoration: InputDecoration(
            label: Text.rich(
@@ -1229,6 +1267,7 @@ class _LGamePageState extends State<LGeamePage>
              ),
            ),
          ),
+           ),
        );
 
        if (widget.bScreenReaderIsUsed) {
