@@ -5,6 +5,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+import '../ParameterValues.dart';
+
 class LoadingScreen extends StatefulWidget {
   // final NavigatorState parentNavigator;
   const LoadingScreen({super.key /*, required this.parentNavigator */});
@@ -56,9 +58,10 @@ class _LoadingScreenState extends State<LoadingScreen>
   {
     //  rootBundle = context;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'L Game is loading...',
       home: SafeArea(
-        minimum: const EdgeInsets.all(16.0),
+        minimum: EdgeInsets.all( !ScreenValues.isWeb ? 16.0 : 5),
         child: Center( child:  Scaffold(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
        /* appBar: AppBar(
@@ -78,17 +81,19 @@ class _LoadingScreenState extends State<LoadingScreen>
           ),
     child: Column(
           children: [
-            const SizedBox(height: 150, width: 100),
-            const Center(
+            ScreenValues.isWeb ? SizedBox(height: 150, width: 100)
+             : SizedBox(height: 15, width: 100),
+            Center(
               child: Text('L Game',
-                  style: TextStyle(fontSize: 37, color: Colors.black)),
+                  style: TextStyle(fontSize: ScreenValues.isWeb ? 37 : 10,
+                      color: Colors.black)),
             ),
             AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 700),
-            child: const Image(
-            height: 300,
-            width: 300,
+            child: Image(
+            height: ScreenValues.isWeb ? 300 : 100,
+            width: ScreenValues.isWeb ? 300 : 100,
             image: AssetImage(
               'assets/L_Game_start_position.svg.png',
             ),

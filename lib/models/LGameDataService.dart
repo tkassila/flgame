@@ -1,10 +1,12 @@
 
 // import 'package:injectable/injectable.dart';
 import 'dart:async';
-import 'dart:io';
 import 'package:flgame/LoggerDef.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:flgame/ParameterValues.dart';
+import 'dart:io';
 // import 'package:logger/logger.dart';
 
 import './lgame_data.dart';
@@ -92,14 +94,17 @@ class LGameDataService {
 
   Future<void> initHive() async
   {
-    var path = Directory.current.path;
-    if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i("var path = Directory.current.path: $path");
-    }
-    Directory directory = await pathProvider.getApplicationDocumentsDirectory();
-//  hiveDb = Directory('${appDir. path}/chosenPath');
-    if (Loggerdef.isLoggerOn) {
-      Loggerdef.logger.i(".current.path: ${directory.path}");
+    if (!ScreenValues.isWeb) {
+      var path = Directory.current.path;
+      if (Loggerdef.isLoggerOn) {
+        Loggerdef.logger.i("var path = Directory.current.path: $path");
+      }
+      Directory directory = await pathProvider
+          .getApplicationDocumentsDirectory();
+      //  hiveDb = Directory('${appDir. path}/chosenPath');
+      if (Loggerdef.isLoggerOn) {
+        Loggerdef.logger.i(".current.path: ${directory.path}");
+      }
     }
     await Hive.initFlutter();
     /*

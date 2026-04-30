@@ -17,6 +17,7 @@ import 'package:flutter_html/flutter_html.dart';
 // import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flgame/ParameterValues.dart';
 
 class BorderedContainer extends StatelessWidget {
   final Widget child;
@@ -31,7 +32,8 @@ class BorderedContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: !ScreenValues.isWeb ? 17 : 17, vertical:
+      !ScreenValues.isWeb ? 20 : 10),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
         color: color,
@@ -41,8 +43,19 @@ class BorderedContainer extends StatelessWidget {
   }
 }
 
-final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(20),
+final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(
+    !ScreenValues.isWeb ? 20 :3),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
+
+final TextStyle textStyleBack = TextStyle(fontSize: ScreenUtil().setSp(
+    !ScreenValues.isWeb ? 20 : 3),
+    color: Colors.black, backgroundColor: Colors.orangeAccent);
+
+final ButtonStyle buttonStyle =
+ElevatedButton.styleFrom(textStyle:
+TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 13 : 6),
+    fontWeight: FontWeight.bold),
+    backgroundColor: Colors.amberAccent);
 
 const TextStyle textStyleHtml = TextStyle(fontSize: 16,
     color: Colors.black,
@@ -240,6 +253,98 @@ const String strHelp3 = r"""
 </div>
 """;
 
+class HelpPageWeb extends StatelessWidget {
+  const HelpPageWeb({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return SingleChildScrollView(
+      controller: ScrollController(),
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 5.0, right: 5.0,
+              bottom: 5.0, top: 4.0),
+          child: Text('Scroll up and down between help text. ' +
+              'Or when needed from up into down.', style: textStyle,),
+        ),
+        SingleChildScrollView(
+          controller: ScrollController(),
+          primary: false,
+          child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
+            Html(style: htmlStyle, data: strHelp),
+            const Image(
+              width: 150,
+              height: 150,
+              image: AssetImage(
+                'assets/L_Game_start_position.svg.png',
+              ),
+            ),
+            Html(style: htmlStyle, data: strHelp_2),
+            Html(style: htmlStyle, data: strHelp3),
+            Column(
+              spacing: 0.0,
+              children:  [
+                const Padding(
+                  padding: EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
+                  child: Image(
+                    width: 150,
+                    height: 150,
+                    image: AssetImage(
+                      'assets/L_Game_start_position.svg.png',
+                    ),),
+                ),
+                Text("Start position of L game", style: textStyleHtml,),
+                const SizedBox(height: 20.0,),
+                Image(
+                  width: width -30.0,
+                  image: const AssetImage(
+                    'assets/560px-L_Game_mate_positions.svg.png',
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
+                  child: Text("All positions, Red to move, where Red will lose " "to a perfect Blue, and maximum number of moves remaining " "for Red. By looking ahead one move and ensuring " "one never ends up in any of the above positions,"
+                      " one can avoid losing.", style: textStyleHtml,),
+                ),
+
+                Image(
+                  width: width -30.0,
+                  image: AssetImage(
+                    'assets/560px-L_Game_all_final_positions.svg.png',
+                  ),
+                ),
+                const Text("All possible final positions, Blue has won",
+                  style: textStyleHtml,),
+                /*
+              Image(
+                width: 250,
+                height: 250,
+                image: AssetImage(
+                  'assets/560px-L_Game_mate_positions.svg.png',
+                ),),
+              Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
+              Image(
+                width: 250,
+                height: 250,
+                image: AssetImage(
+                  'assets/560px-L_Game_all_final_positions.svg.png',
+                ),),
+              Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
+               */
+                const SizedBox(height: 20.0,)
+              ],
+            ),
+          ],
+          ),
+          ),
+        ),
+      ],),
+    )
+    ;
+  }
+}
+
 class HelpPage1 extends StatelessWidget {
   const HelpPage1({super.key});
 
@@ -250,7 +355,8 @@ class HelpPage1 extends StatelessWidget {
       child: Column(children: [
       Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 4.0),
-      child: Text('Swipe from left into right and back between help pages. Or when needed from up into down.', style: textStyle,),
+      child: Text('Swipe from left into right and back between help pages. ' +
+          'Or when needed from up into down.', style: textStyle,),
       ),
       SingleChildScrollView(
         controller: ScrollController(),
@@ -642,14 +748,22 @@ class HelpRoute extends StatelessWidget {
   };
    */
   // final PageController pageController = PageController();
-  final pageView = PageView(
+  final pageView = !ScreenValues.isWeb ? PageView(
     controller: PageController(),
     scrollDirection: Axis.horizontal,
-    children: const [
+    children: [
       HelpPage1(),
-      HelpPage2(),
+        // HelpPage2(),
       HelpPage3(),
       HelpPage4(),
+    ],
+  )
+   :
+  PageView(
+    controller: PageController(),
+    scrollDirection: Axis.horizontal,
+    children: [
+      HelpPageWeb(),
     ],
   );
 
@@ -680,7 +794,8 @@ class HelpRoute extends StatelessWidget {
           hint: 'Wrap button',
           child: ElevatedButton(
             style: buttonStyle,
-            child: const Text(
+            child: Text(
+              style: textStyleBack,
               'Back into LGame',
             ),
             onPressed: () {

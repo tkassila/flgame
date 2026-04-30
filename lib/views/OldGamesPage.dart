@@ -55,7 +55,9 @@ class OldGamesPage extends StatefulWidget {
 class _OldGamesPageState extends State<OldGamesPage> {
 
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20)),
+  ElevatedButton.styleFrom(textStyle:
+  TextStyle(fontSize: ScreenUtil().setSp(
+      !ScreenValues.isWeb ? 20 : 5)),
       backgroundColor: Colors.amberAccent);
 
   Future<Null> _fetchPartner() async {
@@ -199,9 +201,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
       Card(child: Padding(padding: EdgeInsets.all(5),
         child: Semantics(
           readOnly: true,
-          label: "Unfinished games",
-          hint: 'List of unfinished games',
-          child: Text("Unfinished games"),),),)
+          label: widget.bCalledFromFinishedGames ? "Finished games"
+             : "Unfinished games",
+          hint: widget.bCalledFromFinishedGames ? 'List of finished games'
+           :  'List of unfinished games',
+          child: Text(widget.bCalledFromFinishedGames ? "Finished games"
+           : "Unfinished games"),),),)
           : SafeArea(
           minimum: const EdgeInsets.all(16.0),
           child: /* ListView( crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,7 +248,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
                         lGameSessionSelectedFunctionCallback,
                         bScreenReaderIsUsed: bScreenReaderIsUsed,
                         scrollController: scrollController,
-                        indexBackgroundColor: indexBackgroundColor),
+                        indexBackgroundColor: indexBackgroundColor,
+                        bCalledFromFinishedGames: widget.bCalledFromFinishedGames,
+                    ),
                   ),
                 ),
               //  ),

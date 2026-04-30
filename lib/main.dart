@@ -1,10 +1,10 @@
 
-
+import 'dart:ui';
 import 'package:flgame/ParameterValues.dart';
 import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/foundation.dart' show ValueNotifier;
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:platform/platform.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
@@ -18,6 +18,7 @@ import './di.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:content_resolver/content_resolver.dart';
 // import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'views/utils/util_dialog.dart';
 import 'views/help_route.dart';
@@ -29,6 +30,7 @@ import './views/finished_games_route.dart';
 import './views/remote_game.dart';
 import '../models/LGameDataService.dart';
 import './services/navigation_service.dart';
+// import 'package:flutter/services.dart';
 import './views/about_game.dart';
 import './LoggerDef.dart';
 import 'services/AudioPlayerService.dart' as audioPlayerService;
@@ -89,7 +91,11 @@ class MyApp extends StatelessWidget {
     }
 
 // Device width
-    final deviceWidth =   MediaQuery.of(context).size.width;
+    double deviceWidth = 500.0;
+    if (!ScreenValues.isWeb)
+      deviceWidth = MediaQuery.of(context).size.width;
+    else
+      deviceWidth = 500.0;
 // Subtract paddings to calculate available dimensions
     final paddingRight = MediaQuery.of(context).padding.right;
     final paddingLeft = MediaQuery.of(context).padding.left;
@@ -98,7 +104,9 @@ class MyApp extends StatelessWidget {
     final double availableWidth = deviceWidth - paddingRight - paddingLeft;
 //Inside Build function since we need context.
 // This is device height
-    final deviceHeight = MediaQuery.of(context).size.height;
+    final deviceHeight = !ScreenValues.isWeb ?
+         MediaQuery.of(context).size.height :
+         MediaQuery.of(context).size.height -100;
     final availableHeight = deviceHeight - AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top
         - MediaQuery.of(context).padding.bottom;
@@ -212,6 +220,8 @@ class _LGamePageState extends State<LGamePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (ScreenValues.isWeb)
+      return;
     switch (state) {
       case AppLifecycleState.inactive:
         if (Loggerdef.isLoggerOn) {
@@ -271,7 +281,7 @@ class _LGamePageState extends State<LGamePage>
   final double containerHeight = 200;
   bool bInitGameBoard = true;
   bool _bUpdateUI = false;
-  final ValueNotifier<bool> _notifier = ValueNotifier(false);
+ // final ValueNotifier<bool> _notifier = ValueNotifier(false);
 
   Widget? buttonUp;
   Widget? buttonDown;
@@ -291,9 +301,10 @@ class _LGamePageState extends State<LGamePage>
   final player1Color = Colors.redAccent;
   final player2Color = Colors.blueAccent;
   final neutralColor = Colors.black;
-  final ButtonStyle buttonStyle =
+  // final buttonFontSize = !ScreenValues.isWeb ? 13 : 5;
+  ButtonStyle buttonStyle =
          ElevatedButton.styleFrom(textStyle:
-         TextStyle(fontSize: ScreenUtil().setSp(13),
+         TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 13 : 5),
              fontWeight: FontWeight.bold),
          backgroundColor: Colors.amberAccent);
 
@@ -333,8 +344,8 @@ class _LGamePageState extends State<LGamePage>
         _bUpdateUI = true;
         lGameSession.setListBoardPiecesUpdated(true);
         _buildBoard = buildGameBoard();
-        _notifier.value = _bUpdateUI;
-        ScreenValues.notifier = _notifier;
+     //   _notifier.value = _bUpdateUI;
+      //  ScreenValues.notifier = _notifier;
     });
     }
   }
@@ -529,8 +540,8 @@ class _LGamePageState extends State<LGamePage>
         setState(() {
           _bUpdateUI = true;
           _buildBoard = buildGameBoard();
-          _notifier.value = _bUpdateUI;
-          ScreenValues.notifier = _notifier;
+       //   _notifier.value = _bUpdateUI;
+         // ScreenValues.notifier = _notifier;
         });
         return true;
       }
@@ -555,8 +566,8 @@ class _LGamePageState extends State<LGamePage>
           _bUpdateUI = true;
           lGameSession.setListBoardPiecesUpdated(true);
           _buildBoard = buildGameBoard();
-          _notifier.value = _bUpdateUI;
-          ScreenValues.notifier = _notifier;
+      //    _notifier.value = _bUpdateUI;
+        //  ScreenValues.notifier = _notifier;
        });
    // }
   }
@@ -586,8 +597,8 @@ class _LGamePageState extends State<LGamePage>
       bEditPlayerNames = false;
       _bUpdateUI = true;
       _buildBoard = buildGameBoard();
-      _notifier.value = _bUpdateUI;
-      ScreenValues.notifier = _notifier;
+    //  _notifier.value = _bUpdateUI;
+     // ScreenValues.notifier = _notifier;
     });
   }
 
@@ -597,8 +608,8 @@ class _LGamePageState extends State<LGamePage>
       bEditPlayerNames = false;
       _bUpdateUI = true;
       _buildBoard = buildGameBoard();
-      _notifier.value = _bUpdateUI;
-      ScreenValues.notifier = _notifier;
+  //    _notifier.value = _bUpdateUI;
+    //  ScreenValues.notifier = _notifier;
    });
   }
 
@@ -619,8 +630,8 @@ class _LGamePageState extends State<LGamePage>
         _bUpdateUI = true;
       //  lGameSession.setListMovePiecesUpdated(true);
         _buildBoard = buildGameBoard();
-        _notifier.value = _bUpdateUI;
-        ScreenValues.notifier = _notifier;
+      //  _notifier.value = _bUpdateUI;
+       // ScreenValues.notifier = _notifier;
      });
   //  }
   }
@@ -642,8 +653,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
     //     lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+       //  _notifier.value = _bUpdateUI;
+        // ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -665,8 +676,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
      //    lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+      //   _notifier.value = _bUpdateUI;
+        // ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -688,8 +699,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
    //      lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+      //   _notifier.value = _bUpdateUI;
+        // ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -711,8 +722,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
        //  lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+      //   _notifier.value = _bUpdateUI;
+        // ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -734,8 +745,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
      //    lGameSession.setListMovePiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+      //   _notifier.value = _bUpdateUI;
+       //  ScreenValues.notifier = _notifier;
       });
     // }
   }
@@ -758,8 +769,8 @@ class _LGamePageState extends State<LGamePage>
          _bUpdateUI = true;
          lGameSession.setListBoardPiecesUpdated(true);
          _buildBoard = buildGameBoard();
-         _notifier.value = _bUpdateUI;
-         ScreenValues.notifier = _notifier;
+      //   _notifier.value = _bUpdateUI;
+        // ScreenValues.notifier = _notifier;
       });
      // }
   }
@@ -800,8 +811,8 @@ class _LGamePageState extends State<LGamePage>
      setState(() {
         _bUpdateUI = true;
         _buildBoard = buildGameBoard();
-        _notifier.value = _bUpdateUI;
-        ScreenValues.notifier = _notifier;
+       // _notifier.value = _bUpdateUI;
+       // ScreenValues.notifier = _notifier;
      });
   }
 
@@ -1158,7 +1169,7 @@ class _LGamePageState extends State<LGamePage>
            child: Tooltip(message: "Messages of this game.",
              child: RoundedBackgroundText(
          lGameSession.msg,
-         style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),
+         style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp( !ScreenValues.isWeb ? 15 : 3)),
          backgroundColor: Colors.yellowAccent,
        ),
            ),
@@ -1167,7 +1178,7 @@ class _LGamePageState extends State<LGamePage>
      else {
        textMessage = Tooltip(message: "Messages of this game.",
            child: Text(lGameSession.msg,
-         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp(15)),
+         style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp( !ScreenValues.isWeb ? 15 : 3)),
            ),
        );
      }
@@ -1217,14 +1228,14 @@ class _LGamePageState extends State<LGamePage>
                    child: Text(
                      'Player 1',
                     style: TextStyle(fontWeight: FontWeight.bold,
-                        fontSize: ScreenUtil().setSp(15), color: Colors.red),
+                        fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5), color: Colors.red),
                    ),
                  ),
                  WidgetSpan(
                    child: Text(
                      '*',
                      style: TextStyle(fontWeight: FontWeight.bold,
-                         fontSize: ScreenUtil().setSp(15),),
+                         fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5),),
                    ),
                  ),
                ],
@@ -1253,14 +1264,14 @@ class _LGamePageState extends State<LGamePage>
                    child: Text(
                      'Player 2',
                      style: TextStyle(fontWeight: FontWeight.bold,
-                       fontSize: ScreenUtil().setSp(15), color: Colors.blue),
+                       fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5), color: Colors.blue),
                    ),
                  ),
                  WidgetSpan(
                    child: Text(
                      '*',
                      style: TextStyle(fontWeight: FontWeight.bold,
-                         fontSize: ScreenUtil().setSp(15), ),
+                         fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5), ),
                    ),
                  ),
                ],
@@ -1430,34 +1441,69 @@ class _LGamePageState extends State<LGamePage>
           _bUpdateUI,);
       }
 
-    Widget ret = Column (
+    final Widget mobileScreenLayout = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         /* Expanded( // wrap in Expanded
-          child: */ lGameBoard! /* buildGameBoard2() */,
-       /* _gameBoardGrid!, */
-       // ),
+          child: */ if (!bEditPlayerNames) lGameBoard! /* buildGameBoard2() */,
+        /* _gameBoardGrid!, */
+        // ),
 //        SizedBox(height: 20,),
-    Padding(
-    padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-    child: Column (
-         crossAxisAlignment: CrossAxisAlignment.center,
-         mainAxisSize: MainAxisSize.min,
-         children: <Widget>[
-     const SizedBox(height: 40),
-    Center( child: Semantics(
-      liveRegion: true,
-      child: textMessage!,),
-     ),
-   //  if (!bEditPlayerNames) SizedBox(height: 30, ),
-     if (!bEditPlayerNames) editOrButtonContainer!,
-         ],),
-    ),
-        if (isSystemNavigateMenu) const SizedBox(height: 30, ),
-    ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(height: 40),
+              Center(child: Semantics(
+                liveRegion: true,
+                child: textMessage!,),
+              ),
+              //  if (!bEditPlayerNames) SizedBox(height: 30, ),
+              if (!bEditPlayerNames) editOrButtonContainer!,
+            ],),
+        ),
+        if (isSystemNavigateMenu) const SizedBox(height: 30,),
+      ],
     );
 
+    Widget? ret = null;
+    if (!ScreenValues.isWeb) {
+      ret = mobileScreenLayout;
+    }
+    else      {
+        ret = Row (
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            /* Expanded( // wrap in Expanded
+          child: */ !bEditPlayerNames ? lGameBoard!
+                : SizedBox.shrink()
+            /* buildGameBoard2() */,
+            /* _gameBoardGrid!, */
+            // ),
+//        SizedBox(height: 20,),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+              child: Column (
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // const SizedBox(height: 40),
+                  Center( child: Semantics(
+                    liveRegion: true,
+                    child: textMessage!,),
+                  ),
+                  //  if (!bEditPlayerNames) SizedBox(height: 30, ),
+                  if (!bEditPlayerNames) editOrButtonContainer!,
+                ],),
+            ),
+            if (isSystemNavigateMenu) const SizedBox(height: 30, ),
+          ],
+        );
+      }
     /*
     String duration = DateTime.now().difference(now).toString();
     if (Loggerdef.isLoggerOn) {
@@ -1551,8 +1597,8 @@ class _LGamePageState extends State<LGamePage>
           _bUpdateUI = true;
           lGameSession.msg = "Cannot save the current game.";
           _buildBoard = buildGameBoard();
-          _notifier.value = _bUpdateUI;
-          ScreenValues.notifier = _notifier;
+       //   _notifier.value = _bUpdateUI;
+         // ScreenValues.notifier = _notifier;
         });
         return;
       }
@@ -1564,8 +1610,8 @@ class _LGamePageState extends State<LGamePage>
      setState(() {
         _bUpdateUI = true;
         _buildBoard = buildGameBoard();
-        _notifier.value = _bUpdateUI;
-        ScreenValues.notifier = _notifier;
+      //  _notifier.value = _bUpdateUI;
+       // ScreenValues.notifier = _notifier;
      });
     }
     // final result = await = Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) =>
@@ -1574,6 +1620,12 @@ class _LGamePageState extends State<LGamePage>
 
   void callExitGame()
   {
+    if (ScreenValues.isWeb)
+      {
+       // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+       // window.close();
+        return;
+      }
     if (localPlatform.isAndroid) {
       FlutterExitApp.exitApp();
     } else if (localPlatform.isIOS) {
@@ -1628,12 +1680,13 @@ class _LGamePageState extends State<LGamePage>
     return ret;
   }
 
+  /*
   Widget? buildUpdatedBoard()
   {
-    var ret = _buildBoard;
     _bUpdateUI = false;
     return ret;
   }
+   */
 
   bool getCurrentUpdateUI()
   {
@@ -1653,8 +1706,8 @@ class _LGamePageState extends State<LGamePage>
     if (bGameIsFormat)
       {
         _buildBoard = buildGameBoard();
-        _notifier.value = _bUpdateUI;
-        ScreenValues.notifier = _notifier;
+       // _notifier.value = _bUpdateUI;
+       // ScreenValues.notifier = _notifier;
         bGameIsFormat = false;
       }
 
@@ -1664,7 +1717,7 @@ class _LGamePageState extends State<LGamePage>
       homeTitle = "Turn: $strPlayer";
     }
 
-    final TextStyle menuTextStyle = TextStyle(fontSize: ScreenUtil().setSp(16),
+    final TextStyle menuTextStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3),
         fontWeight: FontWeight.bold);
 
     double height = MediaQuery.sizeOf(context).height;
@@ -1704,19 +1757,19 @@ class _LGamePageState extends State<LGamePage>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        titleSpacing: 23,
+        titleSpacing: !ScreenValues.isWeb ? 23 : 10,
         title: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(!ScreenValues.isWeb ? 20.0 : 10),
             child: Container(
-              padding: const EdgeInsets.all(4.0),
+              padding: EdgeInsets.all(!ScreenValues.isWeb ? 4.0 : 2.0),
               decoration: BoxDecoration(
                 color: playerColor!,
                 borderRadius: BorderRadius.all(
-                  Radius.circular(15.0),
+                  Radius.circular(!ScreenValues.isWeb ? 15.0 : 5.0),
                 ),
               ),
               child: Text(homeTitle, style:
-            TextStyle(fontSize: ScreenUtil().setSp(20),
+            TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 5),
             fontWeight: FontWeight.bold, background: Paint()
             /*
           ..strokeWidth = 12.0
@@ -1751,8 +1804,8 @@ class _LGamePageState extends State<LGamePage>
                     _bUpdateUI = true;
                     bEditPlayerNames = true;
                     _buildBoard = buildGameBoard();
-                    _notifier.value = _bUpdateUI;
-                    ScreenValues.notifier = _notifier;
+                  //  _notifier.value = _bUpdateUI;
+                   // ScreenValues.notifier = _notifier;
                  // });
                 }
                 else

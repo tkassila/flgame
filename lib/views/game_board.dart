@@ -8,7 +8,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:multi_finger_gesture_detector/multi_finger_gesture_detector.dart';
-
 import '../ParameterValues.dart';
 import '../models/lgame_data.dart';
 import '../LoggerDef.dart';
@@ -244,7 +243,7 @@ class LGameBoard extends StatelessWidget {
   */
   void initState() {
    // super.initState();
-    buttonStyleScreenReader = ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(12),
+    buttonStyleScreenReader = ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 12 : 6),
         fontWeight: FontWeight.bold),
         backgroundColor: Colors.transparent);
     if (Loggerdef.isLoggerOn) {
@@ -1177,7 +1176,7 @@ Border
     Widget text = Text(
         "${lGameSession.iPlayerMove}",
         textAlign: TextAlign.left,
-        style: TextStyle(fontSize: ScreenUtil().setSp(27), color: textColor,
+        style: TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 27 : 6), color: textColor,
             fontWeight: FontWeight.bold)
     );
 
@@ -1656,7 +1655,7 @@ Border
     ObjectKey objectKey = ObjectKey(DateTime.now());
     return Center(key: objectKey, child: AutoSizeText(strText,
       // This is some text that will resize based on the screen size.,
-      style: TextStyle(fontSize: ScreenUtil().setSp(30), color: fontColor,
+      style: TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 30 : 6), color: fontColor,
           fontWeight: FontWeight.bold),
       overflow: TextOverflow.ellipsis,));
   }
@@ -1679,7 +1678,7 @@ Border
       },
       child: */ Text(_iArrScreenReaderSquareText[index],
           textAlign: TextAlign.left,
-          style: TextStyle(fontSize: ScreenUtil().setSp(12),
+          style: TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 12 : 6),
               color: Colors.transparent,
               fontWeight: FontWeight.bold
             /* Colors.grey */),

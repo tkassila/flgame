@@ -29,7 +29,7 @@ class FinishedGamesRoute extends StatefulWidget {
 class _FinishedGamesState extends State<FinishedGamesRoute> {
 
   final ButtonStyle buttonStyle =
-  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(20)),
+  ElevatedButton.styleFrom(textStyle: TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 3)),
       backgroundColor: Colors.amberAccent);
 
   List<LGameSessionData>? listDataSessions;
@@ -52,6 +52,7 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
         expansionControllers![i].dispose();
       }
     }
+    super.dispose();
   }
 
   int getModified(LGameSessionData a, LGameSessionData b)

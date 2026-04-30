@@ -4,6 +4,7 @@ import 'package:flgame/models/lgame_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import './utils/util_dialog.dart';
+import 'package:flgame/ParameterValues.dart';
 import 'package:intl/intl.dart';
 
 
@@ -56,6 +57,7 @@ class ListGameSessions extends StatefulWidget {
   final ScrollController scrollController;
   final bool bScreenReaderIsUsed;
   final int indexBackgroundColor;
+  final bool bCalledFromFinishedGames;
   ListGameSessions({super.key, required this.strDeleteTitle,
     required this.strDeleteAsk,
     required this.listDataSessions,
@@ -63,7 +65,8 @@ class ListGameSessions extends StatefulWidget {
     required this.lGameSessionSelectedFunctionCallback,
     required this.bScreenReaderIsUsed,
     required this.scrollController,
-    required this.indexBackgroundColor});
+    required this.indexBackgroundColor,
+    required this.bCalledFromFinishedGames});
 
   @override
   State<ListGameSessions> createState() =>
@@ -190,12 +193,16 @@ class _ListGameSessionsState
            return ListTile(
              title: Semantics(
                readOnly: true,
-               label: "Unfinished game",
-               hint: 'Unfinished game name',
-               child: Text(formatTitle(item.title), style: TextStyle(backgroundColor:
+               label: widget.bCalledFromFinishedGames ? "Finished game"
+                 : "Unfinished game",
+               hint: widget.bCalledFromFinishedGames ?
+                 'Finished game name' : 'Unfinished game name',
+               child: Text(formatTitle(item.title), style:
+               TextStyle(backgroundColor:
              isExpanded ? Colors.lightGreen :
              Colors.white, fontWeight: FontWeight.bold,
-                 fontSize: ScreenUtil().setSp(16) ),
+                 fontSize: ScreenUtil().setSp(
+                     !ScreenValues.isWeb ? 16 : 3) ),
              ),),
              //   },),
              onTap: () {
@@ -230,7 +237,7 @@ class _ListGameSessionsState
                  ? "Player 1: ${item.data.name1}"
                  : '', style: TextStyle(backgroundColor:  Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
-                 fontSize: ScreenUtil().setSp(16) )),
+                 fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
              const SizedBox(
                height: 5.0,
              ),
@@ -238,7 +245,7 @@ class _ListGameSessionsState
                  ? "Player 2: ${item.data.name2}"
                  : '', style: TextStyle(backgroundColor: Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
-                 fontSize: ScreenUtil().setSp(16) )),
+                 fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
              const Text('To delete this game session, tap the trash can icon'),
              InkWell(child: const Icon(Icons.delete, size: 34,),
                  onTap: () async {

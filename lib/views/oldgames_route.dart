@@ -59,7 +59,7 @@ class OldGamesPage extends StatelessWidget {
 }
 */
 
-TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(20),
+TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 5),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
 
 class OldGamesRoute extends StatefulWidget {

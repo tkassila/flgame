@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flgame/ParameterValues.dart';
 
-final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(20),
+final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 3),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
 
 class AboutRoute extends StatelessWidget {
@@ -11,7 +12,7 @@ class AboutRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final ButtonStyle buttonStyle =
     ElevatedButton.styleFrom(textStyle: TextStyle(fontSize:
-    ScreenUtil().setSp(15), fontWeight: FontWeight.bold),
+    ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 3), fontWeight: FontWeight.bold),
         backgroundColor: Colors.amberAccent);
 
     return SafeArea(
@@ -69,7 +70,7 @@ class AboutRoute extends StatelessWidget {
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1.6',
+                child: Text('version 1.1.7',
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

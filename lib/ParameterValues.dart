@@ -1,4 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io' as io;
+
+enum Platform { android, ios, web, }
+class PlatformClass {
+    static Platform getPlatform() {
+        if (io.Platform.isAndroid) return Platform.android;
+        if (io.Platform.isIOS) return Platform.ios;
+        return Platform.web;
+        //  throw UnimplementedError('Unsupported');
+  }
+}
 
 class ScreenValues {
   ScreenValues(
@@ -21,9 +33,11 @@ class ScreenValues {
   final double availableWidth;
   final double deviceHeight;
   final double availableHeight;
-  static final int minusDynamicContainerSizeOfLGame = 18;
+  static final int minusDynamicContainerSizeOfLGame = !kIsWeb ? 18 : 38;
   static double containerWidth = 80;
   static double containerHeight = 80;
+  static final bool isWeb = kIsWeb /* PlatformClass.getPlatform() == Platform.web */
+  /* kIsWeb */;
 
   void calculateInitValues()
   {
