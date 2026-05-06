@@ -83,9 +83,9 @@ flutter:
     - assets/560px-L_Game_mate_positions.svg.png
     - assets/560px-L_Game_all_final_positions.svg.png
     - assets/help.html
-    - assets/sounds/errbeep.mp3
+    - assets/audio/errbeep.mp3
     - assets/
-    - assets/sounds/
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

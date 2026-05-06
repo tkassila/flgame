@@ -14,7 +14,7 @@ class LGameContainer extends StatelessWidget {
     required this.isSystemNavigateMenu,
     required this.bEditPlayerNames,
     required this.editOrButtonContainer,
- //   required this.lGameBoard,
+    // required this.lGameBoard,
     required this.textMessage,
   //  required this.notifier,
     required this.buttonBetweenWidth,
@@ -27,7 +27,7 @@ class LGameContainer extends StatelessWidget {
   final bool bEditPlayerNames;
   final Widget editOrButtonContainer;
  // final ValueNotifier<bool> notifier;
-  // final LGameBoard? lGameBoard;
+ //  final LGameBoard? lGameBoard;
   final LGameSession lGameSession;
   final bool bScreenReaderIsUsed;
   final Widget? textMessage;
@@ -57,11 +57,11 @@ class LGameContainer extends StatelessWidget {
             isUpdated: isUpdated,
             /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */
             // lGameBoard!,
-            /* buildGameBoard2() */ /* _gameBoardGrid!, */
-
+            /* buildGameBoard2() *? ?* _gameBoardGrid!, */
             // ),
 //        SizedBox(height: 20,),
-          ), // ),
+          ),
+          // ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
             child: Center(child: Column(

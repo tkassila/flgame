@@ -17,28 +17,42 @@ var logger = Logger(
 
 class AudioPlayerService {
  // static AudioPlayer? _audioPlayer;
-  late AudioPlayer player = AudioPlayer();
-  AudioSource? currentSound;
-  var currentSound2;
+  final AudioPlayer player = AudioPlayer();
+  late PlayerState? _playerState;
+  Source? source;
+  bool get _isPlaying => _playerState == PlayerState.playing;
+  bool get _isPaused => _playerState == PlayerState.paused;
+  late AudioSource? currentSound;
+  var currentSound2 = AssetSource('assets/audio/errbeep.mp3');
 
   /// load the audio file
   void initState() async
   {
     if (ScreenValues.isWeb) {
-      player = AudioPlayer();
+      _playerState = player.state;
       // Set the release mode to keep the source after playback has completed.
       player.setReleaseMode(ReleaseMode.stop);
-      // Start the player as soon as the app is displayed.
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await player.setSource(AssetSource('assets/sounds/errbeep.mp3'));
+      // Start the player as soon as the app is displayed.WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //  print('AssetSource=' +AssetSource('audio/errbeep.mp3').toString());
+        await player.setSource(AssetSource('audio/errbeep.mp3'));
+        source = player.source;
+        // print("currentSound2=" +currentSound2.toString());
         await player.resume();
-      });
+     // });
       return;
     }
-    currentSound = await SoLoud.instance
-        .loadAsset('assets/sounds/errbeep.mp3');
+    if (!ScreenValues.isWeb) {
+      currentSound = await SoLoud.instance
+          .loadAsset('assets/audio/errbeep.mp3');
+      print("currentSound=" +currentSound.toString());
+    }
   }
 
+  Future<void> _play() async {
+    await player.resume();
+    _playerState = PlayerState.playing;
+  //  await player.play(source!);
+  }
   /*
   static AudioPlayer get audioPlayer {
     bool bIsNotSet = _audioPlayer == null;
@@ -58,15 +72,17 @@ class AudioPlayerService {
         Loggerdef.logger.i("before beed: beep_error");
       }
       if (ScreenValues.isWeb) {
-        player.play(currentSound2);
+        _play();
         if (Loggerdef.isLoggerOn) {
           Loggerdef.logger.i("after beed: beep_error");
         }
-        return;
+       // return;
       }
-      // audioPlayer.play(AssetSource('sounds/errbeep.mp3'));
+      // audioPlayer.play(AssetSource('audio/errbeep.mp3'));
       /// play it
-      await SoLoud.instance.play(currentSound!);
+      if (!ScreenValues.isWeb) {
+        await SoLoud.instance.play(currentSound!);
+      }
       if (Loggerdef.isLoggerOn) {
         Loggerdef.logger.i("after beed: beep_error");
       }
@@ -82,7 +98,11 @@ class AudioPlayerService {
       player.dispose();
       return;
     }
-    SoLoud.instance.deinit();
+    if (!ScreenValues.isWeb) {
+      SoLoud.instance.deinit();
+      audioPlayerService.dispose();
+      SoLoud.instance.deinit();
+    }
  //   _audioPlayer?.dispose();
   //  _audioPlayer = null;
   }

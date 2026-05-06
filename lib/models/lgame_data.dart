@@ -6,28 +6,35 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import '../models/LGameDataService.dart';
 import '../di.dart';
 // import '../main.dart';
-import '../services/AudioPlayerService.dart' as audioPlayerService;
+import '../services/AudioPlayerService.dart'; // as audioPlayerService;
 part 'lgame_data.g.dart';
 
 Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 @HiveType(typeId: 2)
+@JsonSerializable()
 enum GamePlayerTurn {
   @HiveField(0)
+  @JsonKey(name: 'player1')
   player1,
   @HiveField(1)
+  @JsonKey(name: 'player2')
   player2,
 }
 
 @HiveType(typeId: 3)
+@JsonSerializable()
 enum LGamePieceInMove {
   @HiveField(0)
+  @JsonKey(name: 'lpiece')
   LPiece,
   @HiveField(1)
+  @JsonKey(name: 'neutral')
   neutral,
 }
 
@@ -197,85 +204,111 @@ class GameBoardPositionValidate {
 }
 
 @HiveType(typeId: 0) //typeId should be unique for each model
+@JsonSerializable()
 class LGameSessionData extends HiveObject {
   String? error;
 
   @HiveField(0) // unique id for each field
+  @JsonKey(name: 'name1')
   String name1 = "";
 
   @HiveField(1)
+  @JsonKey(name: 'name2')
   String name2 = "";
 
   @HiveField(2)
+  @JsonKey(name: 'startedAt')
   String? startedAt;
 
   @HiveField(3)
+  @JsonKey(name: 'isLocal')
   bool isLocal = true;
 
   @HiveField(4)
+  @JsonKey(name: 'remoteUser')
   String? remoteUser;
 
   @HiveField(5)
+  @JsonKey(name: 'oldIActiveNeutral')
   int oldIActiveNeutral = 0;
 
   @HiveField(6)
+  @JsonKey(name: 'oldIArrPlayer1Pieces')
   List<int>? oldIArrPlayer1Pieces;
 
   @HiveField(7)
+  @JsonKey(name: 'oldIArrPlayer2Pieces')
   List<int>? oldIArrPlayer2Pieces;
 
   @HiveField(8)
+  @JsonKey(name: 'oldIPlayerNeutral1Piece')
   int oldIPlayerNeutral1Piece = -1;
 
   @HiveField(9)
+  @JsonKey(name: 'oldIPlayerNeutral2Piece')
   int oldIPlayerNeutral2Piece = -1;
 
   @HiveField(10)
+  @JsonKey(name: 'oldIPlayerMovePieces')
   List<int>? oldIPlayerMovePieces;
 
   @HiveField(11)
+  @JsonKey(name: 'oldPlayerTurn')
   GamePlayerTurn? oldPlayerTurn;
 
   @HiveField(12)
+  @JsonKey(name: 'oldInMovingPiece')
   LGamePieceInMove? oldInMovingPiece;
 
   @HiveField(13)
+  @JsonKey(name: 'oldIPlayerMove')
   int? oldIPlayerMove;
 
   @HiveField(14)
+  @JsonKey(name: 'bGameOver')
   bool bGameOver = false;
 
   @HiveField(15)
+  @JsonKey(name: 'oldIArrPlayerPossibleMovePieces')
   List<int>? oldIArrPlayerPossibleMovePieces;
 
   @HiveField(16)
+  @JsonKey(name: 'oldIPlayerNeutral1PieceInBeginningMove')
   int? oldIPlayerNeutral1PieceInBeginningMove;
 
   @HiveField(17)
+  @JsonKey(name: 'oldIPlayerNeutral2PieceInBeginningMove')
   int? oldIPlayerNeutral2PieceInBeginningMove;
 
   @HiveField(18)
+  @JsonKey(name: 'modifiedAt')
   DateTime? modifiedAt;
 
   @HiveField(19)
+  @JsonKey(name: 'msg')
   late String? msg;
 
 }
 
 @HiveType(typeId: 1) //typeId should be unique for each model
+@JsonSerializable()
 class HiveLGameSessionData extends HiveObject {
   String? error;
 
   @HiveField(0) // unique id for each field
+  @JsonKey(name: 'savetime')
   DateTime? saveTime = DateTime.now();
 
   @HiveField(1)
+  @JsonKey(name: 'unFinishedGames')
   List<LGameSessionData>? unFinishedGames;
 
   @HiveField(2) //unique id for each field
+  @JsonKey(name: 'finishedGames')
   List<LGameSessionData>? finishedGames;
 
   @HiveField(3)
+  @JsonKey(name: 'activeGames')
   LGameSessionData? activeGame;
 
   /*
@@ -2420,7 +2453,8 @@ class LGameSession {
 
   Future beep(bool bValue) async {
     if (!bValue) {
-      await audioPlayerService.audioPlayerService.beepError();
+      // await audioPlayerService.audioPlayerService.beepError();
+      await di<AudioPlayerService>().beepError();
     }
   }
 

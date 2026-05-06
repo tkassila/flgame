@@ -4,6 +4,7 @@ import 'package:flgame/ParameterValues.dart';
 import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter/foundation.dart' show ValueNotifier;
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:platform/platform.dart';
@@ -33,7 +34,7 @@ import './services/navigation_service.dart';
 // import 'package:flutter/services.dart';
 import './views/about_game.dart';
 import './LoggerDef.dart';
-import 'services/AudioPlayerService.dart' as audioPlayerService;
+import 'services/AudioPlayerService.dart'; // as myAudioPlayerService;
 
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
@@ -52,7 +53,7 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'fi_FI';
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+//  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   /*
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
@@ -203,15 +204,34 @@ class _LGamePageState extends State<LGamePage>
   }
    */
 
+  Future<void> saveSession() async
+  {
+    if (ScreenValues.isWeb)
+    {
+      saveSessionFromBuildGameBoard();
+      di<LGameDataService>().closeHive();
+    }
+  }
+
+  Future<void> saveSessionFromBuildGameBoard() async
+  {
+    if (ScreenValues.isWeb)
+    {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().setActiveGame(obj);
+      di<LGameDataService>().saveLGameSessionData(obj);
+    }
+  }
+
   @override
   void dispose() {
     if (Loggerdef.isLoggerOn) {
       Loggerdef.logger.i("dispose");
     }
-  //  player.dispose();
+    saveSession();
     lGameSession.dispose();
-    audioPlayerService.audioPlayerService.dispose();
-    SoLoud.instance.deinit();
+   // myAudioPlayerService.audioPlayerService.dispose();
+    di<AudioPlayerService>().dispose();
     WidgetsBinding.instance.removeObserver(this);
     _textFieldName1Controller.dispose();
     _textFieldName2Controller.dispose();
@@ -230,7 +250,9 @@ class _LGamePageState extends State<LGamePage>
         var obj = lGameSession.getGamePositionsForSaveGame();
         di<LGameDataService>().setActiveGame(obj);
         di<LGameDataService>().saveLGameSessionData(obj);
-        di<LGameDataService>().closeHive();
+        if (!ScreenValues.isWeb) {
+          di<LGameDataService>().closeHive();
+        }
         break;
       case AppLifecycleState.resumed:
         if (Loggerdef.isLoggerOn) {
@@ -239,7 +261,9 @@ class _LGamePageState extends State<LGamePage>
         var obj = lGameSession.getGamePositionsForSaveGame();
         di<LGameDataService>().setActiveGame(obj);
         di<LGameDataService>().saveLGameSessionData(obj);
-        di<LGameDataService>().closeHive();
+      //  if (!ScreenValues.isWeb) {
+          di<LGameDataService>().closeHive();
+      //  }
         break;
       case AppLifecycleState.paused:
         if (Loggerdef.isLoggerOn) {
@@ -248,7 +272,9 @@ class _LGamePageState extends State<LGamePage>
           var obj = lGameSession.getGamePositionsForSaveGame();
           di<LGameDataService>().setActiveGame(obj);
           di<LGameDataService>().saveLGameSessionData(obj);
+        if (!ScreenValues.isWeb) {
           di<LGameDataService>().closeHive();
+        }
         break;
       default:
         break;
@@ -262,6 +288,7 @@ class _LGamePageState extends State<LGamePage>
   SelectedLGameSessionData? selectedLGameSessionData;
   SelectedLGameSessionData? oldSelectedLGameSessionData;
 
+  Widget? _buttonSaveSession;
   Widget? _buttonsRow0;
   Widget? _buttonsRow1;
   Widget? _buttonsRow2;
@@ -817,9 +844,12 @@ class _LGamePageState extends State<LGamePage>
   }
 
   Future<void> initAudioService() async {
-    await SoLoud.instance.init();
-    audioPlayerService.audioPlayerService = audioPlayerService.AudioPlayerService();
-    audioPlayerService.audioPlayerService.initState();
+    if (!ScreenValues.isWeb) {
+      await SoLoud.instance.init();
+    }
+   // myAudioPlayerService.audioPlayerService = myAudioPlayerService.AudioPlayerService();
+   // myAudioPlayerService.audioPlayerService.initState();
+    di<AudioPlayerService>().initState();
   }
 
   @override
@@ -832,7 +862,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("padding_left=$ScreenValues.padding_left");
       Loggerdef.logger.i("widget.availableWidth=$ScreenValues.availableWidth");
     }
-
 
     /*
     // Create the audio player.
@@ -929,6 +958,10 @@ class _LGamePageState extends State<LGamePage>
 
   Widget? buildGameBoard()
   {
+    if (ScreenValues.isWeb)
+      {
+        saveSessionFromBuildGameBoard();
+      }
     /*
     DateTime now = DateTime.now();
     if (Loggerdef.isLoggerOn) {
@@ -1302,6 +1335,21 @@ class _LGamePageState extends State<LGamePage>
        );
      } // end of bEdit controls
 
+    _buttonSaveSession = Semantics(
+      readOnly: true,
+      label: "Save game data",
+      hint: "Save game data for this web session",
+      child: Tooltip(message: "Save game data for this web session.",
+        child: ElevatedButton(
+          style: buttonStyle,
+          onPressed: true ? (){}
+              : null,
+          onLongPress: saveSession,
+          child: const Text('Save game data'),
+        ),
+      ),
+    );
+
      _buttonsRow0 = Row(children: [
       buttonStartGame!,
       SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
@@ -1622,7 +1670,7 @@ class _LGamePageState extends State<LGamePage>
   {
     if (ScreenValues.isWeb)
       {
-       // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
        // window.close();
         return;
       }
@@ -1760,7 +1808,8 @@ class _LGamePageState extends State<LGamePage>
         titleSpacing: !ScreenValues.isWeb ? 23 : 10,
         title: Padding(
             padding: EdgeInsets.all(!ScreenValues.isWeb ? 20.0 : 10),
-            child: Container(
+            child: Row(children: [
+              Container(
               padding: EdgeInsets.all(!ScreenValues.isWeb ? 4.0 : 2.0),
               decoration: BoxDecoration(
                 color: playerColor!,
@@ -1781,6 +1830,10 @@ class _LGamePageState extends State<LGamePage>
               height: 1.7,
               letterSpacing: 1.5,
             ),),
+        ),
+              if (ScreenValues.isWeb) SizedBox(width: 30,),
+              if (ScreenValues.isWeb) _buttonSaveSession!,
+          ],
        // ),
                 ),
         ),
@@ -1960,14 +2013,14 @@ class _LGamePageState extends State<LGamePage>
       ),
     ),
     child:
-    /* buildGameBoard() */ bInitGameBoard ? initBoard() :
+    /* buildGameBoard() */ /* bInitGameBoard ? initBoard() : */
      /* _bUpdateUI ? */ /*buildUpdatedBoard() */
     LGameContainer(isSystemNavigateMenu: isSystemNavigateMenu,
         //  notifier: _notifier,
         bEditPlayerNames: bEditPlayerNames,
         editOrButtonContainer: editOrButtonContainer!,
         bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
-       // lGameBoard: lGameBoard,
+     //  lGameBoard: lGameBoard,
         lGameSession: lGameSession,
         buttonBetweenWidth: buttonBetweenWidth,
         textMessage: textMessage,
