@@ -1610,7 +1610,7 @@ class LGameSession {
           {
             LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
           }
-          if (bScreenReaderIsUsed && lPieceMoved)
+          if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
              msg = "Player 1 has moved L Piece.";
           }
@@ -1631,18 +1631,18 @@ class LGameSession {
               {
                 LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
               }
-          if (bScreenReaderIsUsed && lPieceMoved)
+          if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
             msg = "Player 2 has moved L Piece.";
           }
         }
 
-    if (bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral1Piece != iPlayerNeutral1Piece!)
+    if (!bGameIsOver && bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral1Piece != iPlayerNeutral1Piece!)
       {
         msg = "Player has moved Neutral 1 Piece.";
       }
     else
-    if (bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral2Piece != iPlayerNeutral2Piece!)
+    if (!bGameIsOver && bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral2Piece != iPlayerNeutral2Piece!)
     {
       msg = "Player has moved Neutral 2 Piece.";
     }
@@ -1663,16 +1663,15 @@ class LGameSession {
       {
         LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
       }
-      if (bScreenReaderIsUsed && lPieceFrameMoved == 1)
+      if (!bGameIsOver && bScreenReaderIsUsed && lPieceFrameMoved == 1)
       {
         msg = "Player has moved Neutral frame.";
       }
       else
-      if (bScreenReaderIsUsed && lPieceFrameMoved == 3)
+      if (!bGameIsOver && bScreenReaderIsUsed && lPieceFrameMoved == 3)
       {
         msg = "Player has moved L frame.";
       }
-
     }
   }
 
