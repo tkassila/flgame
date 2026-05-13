@@ -1671,7 +1671,7 @@ class _LGamePageState extends State<LGamePage>
     if (ScreenValues.isWeb)
       {
        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-       // window.close();
+        window.close();
         return;
       }
     if (localPlatform.isAndroid) {
