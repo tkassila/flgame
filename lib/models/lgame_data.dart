@@ -1685,6 +1685,7 @@ class LGameSession {
 
     setBeforeVariableValues();
     listMovePiecesUpdated = false;
+    msg = "";
     if (buttonTypePressed == ButtonPressed.moveDone)
     {
        bool bValue = moveDone();
