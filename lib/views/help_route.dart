@@ -265,8 +265,7 @@ class HelpPageWeb extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 5.0, right: 5.0,
               bottom: 5.0, top: 4.0),
-          child: Text('Scroll up and down between help text. ' +
-              'Or when needed from up into down.', style: textStyle,),
+          child: Text('Scroll up and down between help text. ' 'Or when needed from up into down.', style: textStyle,),
         ),
         SingleChildScrollView(
           controller: ScrollController(),
@@ -299,7 +298,7 @@ class HelpPageWeb extends StatelessWidget {
                 Image(
                   width: width -30.0,
                   image: const AssetImage(
-                    'assets/560px-L_Game_mate_positions.svg.png',
+                    'assets/560px-L_Game_mate_positions.svg.png.webp',
                   ),
                 ),
                 const Padding(
@@ -311,7 +310,7 @@ class HelpPageWeb extends StatelessWidget {
                 Image(
                   width: width -30.0,
                   image: AssetImage(
-                    'assets/560px-L_Game_all_final_positions.svg.png',
+                    'assets/560px-L_Game_all_final_positions.svg.png.webp',
                   ),
                 ),
                 const Text("All possible final positions, Blue has won",
@@ -321,14 +320,14 @@ class HelpPageWeb extends StatelessWidget {
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_mate_positions.svg.png',
+                  'assets/560px-L_Game_mate_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
               Image(
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_all_final_positions.svg.png',
+                  'assets/560px-L_Game_all_final_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
                */
@@ -355,8 +354,7 @@ class HelpPage1 extends StatelessWidget {
       child: Column(children: [
       Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 4.0),
-      child: Text('Swipe from left into right and back between help pages. ' +
-          'Or when needed from up into down.', style: textStyle,),
+      child: Text('Swipe from left into right and back between help pages. ' 'Or when needed from up into down.', style: textStyle,),
       ),
       SingleChildScrollView(
         controller: ScrollController(),
@@ -432,7 +430,7 @@ class HelpPage4 extends StatelessWidget {
          Image(
              width: width -30.0,
             image: const AssetImage(
-              'assets/560px-L_Game_mate_positions.svg.png',
+              'assets/560px-L_Game_mate_positions.svg.png.webp',
             ),
           ),
           const Padding(
@@ -444,7 +442,7 @@ class HelpPage4 extends StatelessWidget {
        Image(
         width: width -30.0,
             image: AssetImage(
-              'assets/560px-L_Game_all_final_positions.svg.png',
+              'assets/560px-L_Game_all_final_positions.svg.png.webp',
             ),
           ),
           const Text("All possible final positions, Blue has won",
@@ -454,14 +452,14 @@ class HelpPage4 extends StatelessWidget {
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_mate_positions.svg.png',
+                  'assets/560px-L_Game_mate_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
               Image(
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_all_final_positions.svg.png',
+                  'assets/560px-L_Game_all_final_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
                */
@@ -856,14 +854,14 @@ class HelpRoute extends StatelessWidget {
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_mate_positions.svg.png',
+                  'assets/560px-L_Game_mate_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
               Image(
                 width: 250,
                 height: 250,
                 image: AssetImage(
-                  'assets/560px-L_Game_all_final_positions.svg.png',
+                  'assets/560px-L_Game_all_final_positions.svg.png.webp',
                 ),),
               Text("All positions, Red to move, where Red will lose to a perfect Blue, and maximum number of moves remaining for Red. By looking ahead one move and ensuring one never ends up in any of the above positions, one can avoid losing."),
 

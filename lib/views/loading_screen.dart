@@ -1,5 +1,6 @@
 
 //import 'package:flgame/main.dart';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -23,7 +24,7 @@ class _LoadingScreenState extends State<LoadingScreen>
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     super.initState();
-    timer = Timer(const Duration(seconds: 1), handleTimeout);
+    timer = Timer(const Duration(seconds: 2), handleTimeout);
   }
 
   bool _visible = true;
@@ -49,9 +50,13 @@ class _LoadingScreenState extends State<LoadingScreen>
       _visible = !_visible;
     });
 
-    Timer(const Duration(milliseconds: 100), handleTimeout2);
+    Timer(Duration(milliseconds: timerWaitMsecs +100), handleTimeout2);
     // Navigator.pushNamed(context, "/lgamefor2");
   }
+
+  int get timerWaitMsecs => 1500;
+  late final int timerAnimationMsecs = timerWaitMsecs -
+      (timerWaitMsecs / 10).toInt();
 
   @override
   Widget build(BuildContext context)
@@ -62,7 +67,7 @@ class _LoadingScreenState extends State<LoadingScreen>
       title: 'L Game is loading...',
       home: SafeArea(
         minimum: EdgeInsets.all( !ScreenValues.isWeb ? 16.0 : 5),
-        child: Center( child:  Scaffold(
+        child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
        /* appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -71,7 +76,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             style: TextStyle(fontSize: ScreenUtil().setSp(30)),),
         ),
         */
-        body: Container(
+        body: Center(child: Container(
           decoration: BoxDecoration(
             color: Colors.white70, /* Theme.of(context).colorScheme.primary, */// const Color(0xffe8e8e8),
             border: Border.all(
@@ -82,18 +87,18 @@ class _LoadingScreenState extends State<LoadingScreen>
     child: Column(
           children: [
             ScreenValues.isWeb ? SizedBox(height: 150, width: 100)
-             : SizedBox(height: 15, width: 100),
+             : SizedBox(height: 25, width: 100),
             Center(
               child: Text('L Game',
-                  style: TextStyle(fontSize: ScreenValues.isWeb ? 37 : 10,
+                  style: TextStyle(fontSize: ScreenValues.isWeb ? 37 : 50,
                       color: Colors.black)),
             ),
             AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 700),
+                duration: Duration(milliseconds: timerAnimationMsecs),
             child: Image(
-            height: ScreenValues.isWeb ? 300 : 100,
-            width: ScreenValues.isWeb ? 300 : 100,
+            height: ScreenValues.isWeb ? 300 : 500,
+            width: ScreenValues.isWeb ? 300 : 500,
             image: AssetImage(
               'assets/L_Game_start_position.svg.png',
             ),
@@ -103,7 +108,7 @@ class _LoadingScreenState extends State<LoadingScreen>
         ),
       ),
       ),
-      ),
+      )
       ),
     );
   }

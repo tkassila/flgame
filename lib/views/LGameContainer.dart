@@ -18,10 +18,12 @@ class LGameContainer extends StatelessWidget {
     required this.textMessage,
   //  required this.notifier,
     required this.buttonBetweenWidth,
+  //  required this.lGameSession,
     required this.lGameSession,
     required this.bScreenReaderIsUsed,
     required this.isUpdated,
     required this.gestureDetectedCallBack,
+    required this.calculatedTimeCallBack,
   });
   final bool isSystemNavigateMenu;
   final bool bEditPlayerNames;
@@ -34,10 +36,11 @@ class LGameContainer extends StatelessWidget {
   final double buttonBetweenWidth;
   final bool isUpdated;
   final Function(ButtonPressed)? gestureDetectedCallBack;
+  final bool Function()? calculatedTimeCallBack;
 
   @override
   Widget build(BuildContext context) {
-    Widget? ret = null;
+    Widget? ret;
     if (!ScreenValues.isWeb) {
       ret = Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,10 +54,12 @@ class LGameContainer extends StatelessWidget {
           /* RepaintBoundary(child: */ LGameBoard(lGameSession: lGameSession,
             bScreenReaderIsUsed: bScreenReaderIsUsed,
             gestureDetectedCallBack: gestureDetectedCallBack,
+            calculatedTimeCallBack: calculatedTimeCallBack,
             // notifier: _notifier,
             minusDynamicContainerSize: ScreenValues
                 .minusDynamicContainerSizeOfLGame - 20,
             isUpdated: isUpdated,
+            isCalledFromList: true,
             /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */
             // lGameBoard!,
             /* buildGameBoard2() *? ?* _gameBoardGrid!, */
@@ -74,7 +79,7 @@ class LGameContainer extends StatelessWidget {
                   child: textMessage!,),
                 ),
                 SizedBox(height: 20, width: buttonBetweenWidth,),
-                if (!bEditPlayerNames) editOrButtonContainer!,
+                if (!bEditPlayerNames) editOrButtonContainer,
               ],),
             ),
           ),
@@ -102,10 +107,12 @@ class LGameContainer extends StatelessWidget {
           /* RepaintBoundary(child: */ LGameBoard(lGameSession: lGameSession,
             bScreenReaderIsUsed: bScreenReaderIsUsed,
             gestureDetectedCallBack: gestureDetectedCallBack,
+            calculatedTimeCallBack: calculatedTimeCallBack,
             // notifier: _notifier,
             minusDynamicContainerSize: ScreenValues
                 .minusDynamicContainerSizeOfLGame - 20,
             isUpdated: isUpdated,
+              isCalledFromList: false,
             /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */
             // lGameBoard!,
             /* buildGameBoard2() */ /* _gameBoardGrid!, */
@@ -119,7 +126,7 @@ class LGameContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (!bEditPlayerNames) editOrButtonContainer!,
+                if (!bEditPlayerNames) editOrButtonContainer,
               ],),
             ),
           ),

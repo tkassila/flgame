@@ -146,9 +146,6 @@ class _OldGamesState extends State<OldGamesRoute> {
         LGameSessionData data;
         for (int i = 0; i < listDataSessions!.length; i++) {
           data = listDataSessions![i];
-          if (data == null) {
-            continue;
-          }
           ret.add(LGameSessionTitle(/* i, */ data.modifiedAt != null ?
                   data.modifiedAt!.toString()
               : data.startedAt!, data));

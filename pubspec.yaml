@@ -46,15 +46,16 @@ dependencies:
   platform: ^3.1.6
   flutter_exit_app: ^2.0.0
   flutter_html: ^3.0.0
-  injectable: ^2.7.1+4
+  injectable: ^3.0.0
   get_it: ^9.2.1
   intl: ^0.20.2
   flutter_screenutil: ^5.9.3
-  flutter_soloud: ^3.5.1
+  flutter_soloud: ^4.0.6
   rounded_background_text: ^0.6.0
   transparent_pointer: ^1.0.1
   audioplayers: ^6.6.0
 
+  json_annotation: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,8 +81,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/L_Game_start_position.svg.png
-    - assets/560px-L_Game_mate_positions.svg.png
-    - assets/560px-L_Game_all_final_positions.svg.png
+    - assets/560px-L_Game_mate_positions.svg.png.webp
+    - assets/560px-L_Game_all_final_positions.svg.png.webp
     - assets/help.html
     - assets/audio/errbeep.mp3
     - assets/
@@ -171,7 +172,7 @@ flutter_native_splash:
   # 768 pixels in diameter.
   #image: assets/android12splash.png
     color: "#42a5f5"
-    image: assets/L_Game_start_position.svg.png
+    image: assets/L_Game_start_position.svg.png.webp
 
   # Splash screen background color.
   #color: "#42a5f5"

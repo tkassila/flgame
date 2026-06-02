@@ -1,7 +1,5 @@
 
-import 'dart:ui';
 import 'package:flgame/ParameterValues.dart';
-import 'package:flgame/views/LGameContainer.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +17,6 @@ import './di.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:content_resolver/content_resolver.dart';
 // import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import 'views/utils/util_dialog.dart';
 import 'views/help_route.dart';
@@ -46,7 +43,7 @@ enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
   editPlayerNames, finishedGames, exitGame, aboutGame }
 
 void main() async {
-  
+
   if (Loggerdef.isLoggerOn) {
     Loggerdef.startTime = DateTime.now();
     Loggerdef.logger.i("start: time 0");
@@ -93,10 +90,11 @@ class MyApp extends StatelessWidget {
 
 // Device width
     double deviceWidth = 500.0;
-    if (!ScreenValues.isWeb)
+    if (!ScreenValues.isWeb) {
       deviceWidth = MediaQuery.of(context).size.width;
-    else
+    } else {
       deviceWidth = 500.0;
+    }
 // Subtract paddings to calculate available dimensions
     final paddingRight = MediaQuery.of(context).padding.right;
     final paddingLeft = MediaQuery.of(context).padding.left;
@@ -191,6 +189,7 @@ class _LGamePageState extends State<LGamePage>
 
   final int minusDynamicContainerSizeOfLGame = 18;
   LGameBoard? lGameBoard;
+  DateTime? lGameBoardCalculatedTime;
  // late AudioPlayer player = AudioPlayer();
   final double buttonBetweenWidth = 5;
   Widget? editOrButtonContainer;
@@ -240,8 +239,9 @@ class _LGamePageState extends State<LGamePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (ScreenValues.isWeb)
+    if (ScreenValues.isWeb) {
       return;
+    }
     switch (state) {
       case AppLifecycleState.inactive:
         if (Loggerdef.isLoggerOn) {
@@ -282,7 +282,7 @@ class _LGamePageState extends State<LGamePage>
   }
 
   bool bGameIsFormat = true;
-  String ? oldMsg = null;
+  String ? oldMsg;
  // BuildContext? thisContext;
   LGameSession lGameSession = LGameSession();
   SelectedLGameSessionData? selectedLGameSessionData;
@@ -389,9 +389,6 @@ class _LGamePageState extends State<LGamePage>
         for (int i = 0; i < lGamePieceArray.length; i++ ) {
           iValue = lGamePieceArray[i];
           gp = lGameSession.arrBoardSquares![iValue];
-          if (gp == null) {
-            continue;
-          }
           ret.add(gp);
         }
         // arrBoardSquares
@@ -420,9 +417,6 @@ class _LGamePageState extends State<LGamePage>
         iArrFoundRightRow.add(0);
         for (int i = 0; i < gps.length; i++) {
           gp = gps[i];
-          if (gp == null) {
-            continue;
-          }
           iArrFoundRightRow[(gp.iRow)] = iArrFoundRightRow[(gp.iRow)] +1;
           /*
             if (iValue == null) {
@@ -518,9 +512,6 @@ class _LGamePageState extends State<LGamePage>
       {
         for (int i = 0; i < validateItems.length; i++ ) {
           item = validateItems[i];
-          if (item == null) {
-            continue;
-          }
           if (!item.bPossibleMove || !item.validate()) {
             continue;
           }
@@ -544,9 +535,6 @@ class _LGamePageState extends State<LGamePage>
      GameBoardPosition? gpNew;
      for (int i = 0; i < lGameSession.arrBoardSquares!.length; i++ ) {
         gp = lGameSession.arrBoardSquares![i];
-        if (gp == null) {
-          continue;
-        }
         if (gp.iCol == item.iPossibleCol && gp.iRow == item.iPossibleRow)
           {
             gpNew = gp;
@@ -582,9 +570,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonMoveDonePressed");
     }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
-    if (bValue == null) {
-      return;
-    }
     /*
     if (bValue)
       {
@@ -646,9 +631,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonTurn90GradePressed");
     }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.turn90Degree);
-    if (bValue == null) {
-      return;
-    }
     /*
     if (bValue)
     {
@@ -669,9 +651,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonUpPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.up);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -692,9 +671,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonDownPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.down);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -715,9 +691,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonLeftPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.left);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -738,9 +711,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonRightPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.right);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -761,9 +731,6 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonWrapUpPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.wrap);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -785,9 +752,6 @@ class _LGamePageState extends State<LGamePage>
     }
      bool? bValue = await lGameSession.
           calculatePossibleMovePieces(ButtonPressed.swiftIntoNextNeutral);
-     if (bValue == null) {
-       return;
-     }
      /*
      if (bValue)
      {
@@ -844,8 +808,9 @@ class _LGamePageState extends State<LGamePage>
   }
 
   Future<void> initAudioService() async {
-    if (!ScreenValues.isWeb) {
+    if (ScreenValues.isWeb) {
       await SoLoud.instance.init();
+      return;
     }
    // myAudioPlayerService.audioPlayerService = myAudioPlayerService.AudioPlayerService();
    // myAudioPlayerService.audioPlayerService.initState();
@@ -1470,6 +1435,7 @@ class _LGamePageState extends State<LGamePage>
         ],);
        }
 
+    lGameBoardCalculatedTime = DateTime.now();
     if (lGameBoard == null || bInitGameBoard) {
       lGameBoard = LGameBoard(lGameSession: lGameSession,
           bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
@@ -1477,16 +1443,34 @@ class _LGamePageState extends State<LGamePage>
           minusDynamicContainerSize:
           ScreenValues.minusDynamicContainerSizeOfLGame -20,
           isUpdated: _bUpdateUI,
+        isCalledFromList: lGameBoard == null ? true : bInitGameBoard,
           gestureDetectedCallBack: gestureDetectedCallBack,
+          calculatedTimeCallBack:  calculatedTimeCallBack,
           /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
     //   lGameSession.setListBoardPiecesUpdated(false);
      //  lGameSession.setListMovePiecesUpdated(false);
+    //  lGameBoardCalculatedTime = lGameSession.calculatedTime!;
     }
     else
       {
+       /*
         lGameBoard!.updateParams(widget.bScreenReaderIsUsed,
           lGameSession, ScreenValues.minusDynamicContainerSizeOfLGame -20,
           _bUpdateUI,);
+          */
+        lGameBoard = LGameBoard(lGameSession: lGameSession,
+          bScreenReaderIsUsed: widget.bScreenReaderIsUsed,
+          // notifier: _notifier,
+          minusDynamicContainerSize:
+          ScreenValues.minusDynamicContainerSizeOfLGame -20,
+          isUpdated: _bUpdateUI,
+          isCalledFromList: lGameBoard == null ? true : bInitGameBoard,
+          gestureDetectedCallBack: gestureDetectedCallBack,
+          calculatedTimeCallBack:  calculatedTimeCallBack,
+          /*  minusDynamicContainerSize: minusDynamicContainerSizeOfLGame */);
+        //   lGameSession.setListBoardPiecesUpdated(false);
+        //  lGameSession.setListMovePiecesUpdated(false);
+       // lGameBoardCalculatedTime = lGameSession.calculatedTime!;
       }
 
     final Widget mobileScreenLayout = Column(
@@ -1517,7 +1501,7 @@ class _LGamePageState extends State<LGamePage>
       ],
     );
 
-    Widget? ret = null;
+    Widget? ret;
     if (!ScreenValues.isWeb) {
       ret = mobileScreenLayout;
     }
@@ -1561,6 +1545,25 @@ class _LGamePageState extends State<LGamePage>
    // lGameSession.setListBoardPiecesUpdated(false);
    // lGameSession.setListMovePiecesUpdated(false);
    return ret; // Column(children: <Widget>[_gameBoardGrid!, ],);
+  }
+
+
+  bool calculatedTimeCallBack()
+  {
+    bool ret = lGameBoardCalculatedTime == null;
+    if (!ret)
+      {
+        DateTime? calculatedTime = lGameSession.calculatedTime;
+        if (calculatedTime == null) {
+          ret = false;
+          return ret;
+        } else
+        if (lGameBoardCalculatedTime! != calculatedTime) {
+          ret = true;
+          lGameBoardCalculatedTime = calculatedTime;
+        }
+      }
+    return ret;
   }
 
   Color getMovePieceColor(int index)
@@ -1761,7 +1764,7 @@ class _LGamePageState extends State<LGamePage>
 
     String strPlayer = _getPlayerName();
     String homeTitle = widget.title;
-    if (strPlayer != null && strPlayer.isNotEmpty) {
+    if (strPlayer.isNotEmpty) {
       homeTitle = "Turn: $strPlayer";
     }
 
@@ -2014,7 +2017,8 @@ class _LGamePageState extends State<LGamePage>
     ),
     child:
     /* buildGameBoard() */ /* bInitGameBoard ? initBoard() : */
-     /* _bUpdateUI ? */ /*buildUpdatedBoard() */
+     /* _bUpdateUI ? */
+  buildLGameContainer() /*
     LGameContainer(isSystemNavigateMenu: isSystemNavigateMenu,
         //  notifier: _notifier,
         bEditPlayerNames: bEditPlayerNames,
@@ -2026,7 +2030,8 @@ class _LGamePageState extends State<LGamePage>
         textMessage: textMessage,
         isUpdated: getCurrentUpdateUI(),
         gestureDetectedCallBack: gestureDetectedCallBack,
-    ),
+        calculatedTimeCallBack: calculatedTimeCallBack,
+    ) */,
      /*
        Column (
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -2077,6 +2082,86 @@ class _LGamePageState extends State<LGamePage>
     //  ),
       //  ),
     );
+  }
+
+  Widget buildLGameContainer()
+  {
+    late Widget ret;
+    if (!ScreenValues.isWeb) {
+      ret = Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          /* Expanded( // wrap in Expanded
+          child: */
+          if (bEditPlayerNames)
+          //  SizedBox(height: 10, width: buttonBetweenWidth,),
+            editOrButtonContainer!,
+          /* RepaintBoundary(child: */ lGameBoard!,
+            /* buildGameBoard2() *? ?* _gameBoardGrid!, */
+            // ),
+//        SizedBox(height: 20,),
+          // ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+            child: Center(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(height: 40),
+                Center(child: Semantics(
+                  liveRegion: true,
+                  child: textMessage!,),
+                ),
+                SizedBox(height: 20, width: buttonBetweenWidth,),
+                if (!bEditPlayerNames) editOrButtonContainer!,
+              ],),
+            ),
+          ),
+          if (isSystemNavigateMenu) const SizedBox(height: 30,),
+        ],
+      );
+    }
+    else {
+      ret = Column(children: [
+        SizedBox(height: 40),
+        Center(child: Semantics(
+          liveRegion: true,
+          child: textMessage!,),
+        ),
+        SizedBox(height: 20, width: buttonBetweenWidth,),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            /* Expanded( // wrap in Expanded
+          child: */
+            if (bEditPlayerNames)
+            //  SizedBox(height: 10, width: buttonBetweenWidth,),
+              editOrButtonContainer!,
+            /* RepaintBoundary(child: */ lGameBoard!,
+              /* buildGameBoard2() */ /* _gameBoardGrid!, */
+              // ),
+//        SizedBox(height: 20,),
+          //  ), // ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
+              child: Center(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (!bEditPlayerNames) editOrButtonContainer!,
+                ],),
+              ),
+            ),
+            if (isSystemNavigateMenu) const SizedBox(height: 30,),
+          ],
+        ),
+      ],
+      );
+    }
+
+    return ret;
   }
 }
 

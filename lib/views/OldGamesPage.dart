@@ -195,6 +195,26 @@ class _OldGamesPageState extends State<OldGamesPage> {
             ),
           ),
           ),
+    if (!widget.bCalledFromFinishedGames)
+          Semantics(
+              readOnly: true,
+              label: "Back",
+              hint: 'Back button',
+              child: ElevatedButton(
+                style: buttonStyle,
+                child: const Text(
+                  'Back',
+                ),
+                onPressed: () async {
+                    selectedLGameSessionData = null;
+                    di<LGameDataService>().selectedLGameSessionData = null;
+                    // Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2", ModalRoute.withName('/lgamefor2'));
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context, selectedLGameSessionData);
+                    }
+                    //  Navigator.pushAndRemoveUntil(context,  MaterialPageRoute(builder: (context) => SecondPage(title : "Hello World")), (route) => false);
+                  }
+              )),
         ],
       ),
       body:   widget.listDataSessions == null || widget.listDataSessions!.isEmpty ?
@@ -266,7 +286,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
                   minusDynamicContainerSize:
                   ScreenValues.minusDynamicContainerSizeOfLGame +10,
                   isUpdated: true,
+                  isCalledFromList: true,
                   gestureDetectedCallBack: null,
+                    calculatedTimeCallBack: null,
               ),
               ],
               ),
@@ -355,9 +377,6 @@ class _OldGamesPageState extends State<OldGamesPage> {
       LGameSessionData data;
       for (int i = 0; i < widget.listDataSessions!.length; i++) {
         data = widget.listDataSessions![i];
-        if (data == null) {
-          continue;
-        }
         ret.add(LGameSessionTitle(/* i, */ data.modifiedAt != null ?
         data.modifiedAt!.toString()
             : data.startedAt!, data));

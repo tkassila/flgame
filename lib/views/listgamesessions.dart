@@ -58,7 +58,7 @@ class ListGameSessions extends StatefulWidget {
   final bool bScreenReaderIsUsed;
   final int indexBackgroundColor;
   final bool bCalledFromFinishedGames;
-  ListGameSessions({super.key, required this.strDeleteTitle,
+  const ListGameSessions({super.key, required this.strDeleteTitle,
     required this.strDeleteAsk,
     required this.listDataSessions,
     required this.lGameSessionRemoveFunctionCallback,
@@ -83,7 +83,7 @@ class _ListGameSessionsState
 
   List<LGameSessionTitle2> generateItems() {
     List<LGameSessionTitle2> ret = List.empty(growable: true);
-    if (widget.listDataSessions != null && widget.listDataSessions.isNotEmpty)
+    if (widget.listDataSessions.isNotEmpty)
     {
       int max = widget.listDataSessions.length;
       LGameSessionData? data;
@@ -91,9 +91,6 @@ class _ListGameSessionsState
       for(int i = 0; i < max; i++)
       {
         data = widget.listDataSessions[i];
-        if (data == null) {
-          continue;
-        }
         title = data.modifiedAt != null ? data.modifiedAt.toString() :
         data.startedAt.toString();
         ret.add(LGameSessionTitle2(id: i, title: title, data: data));
@@ -233,17 +230,13 @@ class _ListGameSessionsState
             child: */ Column(
            spacing: 0.1,
            children: [
-             Text(item.data.name1 != null
-                 ? "Player 1: ${item.data.name1}"
-                 : '', style: TextStyle(backgroundColor:  Colors.lightGreen ,
+             Text("Player 1: ${item.data.name1}", style: TextStyle(backgroundColor:  Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
                  fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
              const SizedBox(
                height: 5.0,
              ),
-             Text(item.data.name2 != null
-                 ? "Player 2: ${item.data.name2}"
-                 : '', style: TextStyle(backgroundColor: Colors.lightGreen ,
+             Text("Player 2: ${item.data.name2}", style: TextStyle(backgroundColor: Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
                  fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
              const Text('To delete this game session, tap the trash can icon'),

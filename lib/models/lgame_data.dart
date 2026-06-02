@@ -1,6 +1,5 @@
 // import 'package:audioplayers/audioplayers.dart';
 
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
@@ -355,6 +354,8 @@ class LGameSession {
 
   bool bButtonUpPressed = false;
   bool listBoardPiecesUpdated = false;
+  DateTime? calculatedTime;
+
   void setListBoardPiecesUpdated(bool bValue)
   {
     listBoardPiecesUpdated = bValue;
@@ -367,7 +368,7 @@ class LGameSession {
   }
    */
 
-  bool getUseEarlierStackWidget(int index)
+  bool getIndexChangedUnderCalculateCall(int index)
   {
      bool ret = false;
      if (index < 0 || index > 15) {
@@ -799,9 +800,6 @@ class LGameSession {
       GameBoardPosition gps;
       for (int i = 0; i < gpsList.length; i++ ) {
         gps = gpsList[i];
-        if (gps == null) {
-          continue;
-        }
         if (gps.iCol == iCol) {
           ret.series.add(gps);
         }
@@ -819,9 +817,6 @@ class LGameSession {
       GameBoardPosition gps;
       for (int i = 0; i < gpsList.length; i++) {
         gps = gpsList[i];
-        if (gps == null) {
-          continue;
-        }
         if (gps.iRow == iRow) {
           ret.series.add(gps);
         }
@@ -834,43 +829,37 @@ class LGameSession {
   getEnoughNextRowItemsForLPiece(GameBoardPositionSeries series)
   {
     List<GameBoardPosition>? ret;
-    if (series != null)
-    {
-      if (series.series.length < 3) {
-        return null;
-      }
-
-      List<GameBoardPosition> okItems = List.empty(growable: true);
-      GameBoardPosition? gp, prevGs;
-      series.series.sort(
-              (a, b) => a.iCol.compareTo(b.iCol));
-      bool bAdded = false;
-      for (int i = 0; i < series.series.length; i++) {
-        gp = series.series[i];
-        bAdded = false;
-        if (gp == null) {
-          continue;
-        }
-        if (prevGs != null)
-        {
-           if ((prevGs.iCol +1) == gp.iCol)
-           {
-             okItems.add(prevGs);
-             bAdded = true;
-           }
-        }
-        prevGs = gp;
-      }
-      if (bAdded)
-      {
-        prevGs = okItems.last;
-        if (prevGs != null && gp != null && (prevGs.iCol +1) == gp.iCol)
-        {
-          okItems.add(gp);
-        }
-      }
-      ret = okItems;
+    if (series.series.length < 3) {
+      return null;
     }
+
+    List<GameBoardPosition> okItems = List.empty(growable: true);
+    GameBoardPosition? gp, prevGs;
+    series.series.sort(
+            (a, b) => a.iCol.compareTo(b.iCol));
+    bool bAdded = false;
+    for (int i = 0; i < series.series.length; i++) {
+      gp = series.series[i];
+      bAdded = false;
+      if (prevGs != null)
+      {
+         if ((prevGs.iCol +1) == gp.iCol)
+         {
+           okItems.add(prevGs);
+           bAdded = true;
+         }
+      }
+      prevGs = gp;
+    }
+    if (bAdded)
+    {
+      prevGs = okItems.last;
+      if (gp != null && (prevGs.iCol +1) == gp.iCol)
+      {
+        okItems.add(gp);
+      }
+    }
+    ret = okItems;
     return ret;
   }
 
@@ -878,43 +867,37 @@ class LGameSession {
   getEnoughNextColItemsForLPiece(GameBoardPositionSeries series)
   {
     List<GameBoardPosition>? ret;
-    if (series != null)
-    {
-      if (series.series.length < 3) {
-        return null;
-      }
-
-      List<GameBoardPosition> okItems = List.empty(growable: true);
-      GameBoardPosition? gp, prevGs;
-      series.series.sort(
-              (a, b) => a.iRow.compareTo(b.iRow));
-      bool bAdded = false;
-      for (int i = 0; i < series.series.length; i++) {
-        gp = series.series[i];
-        bAdded = false;
-        if (gp == null) {
-          continue;
-        }
-        if (prevGs != null)
-        {
-          if ((prevGs.iRow +1) == gp.iRow)
-          {
-            okItems.add(prevGs);
-            bAdded = true;
-          }
-        }
-        prevGs = gp;
-      }
-      if (bAdded)
-      {
-        prevGs = okItems.last;
-        if (prevGs != null && gp != null && (prevGs.iRow +1) == gp.iRow)
-        {
-          okItems.add(gp);
-        }
-      }
-      ret = okItems;
+    if (series.series.length < 3) {
+      return null;
     }
+
+    List<GameBoardPosition> okItems = List.empty(growable: true);
+    GameBoardPosition? gp, prevGs;
+    series.series.sort(
+            (a, b) => a.iRow.compareTo(b.iRow));
+    bool bAdded = false;
+    for (int i = 0; i < series.series.length; i++) {
+      gp = series.series[i];
+      bAdded = false;
+      if (prevGs != null)
+      {
+        if ((prevGs.iRow +1) == gp.iRow)
+        {
+          okItems.add(prevGs);
+          bAdded = true;
+        }
+      }
+      prevGs = gp;
+    }
+    if (bAdded)
+    {
+      prevGs = okItems.last;
+      if (gp != null && (prevGs.iRow +1) == gp.iRow)
+      {
+        okItems.add(gp);
+      }
+    }
+    ret = okItems;
     return ret;
   }
 
@@ -927,16 +910,10 @@ class LGameSession {
     if (allSeries != null) {
       for (int i = 0; i < allSeries.length; i++) {
         gps = allSeries[i];
-        if (gps == null) {
-          continue;
-        }
         if (gps.iRow == iRow) {
           GameBoardPosition gp;
           for (int j = 0; j < gps.series.length; j++) {
             gp = gps.series[j];
-            if (gp == null) {
-              continue;
-            }
             if (gp.iCol == iCol) {
               return gp;
             }
@@ -956,16 +933,10 @@ class LGameSession {
     if (allSeries != null) {
       for (int i = 0; i < allSeries.length; i++) {
         gps = allSeries[i];
-        if (gps == null) {
-          continue;
-        }
         if (gps.iCol == iCol) {
           GameBoardPosition gp;
           for (int j = 0; j < gps.series.length; j++) {
             gp = gps.series[j];
-            if (gp == null) {
-              continue;
-            }
             if (gp.iRow == iRow) {
               return gp;
             }
@@ -1023,9 +994,6 @@ class LGameSession {
          List<int>? foundedNumbers = List.empty(growable: true);
          for (int i = 0; i < foundedMayLPiece.length; i++) {
             gp = foundedMayLPiece[i];
-            if (gp == null) {
-              continue;
-            }
             foundedNumbers.add(gp.iPos);
          }
          foundedNumbers.add(gpParent.iPos);
@@ -1090,7 +1058,7 @@ class LGameSession {
       GameBoardPosition last = lMayRow.last;
       GameBoardPosition? between;
       List<GameBoardPosition> foundedMayLPiece = List.empty(growable: true);
-      if(first != null && last != null && first != last)
+      if(first != last)
         {
           bool bSecondCalls = false;
           between = lMayRow[1];
@@ -1142,7 +1110,7 @@ class LGameSession {
       GameBoardPosition last = lMayRow.last;
       GameBoardPosition? between;
       List<GameBoardPosition> foundedMayLPiece = List.empty(growable: true);
-      if(first != null && last != null && first != last)
+      if(first != last)
       {
         between = lMayRow[1];
         bool bSecondCalls = false;
@@ -1334,16 +1302,13 @@ class LGameSession {
   {
     List<GameBoardPosition>? ret;
     GameBoardPosition? gp;
-    if (lGamePieceArray != null && lGamePieceArray.isNotEmpty)
+    if (lGamePieceArray.isNotEmpty)
     {
         ret = List.empty(growable: true);
         int iValue;
         for (int i = 0; i < lGamePieceArray.length; i++ ) {
           iValue = lGamePieceArray[i];
           gp = arrBoardSquares![iValue];
-          if (gp == null) {
-            continue;
-          }
           ret.add(gp);
         }
         // arrBoardSquares
@@ -1372,9 +1337,6 @@ class LGameSession {
         iArrFoundRightRow.add(0);
         for (int i = 0; i < gps.length; i++) {
           gp = gps[i];
-          if (gp == null) {
-            continue;
-          }
           iArrFoundRightRow[(gp.iRow)] = iArrFoundRightRow[(gp.iRow)] +1;
           /*
             if (iValue == null) {
@@ -1434,9 +1396,6 @@ class LGameSession {
         iArrFoundRightRow.add(0);
         for (int i = 0; i < gps.length; i++) {
           gp = gps[i];
-          if (gp == null) {
-            continue;
-          }
           iArrFoundRightRow[(gp.iRow)] = iArrFoundRightRow[(gp.iRow)] +1;
         }
         iValue = 0;
@@ -1475,9 +1434,6 @@ class LGameSession {
         iArrFoundRightRow.add(0);
         for (int i = 0; i < gps.length; i++) {
           gp = gps[i];
-          if (gp == null) {
-            continue;
-          }
           iArrFoundRightRow[(gp.iCol)] = iArrFoundRightRow[(gp.iCol)] +1;
           /*
             if (iValue == null) {
@@ -1591,46 +1547,50 @@ class LGameSession {
   }
 
   void setAfterVariableValues() {
+    calculatedTime = DateTime.now();
     lGameButtonFlow.iArrPlayer1PiecesSet = iArrPlayer1Pieces!.toSet();
     lGameButtonFlow.iArrPlayer2PiecesSet = iArrPlayer2Pieces!.toSet();
     lGameButtonFlow.iArrFrameMoveSet = iArrPlayerMovePieces!.toSet();
+    List<dynamic> iArray = lGameButtonFlow.iArrPlayer1PiecesSet.toList();
+    bool lPieceMoved = false;
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+      lPieceMoved = true;
+    }
+    iArray = lGameButtonFlow.before_iArrPlayer1PiecesSet.toList();
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+    }
+
     if (!setEquals(lGameButtonFlow.iArrPlayer1PiecesSet,
         lGameButtonFlow.before_iArrPlayer1PiecesSet))
       {
         listBoardPiecesUpdated = true;
-        List<dynamic> iArray = lGameButtonFlow.iArrPlayer1PiecesSet.toList();
-        bool lPieceMoved = false;
-        for(var i = 0; i < iArray.length; i++)
-        {
-          LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-          lPieceMoved = true;
-        }
-        iArray = lGameButtonFlow.before_iArrPlayer1PiecesSet.toList();
-        for(var i = 0; i < iArray.length; i++)
-          {
-            LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-          }
           if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
              msg = "Player 1 has moved L Piece.";
           }
       }
-      if (!setEquals(lGameButtonFlow.iArrPlayer2PiecesSet,
+
+    lPieceMoved = false;
+    iArray = lGameButtonFlow.iArrPlayer2PiecesSet.toList();
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+      lPieceMoved = true;
+    }
+    iArray = lGameButtonFlow.before_iArrPlayer2PiecesSet.toList();
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+    }
+
+    if (!setEquals(lGameButtonFlow.iArrPlayer2PiecesSet,
           lGameButtonFlow.before_iArrPlayer2PiecesSet))
         {
           listBoardPiecesUpdated = true;
-          bool lPieceMoved = false;
-          List<dynamic> iArray = lGameButtonFlow.iArrPlayer2PiecesSet.toList();
-          for(var i = 0; i < iArray.length; i++)
-            {
-              LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-              lPieceMoved = true;
-            }
-            iArray = lGameButtonFlow.before_iArrPlayer2PiecesSet.toList();
-            for(var i = 0; i < iArray.length; i++)
-              {
-                LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-              }
           if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
             msg = "Player 2 has moved L Piece.";
@@ -1647,22 +1607,23 @@ class LGameSession {
       msg = "Player has moved Neutral 2 Piece.";
     }
 
+    iArray = lGameButtonFlow.iArrFrameMoveSet.toList();
+    int lPieceFrameMoved = 0;
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+      lPieceFrameMoved++;
+    }
+    iArray = lGameButtonFlow.before_iArrFrameMoveSet.toList();
+    for(var i = 0; i < iArray.length; i++)
+    {
+      LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
+    }
+
     if (!setEquals(lGameButtonFlow.iArrFrameMoveSet,
         lGameButtonFlow.before_iArrFrameMoveSet))
     {
       listBoardPiecesUpdated = true;
-      List<dynamic> iArray = lGameButtonFlow.iArrFrameMoveSet.toList();
-      int lPieceFrameMoved = 0;
-      for(var i = 0; i < iArray.length; i++)
-      {
-        LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-        lPieceFrameMoved++;
-      }
-      iArray = lGameButtonFlow.before_iArrFrameMoveSet.toList();
-      for(var i = 0; i < iArray.length; i++)
-      {
-        LGameSessionUpdated.setListBoardSquareUpdated(iArray[i], true);
-      }
       if (!bGameIsOver && bScreenReaderIsUsed && lPieceFrameMoved == 1)
       {
         msg = "Player has moved Neutral frame.";
@@ -1934,9 +1895,6 @@ class LGameSession {
       {
         for (int i = 0; i < validateItems.length; i++ ) {
           item = validateItems[i];
-          if (item == null) {
-            continue;
-          }
           if (!item.bPossibleMove || !item.validate()) {
             continue;
           }
@@ -1960,9 +1918,6 @@ class LGameSession {
      GameBoardPosition? gpNew;
      for (int i = 0; i < arrBoardSquares!.length; i++ ) {
         gp = arrBoardSquares![i];
-        if (gp == null) {
-          continue;
-        }
         if (gp.iCol == item.iPossibleCol && gp.iRow == item.iPossibleRow)
           {
             gpNew = gp;

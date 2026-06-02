@@ -1,6 +1,5 @@
 library;
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
 // import 'package:logger/logger.dart';
 import '../LoggerDef.dart';
@@ -42,9 +41,10 @@ class AudioPlayerService {
       return;
     }
     if (!ScreenValues.isWeb) {
+      await SoLoud.instance.init();
       currentSound = await SoLoud.instance
           .loadAsset('assets/audio/errbeep.mp3');
-      print("currentSound=" +currentSound.toString());
+      print("currentSound=$currentSound");
     }
   }
 
@@ -81,7 +81,7 @@ class AudioPlayerService {
       // audioPlayer.play(AssetSource('audio/errbeep.mp3'));
       /// play it
       if (!ScreenValues.isWeb) {
-        await SoLoud.instance.play(currentSound!);
+        var soundHandle = SoLoud.instance.play(currentSound!);
       }
       if (Loggerdef.isLoggerOn) {
         Loggerdef.logger.i("after beed: beep_error");

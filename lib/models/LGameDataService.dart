@@ -314,9 +314,6 @@ class LGameDataService {
       int iFounded = -1;
       for (int i = 0; i < listGames.length; i++) {
         data = listGames[i];
-        if (data == null) {
-          continue;
-        }
         if (data.startedAt == ds.startedAt) {
           listGames[i] = ds;
           iFounded = i;
@@ -347,9 +344,6 @@ class LGameDataService {
       int iFounded = -1;
       for (int i = 0; i < listGames.length; i++) {
         data = listGames[i];
-        if (data == null) {
-          continue;
-        }
         if (data.startedAt == ds.startedAt) {
           listGames[i] = ds;
           iFounded = i;
@@ -376,9 +370,6 @@ class LGameDataService {
     int iFounded = -1;
     for (int i = 0; i < listGames.length; i++) {
       data = listGames[i];
-      if (data == null) {
-        continue;
-      }
       if (data.startedAt == ds.startedAt) {
         listGames[i] = ds;
         iFounded = i;
@@ -407,9 +398,6 @@ class LGameDataService {
     int iFounded = -1;
    for (int i = 0; i < listGames.length; i++) {
      data = listGames[i];
-     if (data == null) {
-       continue;
-     }
      if (data.startedAt == ds.startedAt) {
        listGames[i] = ds;
        iFounded = i;
