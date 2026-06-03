@@ -251,7 +251,11 @@ class _ListGameSessionsState
                      setState(() {
                        _data.removeWhere((LGameSessionTitle2 currentItem) =>
                        item == currentItem);
-                       widget.lGameSessionRemoveFunctionCallback(item.data);
+                       Future(() {
+                         print('Callback executed asynchronously after state change');
+                         widget.lGameSessionRemoveFunctionCallback(item.data);
+                       });
+
                      });
                    }
                  }
