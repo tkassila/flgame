@@ -565,6 +565,7 @@ class LGameSession {
       disAbleButtonsForGameOver();
       LGameSessionData obj = getGamePositionsForSaveGame();
       di<LGameDataService>().deleteFinishedGameSessionData(obj);
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
       di<LGameDataService>().saveIntoFinishedGamesList(obj);
       msg =
       "There is no free positions for L piece. You had lost this game!";

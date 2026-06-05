@@ -570,6 +570,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonMoveDonePressed");
     }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
     /*
     if (bValue)
       {
@@ -631,6 +637,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonTurn90GradePressed");
     }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.turn90Degree);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
     /*
     if (bValue)
     {
@@ -651,6 +663,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonUpPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.up);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -671,6 +689,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonDownPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.down);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -691,6 +715,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonLeftPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.left);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -711,6 +741,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonRightPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.right);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -731,6 +767,12 @@ class _LGamePageState extends State<LGamePage>
       Loggerdef.logger.i("buttonWrapUpPressed");
     }
      bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.wrap);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -752,6 +794,12 @@ class _LGamePageState extends State<LGamePage>
     }
      bool? bValue = await lGameSession.
           calculatePossibleMovePieces(ButtonPressed.swiftIntoNextNeutral);
+    if (!bValue! && lGameSession.bGameIsOver) {
+      LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
+      di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
+      // di<LGameDataService>().setActiveGame(obj);
+      // di<LGameDataService>().saveLGameSessionData(obj);
+    }
      /*
      if (bValue)
      {
@@ -1654,6 +1702,13 @@ class _LGamePageState extends State<LGamePage>
         return;
       }
 
+      di<LGameDataService>().deleteUnFinishedGameSessionData(selectedLGameSessionData!.gameSessionData!);
+      if (!lGameSession.bGameIsOver) {
+        di<LGameDataService>().saveIntoUnFinishedGamesList(lGameSession.getGamePositionsForSaveGame());
+      } else {
+        di<LGameDataService>().deleteUnFinishedGameSessionData(lGameSession.getGamePositionsForSaveGame());
+        di<LGameDataService>().saveIntoFinishedGamesList(lGameSession.getGamePositionsForSaveGame());
+      }
       di<LGameDataService>().setActiveGame(selectedLGameSessionData!.gameSessionData);
       oldSelectedLGameSessionData = selectedLGameSessionData;
       lGameSession.setStartGameAfterOldGame(

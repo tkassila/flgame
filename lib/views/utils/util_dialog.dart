@@ -52,8 +52,8 @@ Future<bool> showYesNoDialog(BuildContext thisContext,
     title: Text(strTitle),
     content: Text(strQuestion),
     actions: [
-      cancelButton,
       continueButton,
+      cancelButton,
     ],
   );  // show the dialog
   final result = await showDialog<bool?>(

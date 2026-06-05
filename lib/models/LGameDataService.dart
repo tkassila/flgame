@@ -285,7 +285,12 @@ class LGameDataService {
       hiveLGameSessionData!.activeGame = ds;
     }
 
-    saveIntoUnFinishedGamesList(ds);
+    if (!ds.bGameOver) {
+      saveIntoUnFinishedGamesList(ds);
+    } else {
+      deleteUnFinishedGameSessionData(ds);
+      saveIntoFinishedGamesList(ds);
+    }
     /*
     bUnFinishedGamesExists = unfinishedGames.any((listItem) =>
          listItem.startedAt == ds.startedAt);
