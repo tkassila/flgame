@@ -362,11 +362,13 @@ class _LGamePageState extends State<LGamePage>
     di<LGameDataService>().saveLGameSessionData(obj);
    // for test finished games: di<LGameDataService>().saveIntoFinishedGamesList(obj);
     bool? bValue = lGameSession.buttonStartGamePressed();
+    /*
     if (bValue == null) {
       return ;
     }
-    di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame());
-    if (bValue) {
+     */
+di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame());
+//  di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame()) (bValue) {
       setState(() {
         _bUpdateUI = true;
         lGameSession.setListBoardPiecesUpdated(true);
@@ -374,8 +376,8 @@ class _LGamePageState extends State<LGamePage>
      //   _notifier.value = _bUpdateUI;
       //  ScreenValues.notifier = _notifier;
     });
-    }
   }
+ // }
 
   List<GameBoardPosition>?
   getGameBoardPositionList(List<int>? lGamePieceArray)

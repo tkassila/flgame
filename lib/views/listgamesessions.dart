@@ -255,7 +255,6 @@ class _ListGameSessionsState
                          print('Callback executed asynchronously after state change');
                          widget.lGameSessionRemoveFunctionCallback(item.data);
                        });
-
                      });
                    }
                  }
