@@ -371,6 +371,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 //  di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame()) (bValue) {
       setState(() {
         _bUpdateUI = true;
+        bInitGameBoard = true;
         lGameSession.setListBoardPiecesUpdated(true);
         _buildBoard = buildGameBoard();
      //   _notifier.value = _bUpdateUI;
