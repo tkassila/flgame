@@ -1862,7 +1862,15 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
         left: false, // no padding on the left
         right: false, // no padding on the right
         minimum: EdgeInsets.all(16), // minimum padding for all sides
-        child: Scaffold(
+        child: PopScope(
+          canPop: false, // Estää automaattisen sivulta poistumisen (taaksepäin navigoinnin)
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+
+            // Sulkee Flutter-sovelluksen ja palauttaa käyttäjän Androidin kotinäyttöön
+            SystemNavigator.pop();
+          },
+          child: Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -2137,7 +2145,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       ),
       ),
       ),
-    //  ),
+      ),
       //  ),
     );
   }
