@@ -9,8 +9,8 @@ echo cp $zipfile $zipfileold
 cp $zipfile $zipfileold
 ls -l $zipfile $zipfile_old
 pause
-fvm flutter build web --base-href /flgame/
---wasm --base-href /flgame/
+fvm flutter build web --wasm --base-href /flgame/
+# --wasm --base-href /flgame/
 cd build/web
 rm $zipfile
 zip -r $zipfile *

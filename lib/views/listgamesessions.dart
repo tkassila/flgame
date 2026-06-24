@@ -167,7 +167,10 @@ class _ListGameSessionsState
             selectedSessionData = widget.listDataSessions[index];
             if (selectedSessionData != null) {
               lGameSession.setStartGameAfterOldGame(selectedSessionData!);
-              widget.lGameSessionSelectedFunctionCallback(selectedSessionData!, index);
+              Future(() {
+                print('Callback executed lGameSessionSelectedFunctionCallback after selectedSessionData != null');
+                widget.lGameSessionSelectedFunctionCallback(selectedSessionData!, index);
+              });
             }
           //     });
         },

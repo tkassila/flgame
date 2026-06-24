@@ -36,7 +36,7 @@ import 'services/AudioPlayerService.dart'; // as myAudioPlayerService;
 // part 'lgame_data.g.dart';
 var localPlatform = const LocalPlatform();
 
-Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
+// Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
 
 // This is the type used by the popup menu below.
 enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
@@ -372,7 +372,10 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       setState(() {
         _bUpdateUI = true;
         bInitGameBoard = true;
+        lGameSession.msg = "New game created...";
         lGameSession.setListBoardPiecesUpdated(true);
+        lGameSession.bGameStarted = true;
+        lGameSession.currentButtonPressed = ButtonPressed.newGame;
         _buildBoard = buildGameBoard();
      //   _notifier.value = _bUpdateUI;
       //  ScreenValues.notifier = _notifier;
@@ -573,7 +576,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       Loggerdef.logger.i("buttonMoveDonePressed");
     }
     bool? bValue = await lGameSession.calculatePossibleMovePieces(ButtonPressed.moveDone);
-    if (!bValue! && lGameSession.bGameIsOver) {
+    if (!bValue && lGameSession.bGameIsOver) {
       LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
       di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
       // di<LGameDataService>().setActiveGame(obj);
@@ -797,7 +800,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     }
      bool? bValue = await lGameSession.
           calculatePossibleMovePieces(ButtonPressed.swiftIntoNextNeutral);
-    if (!bValue! && lGameSession.bGameIsOver) {
+    if (!bValue && lGameSession.bGameIsOver) {
       LGameSessionData obj = lGameSession.getGamePositionsForSaveGame();
       di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
       // di<LGameDataService>().setActiveGame(obj);
@@ -1562,7 +1565,10 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             /* Expanded( // wrap in Expanded
-          child: */ !bEditPlayerNames ? lGameBoard!
+          child: */ !bEditPlayerNames ?  AbsorbPointer(
+              absorbing: (lGameSession.bGameIsOver ||
+              lGameSession.bisRemoteGameAndAnotherPlayersTurn),
+                child: lGameBoard! )
                 : SizedBox.shrink()
             /* buildGameBoard2() */,
             /* _gameBoardGrid!, */

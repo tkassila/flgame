@@ -901,7 +901,8 @@ class _LGameBoardState extends State<LGameBoard> {
       // Background Grid - Only build if necessary (here built in initState)
 
       // Board Pieces
-      if (_listBoardPieces.isEmpty || widget.lGameSession.getButtonPressed() == ButtonPressed.moveDone) {
+      if (_listBoardPieces.isEmpty || widget.lGameSession.getButtonPressed() == ButtonPressed.moveDone
+          || widget.lGameSession.getButtonPressed() == ButtonPressed.newGame) {
         _listBoardPieces = List.generate(16, (index) {
           Color? bgColor = _getBoardPieceColor(index);
           if (bgColor == Colors.transparent) return null;
@@ -975,7 +976,11 @@ class _LGameBoardState extends State<LGameBoard> {
             final now = DateTime.now().millisecondsSinceEpoch;
             if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) return;
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack!(ButtonPressed.wrap);
+      /*      Future(() {
+              print('Callback executed gestureDetectedCallBack');
+       */
+              widget.gestureDetectedCallBack!(ButtonPressed.wrap);
+        //    });
           }
         },
         onLongPress: () {
@@ -983,14 +988,22 @@ class _LGameBoardState extends State<LGameBoard> {
             final now = DateTime.now().millisecondsSinceEpoch;
             if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) return;
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack!(ButtonPressed.turn90Degree);
+          /*  Future(() {
+              print('Callback executed gestureDetectedCallBack');
+           */
+              widget.gestureDetectedCallBack!(ButtonPressed.turn90Degree);
+           // });
           }
         },
         onLongPressMoveUpdate: (details) {
           final now = DateTime.now().millisecondsSinceEpoch;
           if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) return;
           lastGestureOccurTime = now;
-          widget.gestureDetectedCallBack!(ButtonPressed.moveDone);
+     /*     Future(() {
+            print('Callback executed gestureDetectedCallBack');
+      */
+            widget.gestureDetectedCallBack!(ButtonPressed.moveDone);
+      //    });
         },
         onPanUpdate: (details) {
           final now = DateTime.now().millisecondsSinceEpoch;
@@ -998,16 +1011,32 @@ class _LGameBoardState extends State<LGameBoard> {
 
           if (details.delta.dx < -5) {
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack?.call(ButtonPressed.left);
+        /*    Future(() {
+              print('Callback executed gestureDetectedCallBack');
+         */
+              widget.gestureDetectedCallBack?.call(ButtonPressed.left);
+        //    });
           } else if (details.delta.dx > 5) {
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack?.call(ButtonPressed.right);
+         /*   Future(() {
+              print('Callback executed gestureDetectedCallBack');
+          */
+              widget.gestureDetectedCallBack?.call(ButtonPressed.right);
+          //  });
           } else if (details.delta.dy < -5) {
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack?.call(ButtonPressed.up);
+         /*   Future(() {
+              print('Callback executed gestureDetectedCallBack');
+          */
+              widget.gestureDetectedCallBack?.call(ButtonPressed.up);
+          //  });
           } else if (details.delta.dy > 5) {
             lastGestureOccurTime = now;
-            widget.gestureDetectedCallBack?.call(ButtonPressed.down);
+         /*   Future(() {
+              print('Callback executed gestureDetectedCallBack');
+          */
+              widget.gestureDetectedCallBack?.call(ButtonPressed.down);
+          //  });
           }
         },
         child: RepaintBoundary(child: Stack(children: listBoardStack)),

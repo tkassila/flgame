@@ -37,10 +37,13 @@ dependencies:
   auto_size_text: ^3.0.0
   logger: ^2.7.0
   collection: ^1.19.1
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
-  hive_generator: ^2.0.1
-  build_runner: ^2.4.13
+  # hive: ^2.2.3
+  hive_ce: ^2.19.3
+  # hive_flutter: ^1.1.0
+  hive_ce_flutter: ^2.3.4
+  # hive_generator: ^2.0.1
+
+  # build_runner: ^2.4.13
   # flutter_co: ^7.2.2
   path_provider: ^2.1.5
   platform: ^3.1.6
@@ -54,11 +57,14 @@ dependencies:
   rounded_background_text: ^0.6.0
   transparent_pointer: ^1.0.1
   audioplayers: ^6.6.0
+  supabase_flutter: ^2.15.0
 
   json_annotation: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.4.13
+  hive_ce_generator: ^1.4.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

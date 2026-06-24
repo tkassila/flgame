@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'package:flgame/LoggerDef.dart';
 // import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:flgame/ParameterValues.dart';
 import 'dart:io';

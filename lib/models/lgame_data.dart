@@ -4,7 +4,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'package:json_annotation/json_annotation.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import '../models/LGameDataService.dart';
@@ -46,6 +46,7 @@ enum ButtonPressed {
   turn90Degree,
   moveDone,
   swiftIntoNextNeutral,
+  newGame
 }
 
 enum LGamePieceAndFrameFlow {
@@ -224,8 +225,8 @@ class LGameSessionData extends HiveObject {
   bool isLocal = true;
 
   @HiveField(4)
-  @JsonKey(name: 'remoteUser')
-  String? remoteUser;
+  @JsonKey(name: 'remoteUserName1')
+  String? remoteUserName1;
 
   @HiveField(5)
   @JsonKey(name: 'oldIActiveNeutral')
@@ -287,6 +288,25 @@ class LGameSessionData extends HiveObject {
   @JsonKey(name: 'msg')
   late String? msg;
 
+  @HiveField(20)
+  @JsonKey(name: 'remoteUserName2')
+  String? remoteUserName2;
+
+  @HiveField(21)
+  @JsonKey(name: 'remoteUserId1')
+  int? remoteUserId1;
+
+  @HiveField(22)
+  @JsonKey(name: 'remoteUserId2')
+  int? remoteUserId2;
+
+  @HiveField(23)
+  @JsonKey(name: 'remoteGameId')
+  int? remoteGameId;
+
+  @HiveField(24)
+  @JsonKey(name: 'remoteGameStartedAt')
+  String? remoteGameStartedAt;
 }
 
 @HiveType(typeId: 1) //typeId should be unique for each model
@@ -336,7 +356,6 @@ class LGameSessionUpdated {
     // listBoardSquareUpdated.clear();
     listBoardSquareUpdated = List<bool>.filled(16, false);
   }
-
 }
 
 class LGameSession {
@@ -355,6 +374,7 @@ class LGameSession {
   bool bButtonUpPressed = false;
   bool listBoardPiecesUpdated = false;
   DateTime? calculatedTime;
+  bool bisRemoteGameAndAnotherPlayersTurn = false;
 
   void setListBoardPiecesUpdated(bool bValue)
   {
