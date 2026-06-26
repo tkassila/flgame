@@ -133,6 +133,8 @@ class _LGameBoardState extends State<LGameBoard> {
   final List<Widget> _listScreenReader = List<Widget>.empty(growable: true);
   late List<Container?> _listBoardPieces = List.empty(growable: true);
   late List<Container?> _listMoveBorderSquares = List.empty(growable: true);
+  late List<Container?> _list2BaseSquares = List.empty(growable: true);
+  late List<Widget?> _list3FrameSquares = List.empty(growable: true);
 
   StackGridContainer? _stackMoveBorderSquares;
   StackGridContainer? _stackMoveSquares;
@@ -734,7 +736,7 @@ class _LGameBoardState extends State<LGameBoard> {
   }
 
   Container _getBoardSquaresContainer(int index) {
-    return Container(
+    return /* Container(
       padding: const EdgeInsets.all(1),
       width: ScreenValues.containerWidth,
       height: ScreenValues.containerWidth,
@@ -745,14 +747,14 @@ class _LGameBoardState extends State<LGameBoard> {
           colors: [Colors.blue, Colors.green],
         ),
       ),
-      child: Container(
+      child: */ Container(
         width: ScreenValues.containerWidth - 20,
         height: ScreenValues.containerWidth - 20,
         decoration: BoxDecoration(
           color: Colors.orange[200],
           border: Border.all(color: Colors.black, width: 0),
         ),
-      ),
+    //  ),
     );
   }
 
@@ -923,21 +925,43 @@ class _LGameBoardState extends State<LGameBoard> {
             child = null;
           }
 
-          return Container(
+          Container ret = Container(
             color: bgColor,
             width: ScreenValues.containerWidth,
             height: ScreenValues.containerWidth,
             decoration: deco,
             child: child,
           );
+
+          if (bgColor == null)
+            {
+               ret = Container(
+                 width: ScreenValues.containerWidth - 20,
+                 height: ScreenValues.containerWidth - 20,
+                 decoration: BoxDecoration(
+                   color: Colors.orange[200],
+                   border: Border.all(color: Colors.black, width: 0),
+                 ),
+                 child: ret,
+               );
+            }
+          return ret;
         });
-        _stackBoardPieces = StackGridContainer(listContainers: _listBoardPieces);
+
+        _list2BaseSquares = _listBoardSquares.toList(growable: true);
+        for (int i = 0; i < _listBoardPieces.length; i++) {
+          if (_listBoardPieces[i] != null) {
+            _list2BaseSquares[i] = _listBoardPieces[i];
+          }
+        }
+        _stackBoardPieces = StackGridContainer(listContainers: _list2BaseSquares);
       }
 
       // Move Squares
       _listMoveBorders = List.generate(16, (index) => null);
       _listMoveSquares = List.generate(16, (index) => _getMoveContainer(index)
           /* getNewOrOldMoveSquares(index) */);
+
       _stackMoveSquares = StackGridContainer(listContainers: _listMoveSquares);
 
       // Move Border Squares
@@ -945,14 +969,26 @@ class _LGameBoardState extends State<LGameBoard> {
       _listMoveBorderSquares = List.generate(16, (index) =>
           _getBorderMoveContainer(index)
           /* getNewOrOldMoveBorderSquares(index) */);
+
+      _list3FrameSquares = _listMoveSquares.toList(growable: true);
+      for (int i = 0; i < _listMoveBorderSquares.length; i++) {
+        if (_listMoveBorderSquares[i] != null) {
+          _list3FrameSquares[i] = Stack(children: [
+            _listMoveSquares[i] as Widget,
+            _listMoveBorderSquares[i] as Widget
+          ]);
+        }
+      }
+
       _stackMoveBorderSquares = StackGridContainer(listContainers: _listMoveBorderSquares);
+      _stackMoveSquares = StackGridContainer(listContainers: _list3FrameSquares);
 
       listBoardStack.clear();
-      listBoardStack.add(ChildRepaintBoundary(child: _stackBoardSquares!));
+     // listBoardStack.add(/* ChildRepaintBoundary(child: */ _stackBoardSquares! /* ) */);
       // listBoardStack.add(RepaintBoundary(child: _stackBoardPieces!));
       listBoardStack.add(ChildRepaintBoundary(child: _stackBoardPieces!));
       listBoardStack.add(ChildRepaintBoundary(child: _stackMoveSquares!));
-      listBoardStack.add(ChildRepaintBoundary(child: _stackMoveBorderSquares!));
+//      listBoardStack.add(/* ChildRepaintBoundary(child: */ _stackMoveBorderSquares!/* ) */);
 
       if (widget.bScreenReaderIsUsed) {
         _iArrScreenReaderSquareText = List.generate(16, (index) => _getChangeScreenReaderText(index, true));
@@ -980,7 +1016,7 @@ class _LGameBoardState extends State<LGameBoard> {
               print('Callback executed gestureDetectedCallBack');
        */
               widget.gestureDetectedCallBack!(ButtonPressed.wrap);
-        //    });
+         //   });
           }
         },
         onLongPress: () {
@@ -988,22 +1024,22 @@ class _LGameBoardState extends State<LGameBoard> {
             final now = DateTime.now().millisecondsSinceEpoch;
             if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) return;
             lastGestureOccurTime = now;
-          /*  Future(() {
+         /*   Future(() {
               print('Callback executed gestureDetectedCallBack');
-           */
+          */
               widget.gestureDetectedCallBack!(ButtonPressed.turn90Degree);
-           // });
+          //  });
           }
         },
         onLongPressMoveUpdate: (details) {
           final now = DateTime.now().millisecondsSinceEpoch;
           if ((now - lastGestureOccurTime) < lastGestureOccurTime_intervalMs) return;
           lastGestureOccurTime = now;
-     /*     Future(() {
+       /*   Future(() {
             print('Callback executed gestureDetectedCallBack');
-      */
+        */
             widget.gestureDetectedCallBack!(ButtonPressed.moveDone);
-      //    });
+        //  });
         },
         onPanUpdate: (details) {
           final now = DateTime.now().millisecondsSinceEpoch;
@@ -1015,7 +1051,7 @@ class _LGameBoardState extends State<LGameBoard> {
               print('Callback executed gestureDetectedCallBack');
          */
               widget.gestureDetectedCallBack?.call(ButtonPressed.left);
-        //    });
+          //  });
           } else if (details.delta.dx > 5) {
             lastGestureOccurTime = now;
          /*   Future(() {
@@ -1039,7 +1075,7 @@ class _LGameBoardState extends State<LGameBoard> {
           //  });
           }
         },
-        child: RepaintBoundary(child: Stack(children: listBoardStack)),
+        child: RepaintBoundary(child: Stack(children: listBoardStack) ),
       );
     } else {
       ret = RepaintBoundary(child: Stack(children: listBoardStack));

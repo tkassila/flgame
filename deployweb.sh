@@ -9,13 +9,21 @@ echo cp $zipfile $zipfileold
 cp $zipfile $zipfileold
 ls -l $zipfile $zipfile_old
 pause
-fvm flutter build web --wasm --base-href /flgame/
+# flutter clean
+# flutter pub get
+# fvm flutter build web --no-wasm  --base-href /flgame/
+flutter build web --no-wasm --base-href /flgame/
+#  --release
+# fvm flutter build web --no-wasm --base-href /flgame/
 # --wasm --base-href /flgame/
 cd build/web
+pwd
+pause
 rm $zipfile
 zip -r $zipfile *
 # cp $zipfile ../..
 mv $zipfile ../..
+pause
 cd ../..
 echo Current dir:
 pwd
