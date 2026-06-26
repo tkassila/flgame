@@ -1,3 +1,3 @@
-fvm flutter --no-wasm  run -d chrome
+fvm flutter run -d chrome 
 # flutter build web --no-wasm
 

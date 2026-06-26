@@ -12,7 +12,7 @@ pause
 # flutter clean
 # flutter pub get
 # fvm flutter build web --no-wasm  --base-href /flgame/
-flutter build web --no-wasm --base-href /flgame/
+flutter build web --base-href /flgame/
 #  --release
 # fvm flutter build web --no-wasm --base-href /flgame/
 # --wasm --base-href /flgame/
