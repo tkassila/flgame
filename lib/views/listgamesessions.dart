@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import './utils/util_dialog.dart';
 import 'package:flgame/ParameterValues.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 
 
 class LGameSessionTitle {
@@ -193,10 +194,10 @@ class _ListGameSessionsState
            return ListTile(
              title: Semantics(
                readOnly: true,
-               label: widget.bCalledFromFinishedGames ? "Finished game"
-                 : "Unfinished game",
+               label: widget.bCalledFromFinishedGames ? AppLocalizations.of(context)!.finishedGameSemantics
+                 : AppLocalizations.of(context)!.unfinishedGameSemantics,
                hint: widget.bCalledFromFinishedGames ?
-                 'Finished game name' : 'Unfinished game name',
+                 AppLocalizations.of(context)!.finishedGameNameHint : AppLocalizations.of(context)!.unfinishedGameNameHint,
                child: Text(formatTitle(item.title), style:
                TextStyle(backgroundColor:
              isExpanded ? Colors.lightGreen :
@@ -233,22 +234,25 @@ class _ListGameSessionsState
             child: */ Column(
            spacing: 0.1,
            children: [
-             Text("Player 1: ${item.data.name1}", style: TextStyle(backgroundColor:  Colors.lightGreen ,
+             Text(AppLocalizations.of(context)!.player1Label(item.data.name1), style: TextStyle(backgroundColor:  Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
                  fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
              const SizedBox(
                height: 5.0,
              ),
-             Text("Player 2: ${item.data.name2}", style: TextStyle(backgroundColor: Colors.lightGreen ,
+             Text(AppLocalizations.of(context)!.player2Label(item.data.name2), style: TextStyle(backgroundColor: Colors.lightGreen ,
                  fontWeight: FontWeight.bold,
                  fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3) )),
-             const Text('To delete this game session, tap the trash can icon'),
-             InkWell(child: const Icon(Icons.delete, size: 34,),
+             Text(AppLocalizations.of(context)!.tapToDelete),
+             Semantics(
+               label: AppLocalizations.of(context)!.deleteOldGame,
+               hint: AppLocalizations.of(context)!.deleteGameButtonHint,
+               child: InkWell(child: const Icon(Icons.delete, size: 34,),
                  onTap: () async {
                    bool bCancelReturnValue = false;
                    bool bContinueReturnValue = true;
                    bool boolResult = await showYesNoDialogWithContext(widget.strDeleteTitle,
-                       "Cancel", "Continue", widget.strDeleteAsk, bCancelReturnValue,
+                       AppLocalizations.of(context)!.cancel, AppLocalizations.of(context)!.continue_, widget.strDeleteAsk, bCancelReturnValue,
                        bContinueReturnValue);
                    if (boolResult) {
                      setState(() {
@@ -261,6 +265,7 @@ class _ListGameSessionsState
                      });
                    }
                  }
+               ),
              ),
            ],
          ),

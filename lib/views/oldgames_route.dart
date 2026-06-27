@@ -29,6 +29,7 @@ import '../di.dart';
 import 'listgamesessions.dart';
 import './utils/util_dialog.dart';
 import '../ParameterValues.dart';
+import '../l10n/app_localizations.dart';
 
 
 /*
@@ -100,8 +101,8 @@ class _OldGamesState extends State<OldGamesRoute> {
       bScreenReaderIsUsed = false;
     }
 
-    return OldGamesPage(strDeleteTitle: strDeleteTitle,
-        strDeleteAsk: strDeleteAsk,
+    return OldGamesPage(strDeleteTitle: AppLocalizations.of(context)!.deleteOldGame,
+        strDeleteAsk: AppLocalizations.of(context)!.deleteOldGameQuery,
         listDataSessions: listDataSessions,
         lGameSessionRemoveFunctionCallback: lGameSessionRemoveFunctionCallback,
         bScreenReaderIsUsed: bScreenReaderIsUsed,
@@ -115,8 +116,12 @@ class _OldGamesState extends State<OldGamesRoute> {
     Future<bool> showDeleteOldGameDialog(BuildContext thisContext) async {
       bool bCancelReturnValue = false;
       bool bContinueReturnValue = true;
-      return showYesNoDialogWithContext("Delete old game", "Cancel", "Continue",
-          "Would you like to delete an old L game?", bCancelReturnValue,
+      return showYesNoDialogWithContext(
+          AppLocalizations.of(context)!.deleteOldGame,
+          AppLocalizations.of(context)!.cancel,
+          AppLocalizations.of(context)!.continue_,
+          AppLocalizations.of(context)!.deleteOldGameQuery,
+          bCancelReturnValue,
           bContinueReturnValue);
     }
 

@@ -28,6 +28,7 @@ import '../di.dart';
 import 'listgamesessions.dart';
 import 'game_board.dart';
 import './utils/util_dialog.dart';
+import '../l10n/app_localizations.dart';
 
 class OldGamesPage extends StatefulWidget {
   final String strDeleteTitle;
@@ -113,9 +114,9 @@ class _OldGamesPageState extends State<OldGamesPage> {
       bScreenReaderIsUsed = false;
     }
 
-    String strPageTitle = 'Unfinished games';
+    String strPageTitle = AppLocalizations.of(context)!.unfinishedGames;
     if (widget.bCalledFromFinishedGames) {
-      strPageTitle = 'Finished games';
+      strPageTitle = AppLocalizations.of(context)!.finishedGamesTitle;
     }
 
     ScrollController scrollController = ScrollController();
@@ -145,12 +146,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
             Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
                 child: Semantics(
                     readOnly: true,
-                    label: "Back",
-                    hint: 'Back button',
+                    label: AppLocalizations.of(context)!.back,
+                    hint: AppLocalizations.of(context)!.backButtonHint,
                     child: ElevatedButton(
                   style: buttonStyle,
-                  child: const Text(
-                    'Back',
+                  child: Text(
+                    AppLocalizations.of(context)!.back,
                   ),
                   onPressed: () async {
                     if (widget.bCalledFromFinishedGames) {
@@ -172,12 +173,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
           else Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
             child: Semantics(
     readOnly: true,
-    label: "Select game",
-    hint: 'Select game button',
+    label: AppLocalizations.of(context)!.selectGame,
+    hint: AppLocalizations.of(context)!.selectGameButtonHint,
     child: ElevatedButton(
               style: buttonStyle,
-              child: const Text(
-                'Select game',
+              child: Text(
+                AppLocalizations.of(context)!.selectGame,
               ),
               onPressed: () async {
                 if (selectedSessionData != null) {
@@ -198,12 +199,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
     if (!widget.bCalledFromFinishedGames)
           Semantics(
               readOnly: true,
-              label: "Back",
-              hint: 'Back button',
+              label: AppLocalizations.of(context)!.back,
+              hint: AppLocalizations.of(context)!.backButtonHint,
               child: ElevatedButton(
                 style: buttonStyle,
-                child: const Text(
-                  'Back',
+                child: Text(
+                  AppLocalizations.of(context)!.back,
                 ),
                 onPressed: () async {
                     selectedLGameSessionData = null;
@@ -218,15 +219,15 @@ class _OldGamesPageState extends State<OldGamesPage> {
         ],
       ),
       body:   widget.listDataSessions == null || widget.listDataSessions!.isEmpty ?
-      Card(child: Padding(padding: EdgeInsets.all(5),
+      Card(child: Padding(padding: const EdgeInsets.all(5),
         child: Semantics(
           readOnly: true,
-          label: widget.bCalledFromFinishedGames ? "Finished games"
-             : "Unfinished games",
-          hint: widget.bCalledFromFinishedGames ? 'List of finished games'
-           :  'List of unfinished games',
-          child: Text(widget.bCalledFromFinishedGames ? "Finished games"
-           : "Unfinished games"),),),)
+          label: widget.bCalledFromFinishedGames ? AppLocalizations.of(context)!.finishedGamesTitle
+             : AppLocalizations.of(context)!.unfinishedGames,
+          hint: widget.bCalledFromFinishedGames ? AppLocalizations.of(context)!.finishedGamesHint
+           :  AppLocalizations.of(context)!.unfinishedGamesHint,
+          child: Text(widget.bCalledFromFinishedGames ? AppLocalizations.of(context)!.finishedGamesTitle
+           : AppLocalizations.of(context)!.unfinishedGames),),),)
           : SafeArea(
           minimum: const EdgeInsets.all(16.0),
           child: /* ListView( crossAxisAlignment: CrossAxisAlignment.center,
@@ -346,8 +347,12 @@ class _OldGamesPageState extends State<OldGamesPage> {
   Future<bool> showDeleteOldGameDialog(BuildContext thisContext) async {
     bool bCancelReturnValue = false;
     bool bContinueReturnValue = true;
-    return showYesNoDialogWithContext("Delete old game", "Cancel", "Continue",
-        "Would you like to delete an old L game?", bCancelReturnValue,
+    return showYesNoDialogWithContext(
+        AppLocalizations.of(context)!.deleteOldGame,
+        AppLocalizations.of(context)!.cancel,
+        AppLocalizations.of(context)!.continue_,
+        AppLocalizations.of(context)!.deleteOldGameQuery,
+        bCancelReturnValue,
         bContinueReturnValue);
   }
 

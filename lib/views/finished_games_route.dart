@@ -18,6 +18,7 @@ import '../di.dart';
 
 import 'listgamesessions.dart';
 import '../ParameterValues.dart';
+import '../l10n/app_localizations.dart';
 
 class FinishedGamesRoute extends StatefulWidget {
   const FinishedGamesRoute({super.key});
@@ -104,8 +105,8 @@ class _FinishedGamesState extends State<FinishedGamesRoute> {
       bScreenReaderIsUsed = false;
     }
 
-    return OldGamesPage(strDeleteTitle: strDeleteTitle,
-        strDeleteAsk: strDeleteAsk,
+    return OldGamesPage(strDeleteTitle: AppLocalizations.of(context)!.deleteOldGame,
+        strDeleteAsk: AppLocalizations.of(context)!.deleteOldGameQuery,
         listDataSessions: listDataSessions,
         lGameSessionRemoveFunctionCallback: lGameSessionRemoveFunctionCallback,
         bScreenReaderIsUsed: bScreenReaderIsUsed, bCalledFromFinishedGames: true,

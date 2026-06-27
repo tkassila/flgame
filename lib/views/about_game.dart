@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flgame/ParameterValues.dart';
+import '../l10n/app_localizations.dart';
 
 final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 3),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
@@ -22,19 +23,19 @@ class AboutRoute extends StatelessWidget {
       appBar: AppBar(
         // leadingWidth: MediaQuery.of(context).padding.top,
         primary: false,
-        title: Text('About LGame', style: TextStyle(fontSize: 20,
+        title: Text(AppLocalizations.of(context)!.aboutLGame, style: TextStyle(fontSize: 20,
             color: Colors.white) /* style: textStyle, */),
         centerTitle: false,
         actions: [
           Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
             child: Semantics(
               readOnly: true,
-              label: "Back",
-              hint: 'Back button',
+              label: AppLocalizations.of(context)!.back,
+              hint: AppLocalizations.of(context)!.backButtonHint,
               child: ElevatedButton(
               style: buttonStyle,
-              child: const Text(
-                'Back',
+              child: Text(
+                AppLocalizations.of(context)!.back,
               ),
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2",
@@ -56,8 +57,8 @@ class AboutRoute extends StatelessWidget {
           child: Column(
             children: <Widget>[
               const SizedBox(height: 150, width: 100),
-              const Center(
-                child: Text('L Game',
+              Center(
+                child: Text(AppLocalizations.of(context)!.lGameTitle,
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
               Image(width: 150,
@@ -66,11 +67,11 @@ class AboutRoute extends StatelessWidget {
               AssetImage('assets/L_Game_start_position.svg.png', ),
               ),
               Center(
-                child: Text('copyright Tuomas Kassila',
+                child: Text(AppLocalizations.of(context)!.copyright,
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1.8',
+                child: Text(AppLocalizations.of(context)!.version('1.1.8'),
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

@@ -9,6 +9,8 @@ import 'package:json_annotation/json_annotation.dart';
 // import 'package:audioplayers/audioplayers.dart';
 import '../models/LGameDataService.dart';
 import '../di.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // import '../main.dart';
 import '../services/AudioPlayerService.dart'; // as audioPlayerService;
 part 'lgame_data.g.dart';
@@ -366,6 +368,8 @@ class LGameSession {
     // this.buttonStartGamePressed();
   }
 
+  AppLocalizations? l10n;
+
   ButtonPressed currentButtonPressed = ButtonPressed.up;
   ButtonPressed getButtonPressed() {
     return currentButtonPressed;
@@ -375,6 +379,7 @@ class LGameSession {
   bool listBoardPiecesUpdated = false;
   DateTime? calculatedTime;
   bool bisRemoteGameAndAnotherPlayersTurn = false;
+  bool bIsRemoteGame = false;
 
   void setListBoardPiecesUpdated(bool bValue)
   {
@@ -484,7 +489,8 @@ class LGameSession {
     if (pos == null) {
       return "";
     }
-    return 'Row: ${pos.iRow+1} column: ${pos.iCol+1}' ;
+    return l10n?.rowColumnLabel(pos.iRow + 1, pos.iCol + 1) ??
+        'Row: ${pos.iRow + 1} column: ${pos.iCol + 1}';
   }
 
   String getScreenReaderSquareValue(int index)
@@ -508,10 +514,10 @@ class LGameSession {
     }
     else {
       if (iPlayerNeutral1Piece != null && iPlayerNeutral1Piece! == index) {
-        strBottom = " Neutral 1";
+        strBottom = l10n != null ? " ${l10n!.selectNeutral(1)}" : " Neutral 1";
       }
       else if (iPlayerNeutral2Piece != null && iPlayerNeutral2Piece! == index) {
-        strBottom = " Neutral 2";
+        strBottom = l10n != null ? " ${l10n!.selectNeutral(2)}" : " Neutral 2";
       }
     }
 
@@ -546,15 +552,15 @@ class LGameSession {
     }
 
     if (strBottom.isEmpty && strTop.isEmpty) {
-      return "Free";
+      return l10n?.free ?? "Free";
     }
 
     if (strBottom.isEmpty) {
-      strBottom = "bottom: Free";
+      strBottom = l10n?.bottomFree ?? "bottom: Free";
     }
     else
     if (strTop.isNotEmpty) {
-      strBottom = "bottom: $strBottom";
+      strBottom = l10n?.bottomValue(strBottom) ?? "bottom: $strBottom";
     }
 
     return "$strTop\n\n$strBottom";
@@ -587,7 +593,7 @@ class LGameSession {
       di<LGameDataService>().deleteFinishedGameSessionData(obj);
       di<LGameDataService>().deleteUnFinishedGameSessionData(obj);
       di<LGameDataService>().saveIntoFinishedGamesList(obj);
-      msg =
+      msg = l10n?.noFreePositionsLPiece ??
       "There is no free positions for L piece. You had lost this game!";
       return false;
     }
@@ -607,7 +613,7 @@ class LGameSession {
       iArrPlayerMovePieces = [... iArrPlayer1Pieces!];
       iPlayerMove = 1;
       iActiveNeutral = 1;
-      msg = "Player 1: move L piece";
+      msg = l10n?.player1MoveLPiece ?? "Player 1: move L piece";
     }
     else
     if (playerTurn == GamePlayerTurn.player1)
@@ -622,7 +628,7 @@ class LGameSession {
        // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!,
          //   iPlayer);
         iArrPlayerMovePieces = [... iArrPlayer2Pieces!];
-        msg = "Player 2: move L piece";
+        msg = l10n?.player2MoveLPiece ?? "Player 2: move L piece";
         iActiveNeutral = 1;
         iPlayerMove = 2;
 
@@ -652,7 +658,7 @@ class LGameSession {
       bButtonWrapUpEnabled = true;
      // lGameButtonFlow.copyOfArrBeforeLastFrameMove(iArrPlayerMovePieces!, 1);
       iArrPlayerMovePieces = [... iArrPlayer1Pieces!];
-      msg = "Player 1: move L piece";
+      msg = l10n?.player1MoveLPiece ?? "Player 1: move L piece";
       iActiveNeutral = 1;
       iPlayerMove = 1;
 
@@ -1591,7 +1597,7 @@ class LGameSession {
         listBoardPiecesUpdated = true;
           if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
-             msg = "Player 1 has moved L Piece.";
+             msg = l10n?.player1MovedLPiece ?? "Player 1 has moved L Piece.";
           }
       }
 
@@ -1614,18 +1620,18 @@ class LGameSession {
           listBoardPiecesUpdated = true;
           if (!bGameIsOver && bScreenReaderIsUsed && lPieceMoved)
           {
-            msg = "Player 2 has moved L Piece.";
+            msg = l10n?.player2MovedLPiece ?? "Player 2 has moved L Piece.";
           }
         }
 
     if (!bGameIsOver && bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral1Piece != iPlayerNeutral1Piece!)
       {
-        msg = "Player has moved Neutral 1 Piece.";
+        msg = l10n?.movedNeutral1Piece ?? "Player has moved Neutral 1 Piece.";
       }
     else
     if (!bGameIsOver && bScreenReaderIsUsed && lGameButtonFlow.before_iPlayerNeutral2Piece != iPlayerNeutral2Piece!)
     {
-      msg = "Player has moved Neutral 2 Piece.";
+      msg = l10n?.movedNeutral2Piece ?? "Player has moved Neutral 2 Piece.";
     }
 
     iArray = lGameButtonFlow.iArrFrameMoveSet.toList();
@@ -1647,12 +1653,12 @@ class LGameSession {
       listBoardPiecesUpdated = true;
       if (!bGameIsOver && bScreenReaderIsUsed && lPieceFrameMoved == 1)
       {
-        msg = "Player has moved Neutral frame.";
+        msg = l10n?.movedNeutralFrame ?? "Player has moved Neutral frame.";
       }
       else
       if (!bGameIsOver && bScreenReaderIsUsed && lPieceFrameMoved == 3)
       {
-        msg = "Player has moved L frame.";
+        msg = l10n?.movedLPieceFrame ?? "Player has moved L frame.";
       }
     }
   }
@@ -2018,18 +2024,18 @@ class LGameSession {
       bool areTheSame =
       unOrdDeepEq(iArrPlayerMovePieces, iPlayerPresentPos);
       if (areTheSame) {
-        msg =
+        msg = l10n?.lPositionSame ??
           "L position and the move are the same! Move into diff position.";
         beep(false);
         return true;
       }
       if (!newLPiecePositionsAreFreeToMove()) {
-        msg = "All L positions are not free!";
+        msg = l10n?.allLPositionsNotFree ?? "All L positions are not free!";
         beep(false);
         return true;
       }
 
-        msg = "Move one neutral piece, please";
+        msg = l10n?.moveOneNeutralPiece ?? "Move one neutral piece, please";
         if (playerTurn == GamePlayerTurn.player1) {
           iArrPlayer1Pieces = iArrPlayerMovePieces;
           //     initNeutralData();
@@ -2088,12 +2094,12 @@ class LGameSession {
         }
       }
       if (!newNeutralPositionAreFreeToMove()) {
-        msg = "This neutral piece position is not free!";
+        msg = l10n?.neutralPiecePositionNotFree ?? "This neutral piece position is not free!";
         beep(false);
         return true;
       }
 
-        msg = "Move one more neutral piece, please";
+        msg = l10n?.moveOneMoreNeutralPiece ?? "Move one more neutral piece, please";
         if (iPlayerNeutral1PieceInBeginningMove != null && iPlayerNeutral1Piece == iPlayerNeutral1PieceInBeginningMove) {
           iPlayerNeutral1Piece = iArrPlayerMovePieces?.first.toInt();
         }

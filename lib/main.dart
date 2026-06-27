@@ -34,13 +34,22 @@ import './LoggerDef.dart';
 import 'services/AudioPlayerService.dart'; // as myAudioPlayerService;
 
 // part 'lgame_data.g.dart';
+import './l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+// ... existing imports ...
 var localPlatform = const LocalPlatform();
 
-// Function unOrdDeepEq = const DeepCollectionEquality.unordered().equals;
+enum MenuButtonSelected {
+  oldUnFinishedGames,
+  editPlayerNames,
+  finishedGames,
+  exitGame,
+  aboutGame,
+  selectLanguage
+}
 
-// This is the type used by the popup menu below.
-enum MenuButtonSelected { /* remoteGames, */ oldUnFinishedGames,
-  editPlayerNames, finishedGames, exitGame, aboutGame }
+final ValueNotifier<Locale> localeNotifier = ValueNotifier(const Locale('en'));
 
 void main() async {
 
@@ -62,8 +71,8 @@ void main() async {
   await setupDi();
   await di<LGameDataService>().checkInit();
  // FlutterNativeSplash.remove();
-  initializeDateFormatting('fi_FI', "yyyy-mm-dd hh:mm:ss").then((_) =>
-      runApp(const MyApp()));
+  await initializeDateFormatting(null, null);
+  runApp(const MyApp());
 }
 
 const String strAppTitle = 'LGame for creativity';
@@ -116,46 +125,55 @@ class MyApp extends StatelessWidget {
     ScreenValues.screenValues.padding_left =  padding_left;
     ScreenValues.screenValues.padding_right = padding_right;
     */
-    return ScreenUtilInit(
-      designSize: Size(availableHeight * .4, availableWidth * .5),
-      minTextAdapt: true,
-      enableScaleWH: () => true,
-      enableScaleText: () => true,
-      splitScreenMode: true,
-      builder: (_, __) {
-        return ParameterValues(
-          screenValues: ScreenValues(
-              bScreenReaderIsUsed: bScreenReaderIsUsed,
-              deviceWidth: deviceWidth,
-              padding_left: paddingLeft,
-              padding_right: paddingRight,
-              availableWidth: availableWidth,
-              deviceHeight: deviceHeight,
-              availableHeight: availableHeight),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: strAppTitle,
-            navigatorKey: NavigationService.navigatorKey,
-            initialRoute: '/',
-            routes: {
-              '/': (context) => const LoadingScreen(),
-              '/lgamefor2': (context) => LGamePage(
-                    title: strAppTitle,
-                    bScreenReaderIsUsed: bScreenReaderIsUsed,
-                  ),
-              '/help': (context) => const HelpRoute(),
-              '/about': (context) => const AboutRoute(),
-              '/oldgames': (context) => const OldGamesRoute(),
-              '/finishedgames': (context) => const FinishedGamesRoute(),
-              '/remotegames': (context) => const RemoteGamesRoute(),
-            },
-            theme: ThemeData(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
-                  .copyWith(surface: Colors.blueGrey),
-                useSystemColors: true,
-            ),
-          ),
+    return ValueListenableBuilder<Locale>(
+      valueListenable: localeNotifier,
+      builder: (context, locale, child) {
+        Intl.defaultLocale = locale.toLanguageTag();
+        return ScreenUtilInit(
+          designSize: Size(availableHeight * .4, availableWidth * .5),
+          minTextAdapt: true,
+          enableScaleWH: () => true,
+          enableScaleText: () => true,
+          splitScreenMode: true,
+          builder: (_, __) {
+            return ParameterValues(
+              screenValues: ScreenValues(
+                  bScreenReaderIsUsed: bScreenReaderIsUsed,
+                  deviceWidth: deviceWidth,
+                  padding_left: paddingLeft,
+                  padding_right: paddingRight,
+                  availableWidth: availableWidth,
+                  deviceHeight: deviceHeight,
+                  availableHeight: availableHeight),
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: strAppTitle,
+                navigatorKey: NavigationService.navigatorKey,
+                locale: locale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                initialRoute: '/',
+                routes: {
+                  '/': (context) => const LoadingScreen(),
+                  '/lgamefor2': (context) => LGamePage(
+                        title: strAppTitle,
+                        bScreenReaderIsUsed: bScreenReaderIsUsed,
+                      ),
+                  '/help': (context) => const HelpRoute(),
+                  '/about': (context) => const AboutRoute(),
+                  '/oldgames': (context) => const OldGamesRoute(),
+                  '/finishedgames': (context) => const FinishedGamesRoute(),
+                  '/remotegames': (context) => const RemoteGamesRoute(),
+                },
+                theme: ThemeData(
+                  useMaterial3: true,
+                  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
+                      .copyWith(surface: Colors.blueGrey),
+                  useSystemColors: true,
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -339,8 +357,12 @@ class _LGamePageState extends State<LGamePage>
     bool bCancelReturnValue = true;
     bool bContinueReturnValue = false;
     // showYesNoDialog
-      return showYesNoDialogWithContext("New L game", "Cancel", "Continue",
-          "Would you like to start a new L game?", bCancelReturnValue,
+      return showYesNoDialogWithContext(
+          AppLocalizations.of(context)!.newLGame,
+          AppLocalizations.of(context)!.cancel,
+          AppLocalizations.of(context)!.continue_,
+          AppLocalizations.of(context)!.startNewGameQuery,
+          bCancelReturnValue,
           bContinueReturnValue);
   }
 
@@ -372,7 +394,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       setState(() {
         _bUpdateUI = true;
         bInitGameBoard = true;
-        lGameSession.msg = "New game created...";
+        lGameSession.msg = AppLocalizations.of(context)!.newGameCreated;
         lGameSession.setListBoardPiecesUpdated(true);
         lGameSession.bGameStarted = true;
         lGameSession.currentButtonPressed = ButtonPressed.newGame;
@@ -996,20 +1018,20 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
     buttonStartGame = Semantics(
       readOnly: true,
-      label: 'Start game',
+      label: AppLocalizations.of(context)!.startGame,
       hint: 'Start game button',
       child: Tooltip(message: "Start a new l game after the finished game.",
         child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonStartGameEnabled ? buttonStartGamePressed : null,
-      child: const Text('Start game'),
+      child: Text(AppLocalizations.of(context)!.startGame),
       ),
       ),
     );
 
     buttonUp = Semantics(
       readOnly: true,
-      label: "Up",
+      label: AppLocalizations.of(context)!.up,
       hint: 'Up button',
       child: Tooltip(message: "Move L piece frame into the up.",
         child: ElevatedButton.icon(
@@ -1021,7 +1043,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        */
       onPressed: lGameSession.bButtonUpEnabled ? buttonUpPressed : null,
       icon: Icon(Icons.arrow_upward, size: buttonIconSize,),
-      label: const Text("Up"),
+      label: Text(AppLocalizations.of(context)!.up),
       ),
       ),
     );
@@ -1056,65 +1078,65 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
     buttonDown = Semantics(
       readOnly: true,
-      label: "Down",
+      label: AppLocalizations.of(context)!.down,
       hint: 'Down button',
       child: Tooltip(message: "Move L piece frame into the down.",
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonDownEnabled ? buttonDownPressed : null,
       icon: Icon(Icons.arrow_downward, size: buttonIconSize,),
-      label: const Text('Down'),
+      label: Text(AppLocalizations.of(context)!.down),
     ),
       ),
     );
 
     buttonLeft = Semantics(
       readOnly: true,
-      label: "Left",
+      label: AppLocalizations.of(context)!.left,
       hint: 'Left button',
       child: Tooltip(message: "Move L piece frame into the left.",
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonLeftEnabled ? buttonLeftPressed : null,
       icon: Icon(Icons.arrow_back, size: buttonIconSize,),
-      label: const Text('Left'),
+      label: Text(AppLocalizations.of(context)!.left),
     ),
       ),
     );
 
     buttonRight = Semantics(
       readOnly: true,
-      label: "Right",
+      label: AppLocalizations.of(context)!.right,
       hint: 'Right button',
       child: Tooltip(message: "Move L piece frame into the right.",
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonRightEnabled ? buttonRightPressed : null,
       icon: Icon(Icons.arrow_forward, size: buttonIconSize,),
-      label: const Text('Right'),
+      label: Text(AppLocalizations.of(context)!.right),
     ),
       ),
     );
 
     buttonWrapUp = Semantics(
       readOnly: true,
-        label: "Wrap",
+        label: AppLocalizations.of(context)!.wrap,
         hint: 'Wrap button',
         child: Tooltip(message: "Wrap L piece frame in the game board.",
           child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonWrapUpEnabled ? buttonWrapUpPressed : null,
       icon: Icon(Icons.autorenew, size: buttonIconSize,),
-      label: const Text('Wrap'),
+      label: Text(AppLocalizations.of(context)!.wrap),
     ),
         ),
     );
 
     String strNeutral;
     if (lGameSession.iActiveNeutral == 2) {
-      strNeutral = "Select 1' neutral";
+      strNeutral = AppLocalizations.of(context)!.selectNeutral(1);
     } else {
-      strNeutral = "Select 2' neutral";
+      strNeutral = AppLocalizations.of(context)!.selectNeutral(2);
     }
 
     buttonSwitchNeutral = Semantics(
@@ -1151,40 +1173,40 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
     buttonTurn90Degree = Semantics(
       readOnly: true,
-  label: "Turn 90º",
+  label: AppLocalizations.of(context)!.turn90,
   hint: "Turn 90º button",
   child: Tooltip(message: "Turn l frame 90º in the board and prepare to a next move.",
     child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
       icon: Icon(Icons.subdirectory_arrow_right, size: buttonIconSize,),
-      label: const Text('Turn 90º'),
+      label: Text(AppLocalizations.of(context)!.turn90),
     ),
   ),
   );
 
      buttonHelp = Semantics(
        readOnly: true,
-       label: "Help",
+       label: AppLocalizations.of(context)!.help,
        hint: "Help button",
        child: Tooltip(message: "Help pages for this l game.",
          child: ElevatedButton(
        style: buttonStyle,
        onPressed: lGameSession.bButtonHelpEnabled ? buttonHelpEnabledPressed : null,
-       child: const Text('Help'),
+       child: Text(AppLocalizations.of(context)!.help),
       ),
        ),
      );
 
      buttonMoveDone = Semantics(
        readOnly: true,
-         label: "Move Done",
+         label: AppLocalizations.of(context)!.moveDone,
          hint: "Move Done button",
          child: Tooltip(message: "When move frame is in the position in a next piece move.",
           child: ElevatedButton(
          style: buttonStyle,
        onPressed: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
-       child: const Text('Move Done'),
+       child: Text(AppLocalizations.of(context)!.moveDone),
        ),
        ),
      );
@@ -1193,7 +1215,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
    if (widget.bScreenReaderIsUsed) {
       buttonMoveDoneScreenReader = Semantics(
       readOnly: true,
-      label: "Move Done",
+      label: AppLocalizations.of(context)!.moveDone,
       hint: "Move Done button",
       child: Tooltip(message: "Move frame is in the right position and move a L piece or a neutral piece in this position.",
         child: ElevatedButton(
@@ -1201,7 +1223,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
         onPressed: lGameSession.bButtonMoveDoneEnabled ? (){}
               : null,
         onLongPress: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
-        child: const Text('Move Done'),
+        child: Text(AppLocalizations.of(context)!.moveDone),
       ),
       ),
     );
@@ -1244,26 +1266,26 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
        _buttonSaveEdit = Semantics(
          readOnly: true,
-         label: "Save names",
+         label: AppLocalizations.of(context)!.saveNames,
          hint: "Save names button",
          child: Tooltip(message: "Change and save player's names of this game.",
            child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonSaveEditPressed : null,
-         child: const Text('Save names'),
+         child: Text(AppLocalizations.of(context)!.saveNames),
          ),
          ),
        );
 
        _buttonReturnFromEdit = Semantics(
          readOnly: true,
-         label: "No save",
+         label: AppLocalizations.of(context)!.noSave,
          hint: "No save button",
          child: Tooltip(message: "No save for player's names of this game",
            child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonReturnFromEditPressed : null,
-         child: const Text('No save'),
+         child: Text(AppLocalizations.of(context)!.noSave),
          ),
          ),
        );
@@ -1278,7 +1300,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
                children: <InlineSpan>[
                  WidgetSpan(
                    child: Text(
-                     'Player 1',
+                     AppLocalizations.of(context)!.player1,
                     style: TextStyle(fontWeight: FontWeight.bold,
                         fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5), color: Colors.red),
                    ),
@@ -1299,7 +1321,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
        if (widget.bScreenReaderIsUsed) {
          _textFieldName1 = Semantics( readOnly: false,
-             label: 'Player 1', hint: 'Player 1 text field',
+             label: AppLocalizations.of(context)!.player1, hint: 'Player 1 text field',
              child: _textFieldName1);
        }
 
@@ -1314,7 +1336,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
                children: <InlineSpan>[
                  WidgetSpan(
                    child: Text(
-                     'Player 2',
+                     AppLocalizations.of(context)!.player2,
                      style: TextStyle(fontWeight: FontWeight.bold,
                        fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5), color: Colors.blue),
                    ),
@@ -1335,7 +1357,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
        if (widget.bScreenReaderIsUsed) {
          _textFieldName2 = Semantics( readOnly: false,
-       label: 'Player 2', hint: 'Player 2 text field',
+       label: AppLocalizations.of(context)!.player2, hint: 'Player 2 text field',
        child: _textFieldName2);
        }
 
@@ -1653,14 +1675,14 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
      }
      if (lGameSession.playerTurn == GamePlayerTurn.player1) {
        if (lGameSession.name1.isEmpty) {
-         ret = "Player 1";
+         ret = AppLocalizations.of(context)!.player1;
        } else {
          ret = lGameSession.name1;
        }
      } else
      if (lGameSession.playerTurn == GamePlayerTurn.player2) {
        if (lGameSession.name2.isEmpty) {
-         ret = "Player 2";
+         ret = AppLocalizations.of(context)!.player2;
        } else {
          ret = lGameSession.name2;
        }
@@ -1768,6 +1790,67 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     Navigator.pushNamed(context, "/remotegames");
   }
 
+  void callLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.selectLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('English'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    localeNotifier.value = const Locale('en');
+                  });
+                },
+              ),
+              ListTile(
+                title: const Text('Español'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    localeNotifier.value = const Locale('es');
+                  });
+                },
+              ),
+              ListTile(
+                title: const Text('Deutsch'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    localeNotifier.value = const Locale('de');
+                  });
+                },
+              ),
+              ListTile(
+                title: const Text('Svenska'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    localeNotifier.value = const Locale('sv');
+                  });
+                },
+              ),
+              ListTile(
+                title: const Text('Suomi'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    localeNotifier.value = const Locale('fi');
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void callFinishedGames() async
   {
     /*
@@ -1812,6 +1895,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
   @override
   Widget build(BuildContext context) {
+    lGameSession.l10n = AppLocalizations.of(context);
     /*
     EdgeInsets systemGestureInsets =
         MediaQuery.of(context).systemGestureInsets;
@@ -1829,8 +1913,13 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     String strPlayer = _getPlayerName();
     String homeTitle = widget.title;
     if (strPlayer.isNotEmpty) {
+      homeTitle = AppLocalizations.of(context)!.playerTurnLabel(strPlayer);
+    }
+    /*
+    if (strPlayer.isNotEmpty) {
       homeTitle = "Turn: $strPlayer";
     }
+     */
 
     final TextStyle menuTextStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 16 : 3),
         fontWeight: FontWeight.bold);
@@ -1884,8 +1973,17 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
         title: Padding(
             padding: EdgeInsets.all(!ScreenValues.isWeb ? 20.0 : 10),
             child: Row(children: [
+              if (lGameSession.bIsRemoteGame) Row(children: [
+                Semantics(
+                  readOnly: true,
+                  label: 'Remote game',
+                  hint: 'Remote game',
+                  child: Tooltip(message: "Remote game",
+                child: Icon(Icons.group,),)),
+                SizedBox(width: 10,),
+              ]),
               Container(
-              padding: EdgeInsets.all(!ScreenValues.isWeb ? 4.0 : 2.0),
+              padding: EdgeInsets.all(!ScreenValues.isWeb ? 6.0 : 2.0),
               decoration: BoxDecoration(
                 color: playerColor!,
                 borderRadius: BorderRadius.all(
@@ -1893,7 +1991,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
                 ),
               ),
               child: Text(homeTitle, style:
-            TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 5),
+            TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 15 : 5),
             fontWeight: FontWeight.bold, background: Paint()
             /*
           ..strokeWidth = 12.0
@@ -1963,13 +2061,17 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
                     {
                       callAboutGame();
                     }
+                    else if (selectedMenuButton ==
+                        MenuButtonSelected.selectLanguage) {
+                      callLanguageDialog();
+                    }
 
               });
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuButtonSelected>>[
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.oldUnFinishedGames,
-                child: Text('Select unfinished games', style: menuTextStyle,),
+                child: Text(AppLocalizations.of(context)!.selectUnfinishedGames, style: menuTextStyle,),
               ),
 
               /*
@@ -1980,19 +2082,23 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
                */
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.editPlayerNames,
-                child: Text('Edit player names', style: menuTextStyle,),
+                child: Text(AppLocalizations.of(context)!.editPlayerNames, style: menuTextStyle,),
               ),
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.finishedGames,
-                child: Text('Finished games', style: menuTextStyle,),
+                child: Text(AppLocalizations.of(context)!.finishedGames, style: menuTextStyle,),
+              ),
+              PopupMenuItem<MenuButtonSelected>(
+                value: MenuButtonSelected.selectLanguage,
+                child: Text(AppLocalizations.of(context)!.selectLanguage, style: menuTextStyle,),
               ),
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.exitGame,
-                child: Text('Exit game', style: menuTextStyle,),
+                child: Text(AppLocalizations.of(context)!.exitGame, style: menuTextStyle,),
               ),
               PopupMenuItem<MenuButtonSelected>(
                 value: MenuButtonSelected.aboutGame,
-                child: Text('About game', style: menuTextStyle,),
+                child: Text(AppLocalizations.of(context)!.aboutGame, style: menuTextStyle,),
               ),
             ],
           ),

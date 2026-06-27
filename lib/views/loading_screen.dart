@@ -1,10 +1,9 @@
 
-//import 'package:flgame/main.dart';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import '../l10n/app_localizations.dart';
 
 import '../ParameterValues.dart';
 
@@ -64,7 +63,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     //  rootBundle = context;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'L Game is loading...',
+      title: AppLocalizations.of(context)!.loading,
       home: SafeArea(
         minimum: EdgeInsets.all( !ScreenValues.isWeb ? 16.0 : 5),
         child: Scaffold(
@@ -89,7 +88,7 @@ class _LoadingScreenState extends State<LoadingScreen>
             ScreenValues.isWeb ? SizedBox(height: 150, width: 100)
              : SizedBox(height: 25, width: 100),
             Center(
-              child: Text('L Game',
+              child: Text(AppLocalizations.of(context)!.lGameTitle,
                   style: TextStyle(fontSize: ScreenValues.isWeb ? 37 : 50,
                       color: Colors.black)),
             ),

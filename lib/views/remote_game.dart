@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../l10n/app_localizations.dart';
 
 class RemoteGamesRoute extends StatefulWidget {
   // final NavigatorState parentNavigator;
@@ -50,15 +51,15 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
       appBar: AppBar(
         // leadingWidth: MediaQuery.of(context).padding.top,
         primary: false,
-        title: Text('About LGame', style: TextStyle(fontSize: 20,
+        title: Text(AppLocalizations.of(context)!.aboutLGame, style: TextStyle(fontSize: 20,
             color: Colors.white) /* style: textStyle, */),
         centerTitle: false,
         actions: [
           Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
             child: ElevatedButton(
               style: buttonStyle,
-              child: const Text(
-                'Back',
+              child: Text(
+                AppLocalizations.of(context)!.back,
               ),
               onPressed: () {
                 callMainPage();
@@ -89,8 +90,8 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
                 ),
               ),
               const SizedBox(height: 150, width: 100),
-              const Center(
-                child: Text('L Game',
+              Center(
+                child: Text(AppLocalizations.of(context)!.lGameTitle,
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
               Image( width: 150,
@@ -99,11 +100,11 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
               AssetImage('assets/L_Game_start_position.svg.png', ),
               ),
               Center(
-                child: Text('copyright Tuomas Kassila',
+                child: Text(AppLocalizations.of(context)!.copyright,
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
               Center(
-                child: Text('version 1.1.6',
+                child: Text(AppLocalizations.of(context)!.version('1.1.6'),
                     style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
 

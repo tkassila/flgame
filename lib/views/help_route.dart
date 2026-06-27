@@ -7,17 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 */
-import 'dart:async';
-
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-// import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flgame/ParameterValues.dart';
+import '../../l10n/app_localizations.dart';
 
 class BorderedContainer extends StatelessWidget {
   final Widget child;
@@ -259,19 +254,20 @@ class HelpPageWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       controller: ScrollController(),
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(left: 5.0, right: 5.0,
               bottom: 5.0, top: 4.0),
-          child: Text('Scroll up and down between help text. ' 'Or when needed from up into down.', style: textStyle,),
+          child: Text(l10n.scrollHelp, style: textStyle,),
         ),
         SingleChildScrollView(
           controller: ScrollController(),
           primary: false,
           child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
-            Html(style: htmlStyle, data: strHelp),
+            Html(style: htmlStyle, data: l10n.helpContent1),
             const Image(
               width: 150,
               height: 150,
@@ -279,8 +275,8 @@ class HelpPageWeb extends StatelessWidget {
                 'assets/L_Game_start_position.svg.png',
               ),
             ),
-            Html(style: htmlStyle, data: strHelp_2),
-            Html(style: htmlStyle, data: strHelp3),
+            Html(style: htmlStyle, data: l10n.helpContent2),
+            Html(style: htmlStyle, data: l10n.helpContent4),
             Column(
               spacing: 0.0,
               children:  [
@@ -293,7 +289,7 @@ class HelpPageWeb extends StatelessWidget {
                       'assets/L_Game_start_position.svg.png',
                     ),),
                 ),
-                Text("Start position of L game", style: textStyleHtml,),
+                Text(l10n.startPositionLGame, style: textStyleHtml,),
                 const SizedBox(height: 20.0,),
                 Image(
                   width: width -30.0,
@@ -301,19 +297,18 @@ class HelpPageWeb extends StatelessWidget {
                     'assets/560px-L_Game_mate_positions.svg.png.webp',
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
-                  child: Text("All positions, Red to move, where Red will lose " "to a perfect Blue, and maximum number of moves remaining " "for Red. By looking ahead one move and ensuring " "one never ends up in any of the above positions,"
-                      " one can avoid losing.", style: textStyleHtml,),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
+                  child: Text(l10n.losePositionsDescription, style: textStyleHtml,),
                 ),
 
                 Image(
                   width: width -30.0,
-                  image: AssetImage(
+                  image: const AssetImage(
                     'assets/560px-L_Game_all_final_positions.svg.png.webp',
                   ),
                 ),
-                const Text("All possible final positions, Blue has won",
+                Text(l10n.allPossibleFinalPositions,
                   style: textStyleHtml,),
                 /*
               Image(
@@ -349,18 +344,19 @@ class HelpPage1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       controller: ScrollController(),
       child: Column(children: [
       Padding(
       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0, top: 4.0),
-      child: Text('Swipe from left into right and back between help pages. ' 'Or when needed from up into down.', style: textStyle,),
+      child: Text(l10n.swipeHelp, style: textStyle,),
       ),
       SingleChildScrollView(
         controller: ScrollController(),
         primary: false,
         child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
-          Html(style: htmlStyle, data: strHelp),
+          Html(style: htmlStyle, data: l10n.helpContent1),
           const Image(
             width: 150,
             height: 150,
@@ -368,7 +364,7 @@ class HelpPage1 extends StatelessWidget {
               'assets/L_Game_start_position.svg.png',
             ),
           ),
-          Html(style: htmlStyle, data: strHelp_2),
+          Html(style: htmlStyle, data: l10n.helpContent2),
         ],
         ),
         ),
@@ -387,7 +383,7 @@ class HelpPage2 extends StatelessWidget {
     return SingleChildScrollView(
       controller: ScrollController(),
       primary: false,
-      child: Html(style: htmlStyle, data: strHelp2),
+      child: Html(style: htmlStyle, data: AppLocalizations.of(context)!.helpContent3),
     );
   }
 }
@@ -400,7 +396,7 @@ class HelpPage3 extends StatelessWidget {
     return  SingleChildScrollView(
       controller: ScrollController(),
       primary: false,
-      child: Html(style: htmlStyle, data: strHelp3),
+      child: Html(style: htmlStyle, data: AppLocalizations.of(context)!.helpContent4),
     );
   }
 }
@@ -425,7 +421,7 @@ class HelpPage4 extends StatelessWidget {
             'assets/L_Game_start_position.svg.png',
         ),),
         ),
-          Text("Start position of L game", style: textStyleHtml,),
+          Text(AppLocalizations.of(context)!.startPositionLGame, style: textStyleHtml,),
           const SizedBox(height: 20.0,),
          Image(
              width: width -30.0,
@@ -433,19 +429,18 @@ class HelpPage4 extends StatelessWidget {
               'assets/560px-L_Game_mate_positions.svg.png.webp',
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
-            child: Text("All positions, Red to move, where Red will lose " "to a perfect Blue, and maximum number of moves remaining " "for Red. By looking ahead one move and ensuring " "one never ends up in any of the above positions,"
-                              " one can avoid losing.", style: textStyleHtml,),
+          Padding(
+            padding: const EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
+            child: Text(AppLocalizations.of(context)!.losePositionsDescription, style: textStyleHtml,),
                 ),
 
        Image(
         width: width -30.0,
-            image: AssetImage(
+            image: const AssetImage(
               'assets/560px-L_Game_all_final_positions.svg.png.webp',
             ),
           ),
-          const Text("All possible final positions, Blue has won",
+          Text(AppLocalizations.of(context)!.allPossibleFinalPositions,
             style: textStyleHtml,),
               /*
               Image(
@@ -782,19 +777,19 @@ class HelpRoute extends StatelessWidget {
       appBar: AppBar(
     // leadingWidth: MediaQuery.of(context).padding.top,
         primary: false,
-        title: Text('LGame help', style: textStyle,),
+        title: Text(AppLocalizations.of(context)!.help, style: textStyle,),
         centerTitle: false,
         actions: [
           Padding(padding: const EdgeInsets.only(top: 5.0, right: 10.0),
         child: Semantics(
           readOnly: true,
-          label: "Wrap",
-          hint: 'Wrap button',
+          label: AppLocalizations.of(context)!.back,
+          hint: AppLocalizations.of(context)!.backButtonHint,
           child: ElevatedButton(
             style: buttonStyle,
             child: Text(
               style: textStyleBack,
-              'Back into LGame',
+              AppLocalizations.of(context)!.back,
             ),
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(context, "/lgamefor2",
