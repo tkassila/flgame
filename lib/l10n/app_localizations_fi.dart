@@ -261,8 +261,134 @@ class AppLocalizationsFi extends AppLocalizations {
   String get deleteGameButtonHint => 'Poista vanha peli';
 
   @override
+  String get startGameButtonHint => 'Aloita peli -painike';
+
+  @override
+  String get startGameTooltip => 'Aloita uusi L-peli päättyneen pelin jälkeen.';
+
+  @override
+  String get upButtonHint => 'Ylös-painike';
+
+  @override
+  String get upTooltip => 'Siirrä L-nappulan kehystä ylöspäin.';
+
+  @override
+  String get downButtonHint => 'Alas-painike';
+
+  @override
+  String get downTooltip => 'Siirrä L-nappulan kehystä alaspäin.';
+
+  @override
+  String get leftButtonHint => 'Vasen-painike';
+
+  @override
+  String get leftTooltip => 'Siirrä L-nappulan kehystä vasemmalle.';
+
+  @override
+  String get rightButtonHint => 'Oikea-painike';
+
+  @override
+  String get rightTooltip => 'Siirrä L-nappulan kehystä oikealle.';
+
+  @override
+  String get wrapButtonHint => 'Kierto-painike';
+
+  @override
+  String get wrapTooltip => 'Kierrä L-nappulan kehystä pelilaudalla.';
+
+  @override
+  String neutralButtonHint(String neutral) {
+    return '$neutral-painike';
+  }
+
+  @override
+  String get neutralTooltip =>
+      'Vaihda siirtokehys toiseen neutraaliin pelinappulaan.';
+
+  @override
+  String get turn90ButtonHint => 'Käännä 90º -painike';
+
+  @override
+  String get turn90Tooltip =>
+      'Käännä L-kehystä 90º laudalla ja valmistaudu seuraavaan siirtoon.';
+
+  @override
+  String get helpButtonHint => 'Ohje-painike';
+
+  @override
+  String get helpTooltip => 'Tämän L-pelin ohjesivut.';
+
+  @override
+  String get moveDoneButtonHint => 'Siirto valmis -painike';
+
+  @override
+  String get moveDoneTooltip =>
+      'Kun siirtokehys on paikallaan seuraavaa nappulan siirtoa varten.';
+
+  @override
+  String get moveDoneScreenReaderTooltip =>
+      'Siirtokehys on oikeassa asennossa; siirrä L-nappula tai neutraali nappula tähän kohtaan.';
+
+  @override
+  String get messageLabel => 'Viesti';
+
+  @override
+  String get messageLabelHint => 'Viestikenttä';
+
+  @override
+  String get messageTooltip => 'Tämän pelin viestit.';
+
+  @override
+  String get saveNamesButtonHint => 'Tallenna nimet -painike';
+
+  @override
+  String get saveNamesTooltip =>
+      'Muuta ja tallenna tämän pelin pelaajien nimet.';
+
+  @override
+  String get noSaveButtonHint => 'Älä tallenna -painike';
+
+  @override
+  String get noSaveTooltip => 'Älä tallenna tämän pelin pelaajien nimiä.';
+
+  @override
+  String get playerNameTooltip => 'Tämän pelisession pelaajan nimi.';
+
+  @override
+  String get player1TextFieldHint => 'Pelaajan 1 tekstikenttä';
+
+  @override
+  String get player2TextFieldHint => 'Pelaajan 2 tekstikenttä';
+
+  @override
+  String get saveGameDataLabel => 'Tallenna pelitiedot';
+
+  @override
+  String get saveGameDataHint =>
+      'Tallenna pelitiedot tätä verkkosessiota varten';
+
+  @override
+  String get saveGameDataTooltip =>
+      'Tallenna pelitiedot tätä verkkosessiota varten.';
+
+  @override
+  String get remoteGameLabel => 'Etäpeli';
+
+  @override
+  String get remoteGameHint => 'Etäpeli';
+
+  @override
+  String get remoteGameTooltip => 'Etäpeli';
+
+  @override
+  String get cancelButtonHint => 'Peruuta-painike';
+
+  @override
+  String get continueButtonHint => 'Jatka-painike';
+
+  @override
   String get helpContent1 =>
-      '<div class=\"text\"><h2>L-peli - tabletti- ja puhelinpeli</h2><p>Voit käyttää päävalikkoa valitaksesi seuraavat vaihtoehdot pelissä:</p><p>Tämä peli voi tallentaa päättyneitä/keskeneräisiä pelisessioita nykyisellä pelitilanteella. Valitse kyseinen vaihtoehto nähdäksesi luettelon tallennetuista sessioista ja pelilaudoista. Voit myös poistaa vanhoja pelisessioita painamalla rivillä olevaa roskakorin kuvaa. Voit valita keskeneräisen pelin jatkaaksesi peliä siitä, mihin pelaajat jäivät.</p><h3>Uuden L-pelin aloittamisen jälkeen</h3><p>2 pelaajalla on kummallakin yksi L-nappula. L-nappulan siirtämisen jälkeen pelaaja voi siirtää yhtä neutraaleista nappuloista. Siirron tavoite näytetään mustalla siirtokehyksellä nykyisen L-nappulan ympärillä. Valitun neutraalin nappulan ympärillä siirtokehys on joko sininen tai punainen pelaajan 1 tai 2 mukaan.</p><p>Siirtokehystä siirretään pelipöydällä painamalla keltaisia siirtonäppäimiä. Kun siirtokehys on oikeassa paikassa L-siirtoa varten, paina Siirto valmis -painiketta. Jos siirto on hyväksytty, nappula siirretään valittuun paikkaan. Tämän jälkeen siirtokehys siirtyy neutraalin nappulan ympärille. Voit vaihtaa valittua neutraalia nappulaa, jos haluat. Kun Siirto valmis -painiketta on painettu 2 kertaa, pelivuoro vaihtuu vastustajalle ja siirtokehys on hänen L-nappulansa ympärillä.</p><p>Kun Androidin TalkBack-sovellus ei ole käynnissä, voit siirtää kehystä pelilaudalla myös sormieleillä keltaisten siirtonäppäinten sijaan:</p><p><b>Pyyhkäisy ylös tai alas</b> = kehys liikkuu ylös tai alas.</b><p><b>Pyyhkäisy vasemmalle tai oikealle</b> = kehys liikkuu vasemmalle tai oikealle.</p><p><b>2 napautusta pelilaudalla</b> = kehys liikkuu kuin painettaessa \'kierto\'-painiketta.</p><p><b>Pitkä painallus pelilaudalla</b> = kehys liikkuu kuin painettaessa \'käännä 90º\' -painiketta.</p><p>Pelaajan 1 L-nappula on merkitty valkoisella numerolla 1 ja se on punainen. Pelaajan 2 L-nappula on merkitty valkoisella numerolla 2 ja se on sininen. 2 neutraalia nappulaa ovat mustia. Vuorossa olevan pelaajan L-siirron musta kehys on merkitty mustalla numerolla 1 tai 2. Kun L-siirto hyväksytään, L-siirtokehys katoaa. Neutraali siirtokehys luodaan yhden neutraalin painikkeen ympärille. Kun koko siirto on valmis (toinen valmis-painikkeen painallus), L-siirtokehys siirtyy seuraavan vuorossa olevan pelaajan L-nappulan ympärille. Tässä pelin versiossa pelilaudalle on lisätty erilaisia sormieleitä, jotka vastaavat painettuja siirtonäppäimiä: pyyhkäisy vasemmalle vastaa vasenta painiketta, pyyhkäisy oikealle oikeaa painiketta, pyyhkäisy ylös yläpainiketta, pyyhkäisy alas alapainiketta, pitkä painallus 90º kääntöä ja kaksoisnapautus kiertoa.</p><h2>Wikipediasta</h2><p>Wikipediasta, vapaasta tietosanakirjasta. L-pelin lauta ja aloitusasetelma, jossa neutraalit nappulat näkyvät mustina kiekkoina:</p></div>';
+      '<div class=\"text\"><h2>L-peli - tabletti- ja puhelinpeli</h2><p>Voit käyttää päävalikkoa valitaksesi seuraavat vaihtoehdot pelissä:</p><p>Tämä peli voi tallentaa päättyneitä/keskeneräisiä pelisessioita nykyisellä pelitilanteella. Valitse kyseinen vaihtoehto nähdäksesi luettelon tallennetuista sessioista ja pelilaudoista. Voit myös poistaa vanhoja pelisessioita painamalla rivillä olevaa roskakorin kuvaa. Voit valita keskeneräisen pelin jatkaaksesi peliä siitä, mihin pelaajat jäivät.</p><h3>Uuden L-pelin aloittamisen jälkeen</h3><p>2 pelaajalla on kummallakin yksi L-nappula. L-nappulan siirtämisen jälkeen pelaaja voi siirtää yhtä neutraaleista nappuloista. Siirron tavoite näytetään mustalla siirtokehyksellä nykyisen L-nappulan ympärillä. Valitun neutraalin nappulan ympärillä siirtokehys on joko sininen tai punainen pelaajan 1 tai 2 mukaan.</p><p>Siirtokehystä siirretään pelipöydällä painamalla keltaisia siirtonäppäimiä. Kun siirtokehys on oikeassa paikassa L-siirtoa varten, paina Siirto valmis -painiketta. Jos siirto on hyväksytty, nappula siirretään valittuun paikkaan. Tämän jälkeen siirtokehys siirtyy neutraalin nappulan ympärille. Voit vaihtaa valittua neutraalia nappulaa, jos haluat. Kun Siirto valmis -painiketta on painettu 2 kertaa, pelivuoro vaihtuu vastustajalle ja siirtokehys on hänen L-nappulansa ympärillä.</p><p>Kun Androidin TalkBack-sovellus ei ole käynnissä, voit siirtää kehystä pelilaudalla myös sormieleillä keltaisten siirtonäppäinten sijaan:</p><p><b>Pyyhkäisy ylös tai alas</b> = kehys liikkuu ylös tai alas.</b><p><b>Pyyhkäisy vasemalle tai oikealle</b> = kehys liikkuu vasemmalle tai oikealle.</p><p><b>2 napautusta pelilaudalla</b> = kehys liikkuu kuin painettaessa \'kierto\'-painiketta.</p><p><b>Pitkä painallus pelilaudalla</b> = kehys liikkuu kuin painettaessa \'käännä 90º\' -painiketta.</p><p>Pelaajan 1 L-nappula on merkitty valkoisella numerolla 1 ja se on punainen. Pelaajan 2 L-nappula on merkitty valkoisella numerolla 2 ja se on sininen. 2 neutraalia nappulaa ovat mustia. Vuorossa olevan pelaajan L-siirron musta kehys on merkitty mustalla numerolla 1 tai 2. Kun L-siirto hyväksytään, L-siirtokehys katoaa. Neutraali siirtokehys luodaan yhden neutraalin painikkeen ympärille. Kun koko siirto on valmis (toinen valmis-painikkeen painallus), L-siirtokehys siirtyy seuraavan vuorossa olevan pelaajan L-nappulan ympärille. Tässä pelin versiossa pelilaudalle on lisätty erilaisia sormieleitä, jotka vastaavat painettuja siirtonäppäimiä: pyyhkäisy vasemmalle vastaa vasenta painiketta, pyyhkäisy oikealle oikeaa painiketta, pyyhkäisy ylös yläpainiketta, pyyhkäisy alas alapainiketta, pitkä painallus 90º kääntöä ja kaksoisnapautus kiertoa.</p><h2>Wikipediasta</h2><p>Wikipediasta, vapaasta tietosanakirjasta. L-pelin lauta ja aloitusasetelma, jossa neutraalit nappulat näkyvät mustina kiekkoina:</p></div>';
 
   @override
   String get helpContent2 =>

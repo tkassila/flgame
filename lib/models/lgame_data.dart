@@ -483,6 +483,30 @@ class LGameSession {
 
   String get msg => (_strMsg == null || _strMsg!.isEmpty) ? "" : _strMsg!;
 
+  void refreshMessage() {
+    if (bGameIsOver) {
+      msg = l10n?.noFreePositionsLPiece ??
+          "There is no free positions for L piece. You had lost this game!";
+      return;
+    }
+
+    if (inMovingPiece == LGamePieceInMove.LPiece) {
+      if (playerTurn == GamePlayerTurn.player1) {
+        msg = l10n?.player1MoveLPiece ?? "Player 1: move L piece";
+      } else {
+        msg = l10n?.player2MoveLPiece ?? "Player 2: move L piece";
+      }
+    } else if (inMovingPiece == LGamePieceInMove.neutral) {
+      // We don't necessarily know if they need to move 1 or 2 neutrals without more state,
+      // but we can try to provide a sensible default if they just switched.
+      if (msg.contains("one more") || msg.contains("vielä yksi") || msg.contains("yksi lisää") || msg.contains("uno más") || msg.contains("weiteres")) {
+        msg = l10n?.moveOneMoreNeutralPiece ?? "Move one more neutral piece, please";
+      } else {
+        msg = l10n?.moveOneNeutralPiece ?? "Move one neutral piece, please";
+      }
+    }
+  }
+
   String getScreenReaderSquareLabel(int index)
   {
     GameBoardPosition? pos = getGameBoardPosition(index);

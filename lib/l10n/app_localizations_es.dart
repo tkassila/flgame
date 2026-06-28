@@ -261,6 +261,135 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteGameButtonHint => 'Eliminar un juego antiguo';
 
   @override
+  String get startGameButtonHint => 'Botón de empezar juego';
+
+  @override
+  String get startGameTooltip =>
+      'Empezar un nuevo juego L después del juego terminado.';
+
+  @override
+  String get upButtonHint => 'Botón de arriba';
+
+  @override
+  String get upTooltip => 'Mover el marco de la pieza L hacia arriba.';
+
+  @override
+  String get downButtonHint => 'Botón de abajo';
+
+  @override
+  String get downTooltip => 'Mover el marco de la pieza L hacia abajo.';
+
+  @override
+  String get leftButtonHint => 'Botón de izquierda';
+
+  @override
+  String get leftTooltip => 'Mover el marco de la pieza L hacia la izquierda.';
+
+  @override
+  String get rightButtonHint => 'Botón de derecha';
+
+  @override
+  String get rightTooltip => 'Mover el marco de la pieza L hacia la derecha.';
+
+  @override
+  String get wrapButtonHint => 'Botón de envolver';
+
+  @override
+  String get wrapTooltip =>
+      'Envolver el marco de la pieza L en el tablero de juego.';
+
+  @override
+  String neutralButtonHint(String neutral) {
+    return 'Botón de $neutral';
+  }
+
+  @override
+  String get neutralTooltip =>
+      'Cambiar el marco de movimiento a otra pieza de juego neutral.';
+
+  @override
+  String get turn90ButtonHint => 'Botón de girar 90º';
+
+  @override
+  String get turn90Tooltip =>
+      'Girar el marco L 90º en el tablero y prepararse para el siguiente movimiento.';
+
+  @override
+  String get helpButtonHint => 'Botón de ayuda';
+
+  @override
+  String get helpTooltip => 'Páginas de ayuda para este juego L.';
+
+  @override
+  String get moveDoneButtonHint => 'Botón de movimiento hecho';
+
+  @override
+  String get moveDoneTooltip =>
+      'Cuando el marco de movimiento está en la posición para el siguiente movimiento de pieza.';
+
+  @override
+  String get moveDoneScreenReaderTooltip =>
+      'El marco de movimiento está en la posición correcta y mueve una pieza L o una pieza neutral a esta posición.';
+
+  @override
+  String get messageLabel => 'Mensaje';
+
+  @override
+  String get messageLabelHint => 'Etiqueta de mensaje';
+
+  @override
+  String get messageTooltip => 'Mensajes de este juego.';
+
+  @override
+  String get saveNamesButtonHint => 'Botón de guardar nombres';
+
+  @override
+  String get saveNamesTooltip =>
+      'Cambiar y guardar los nombres de los jugadores de este juego.';
+
+  @override
+  String get noSaveButtonHint => 'Botón de no guardar';
+
+  @override
+  String get noSaveTooltip =>
+      'No guardar los nombres de los jugadores de este juego.';
+
+  @override
+  String get playerNameTooltip =>
+      'Un nombre de jugador de este juego de sesión.';
+
+  @override
+  String get player1TextFieldHint => 'Campo de texto del Jugador 1';
+
+  @override
+  String get player2TextFieldHint => 'Campo de texto del Jugador 2';
+
+  @override
+  String get saveGameDataLabel => 'Guardar datos del juego';
+
+  @override
+  String get saveGameDataHint => 'Guardar datos del juego para esta sesión web';
+
+  @override
+  String get saveGameDataTooltip =>
+      'Guardar datos del juego para esta sesión web.';
+
+  @override
+  String get remoteGameLabel => 'Juego remoto';
+
+  @override
+  String get remoteGameHint => 'Juego remoto';
+
+  @override
+  String get remoteGameTooltip => 'Juego remoto';
+
+  @override
+  String get cancelButtonHint => 'Botón de cancelar';
+
+  @override
+  String get continueButtonHint => 'Botón de continuar';
+
+  @override
   String get helpContent1 =>
       '<div class=\"text\"><h2>Juego L - juego para tablet y teléfono</h2><p>Puedes usar el menú principal para seleccionar las siguientes opciones en el juego:</p><p>Este juego puede almacenar sesiones de juego terminadas o no con la situación actual del juego. Selecciona esa opción para ver una lista de sesiones guardadas y tableros de juego. También puedes eliminar sesiones de juego antiguas pulsando la imagen de la papelera en la fila. Puedes seleccionar algún juego inacabado para continuar el juego donde los jugadores lo dejaron.</p><h3>Después de empezar un nuevo juego L</h3><p>2 jugadores tienen una pieza L cada uno. Después de mover la pieza L, un jugador puede mover una de las piezas neutrales. El objetivo de un movimiento se muestra con un marco de movimiento negro alrededor de la pieza L actual. En la pieza neutral seleccionada, un marco de movimiento es azul o rojo después del jugador 1 o 2.</p><p>Y un marco de movimiento se mueve por la mesa de juego pulsando los botones amarillos de movimiento. Cuando el marco de movimiento esté en el lugar adecuado para el movimiento de la L, pulsa el botón Movimiento hecho. Si el movimiento ha sido aceptado, la pieza se mueve a la posición seleccionada. Y el movimiento se desplaza alrededor de una pieza neutral. Puedes cambiar la pieza neutral seleccionada si lo deseas. Cuando se ha pulsado 2 veces el botón Movimiento hecho, el turno de juego cambia al jugador opuesto y el marco de movimiento está alrededor de su pieza L.</p><p>Cuando la aplicación Android talkback no se está ejecutando, también puedes mover el marco por el tablero de juego con gestos táctiles en lugar de los botones amarillos de movimiento, como:</p><p><b>Deslizar arriba o abajo</b> = el marco se mueve arriba o abajo.</b><p><b>Deslizar izquierda o derecha</b> = el marco se mueve a la izquierda o derecha.</p><p><b>2 toques en el tablero de juego</b> = el marco se mueve como al pulsar el botón \'envolver\'.</p><p><b>Pulsación larga en el tablero de juego</b> = el marco se mueve como al pulsar el botón \'girar 90º\'.</p><p>La pieza L para el Jugador 1 está marcada con un número blanco 1 y tiene color rojo. Y lo mismo para el Jugador 2 ha sido marcada con un número blanco 2 y tiene color azul. 2 piezas neutrales tienen color negro. Y en el turno del jugador, el marco negro de movimiento de la L está marcado con un número negro 1 o 2. Cuando se acepta un movimiento de L, el marco de movimiento de L desaparece. Y se crea un marco de movimiento neutral alrededor de un botón neutral. Cuando se completa todo el movimiento (la segunda pulsación del botón hecho), el marco de movimiento de la L se mueve alrededor de otra pieza L del jugador en turno. En esta versión del juego, se han añadido diferentes gestos táctiles sobre el tablero de juego, que corresponden a los botones de movimiento pulsados: deslizar a la izquierda como pulsar el botón izquierdo, deslizar a la derecha como pulsar el botón derecho, deslizar arriba como pulsar el botón arriba, deslizar abajo como pulsar el botón abajo, pulsación larga como pulsar el botón girar 90º y doble pulsación como pulsar el botón envolver,</p><h2>De Wikipedia</h2><p>De Wikipedia, la enciclopedia libre. Tablero del juego L y posición inicial, con piezas neutrales mostradas como discos negros:</p></div>';
 

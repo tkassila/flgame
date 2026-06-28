@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/navigation_service.dart';
 import 'package:flutter/semantics.dart';
+import '../../l10n/app_localizations.dart';
 
 class AnnounceMessage {
   static void announceMessage(BuildContext context, String message) {
@@ -28,7 +29,7 @@ Future<bool> showYesNoDialog(BuildContext thisContext,
   Widget cancelButton = Semantics(
       readOnly: true,
       label: strCancel,
-      hint: 'Cancel button',
+      hint: AppLocalizations.of(thisContext)!.cancelButtonHint,
       child: ElevatedButton(
     child: Text(strCancel),
     onPressed:  () {
@@ -39,7 +40,7 @@ Future<bool> showYesNoDialog(BuildContext thisContext,
   Widget continueButton = Semantics(
       readOnly: true,
       label: strContinue,
-      hint: 'Continue button',
+      hint: AppLocalizations.of(thisContext)!.continueButtonHint,
       child: ElevatedButton(
     child: Text(strContinue),
     onPressed:  () {

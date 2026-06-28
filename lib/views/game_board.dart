@@ -174,6 +174,13 @@ class _LGameBoardState extends State<LGameBoard> {
     _buildGameBoard();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Rebuild the board when locale or other dependencies change
+    _buildGameBoard();
+  }
+
 /*
  void updateParams(bool p_bScreenReaderIsUsed,
   LGameSession p_lGameSession, int p_minusDynamicContainerSize,

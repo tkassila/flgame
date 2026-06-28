@@ -261,6 +261,134 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteGameButtonHint => 'Ein altes Spiel löschen';
 
   @override
+  String get startGameButtonHint => 'Spiel starten-Button';
+
+  @override
+  String get startGameTooltip =>
+      'Starten Sie ein neues L-Spiel nach dem beendeten Spiel.';
+
+  @override
+  String get upButtonHint => 'Hoch-Button';
+
+  @override
+  String get upTooltip => 'Bewegen Sie den L-Teil-Rahmen nach oben.';
+
+  @override
+  String get downButtonHint => 'Runter-Button';
+
+  @override
+  String get downTooltip => 'Bewegen Sie den L-Teil-Rahmen nach unten.';
+
+  @override
+  String get leftButtonHint => 'Links-Button';
+
+  @override
+  String get leftTooltip => 'Bewegen Sie den L-Teil-Rahmen nach links.';
+
+  @override
+  String get rightButtonHint => 'Rechts-Button';
+
+  @override
+  String get rightTooltip => 'Bewegen Sie den L-Teil-Rahmen nach rechts.';
+
+  @override
+  String get wrapButtonHint => 'Umfassen-Button';
+
+  @override
+  String get wrapTooltip =>
+      'Umfassen Sie den L-Teil-Rahmen auf dem Spielbrett.';
+
+  @override
+  String neutralButtonHint(String neutral) {
+    return '$neutral-Button';
+  }
+
+  @override
+  String get neutralTooltip =>
+      'Ändern Sie den Bewegungsrahmen auf ein anderes neutrales Spielteil.';
+
+  @override
+  String get turn90ButtonHint => '90º drehen-Button';
+
+  @override
+  String get turn90Tooltip =>
+      'Drehen Sie den L-Rahmen um 90º auf dem Brett und bereiten Sie sich auf den nächsten Zug vor.';
+
+  @override
+  String get helpButtonHint => 'Hilfe-Button';
+
+  @override
+  String get helpTooltip => 'Hilfeseiten für dieses L-Spiel.';
+
+  @override
+  String get moveDoneButtonHint => 'Zug fertig-Button';
+
+  @override
+  String get moveDoneTooltip =>
+      'Wenn sich der Bewegungsrahmen in der Position für den nächsten Teilzug befindet.';
+
+  @override
+  String get moveDoneScreenReaderTooltip =>
+      'Der Bewegungsrahmen befindet sich in der richtigen Position und bewegt ein L-Teil oder ein neutrales Teil in diese Position.';
+
+  @override
+  String get messageLabel => 'Meldung';
+
+  @override
+  String get messageLabelHint => 'Meldungsbezeichnung';
+
+  @override
+  String get messageTooltip => 'Meldungen dieses Spiels.';
+
+  @override
+  String get saveNamesButtonHint => 'Namen speichern-Button';
+
+  @override
+  String get saveNamesTooltip =>
+      'Ändern und speichern Sie die Spielernamen dieses Spiels.';
+
+  @override
+  String get noSaveButtonHint => 'Nicht speichern-Button';
+
+  @override
+  String get noSaveTooltip =>
+      'Speichern Sie die Spielernamen dieses Spiels nicht.';
+
+  @override
+  String get playerNameTooltip => 'Ein Spielername dieses Sitzungsspiels.';
+
+  @override
+  String get player1TextFieldHint => 'Spieler 1 Textfeld';
+
+  @override
+  String get player2TextFieldHint => 'Spieler 2 Textfeld';
+
+  @override
+  String get saveGameDataLabel => 'Spieldaten speichern';
+
+  @override
+  String get saveGameDataHint => 'Spieldaten für diese Web-Sitzung speichern';
+
+  @override
+  String get saveGameDataTooltip =>
+      'Spieldaten für diese Web-Sitzung speichern.';
+
+  @override
+  String get remoteGameLabel => 'Remote-Spiel';
+
+  @override
+  String get remoteGameHint => 'Remote-Spiel';
+
+  @override
+  String get remoteGameTooltip => 'Remote-Spiel';
+
+  @override
+  String get cancelButtonHint => 'Abbrechen-Button';
+
+  @override
+  String get continueButtonHint => 'Fortfahren-Button';
+
+  @override
   String get helpContent1 =>
       '<div class=\"text\"><h2>L-Spiel - Tablet- und Smartphone-Spiel</h2><p>Sie können das Hauptmenü verwenden, um die nächsten Optionen im Spiel auszuwählen:</p><p>Dieses Spiel kann un/beendete Spielsitzungen mit der aktuellen Spielsituation speichern. Wählen Sie diese Option, um eine Liste der gespeicherten Sitzungen und Spielbretter anzuzeigen. Sie können auch alte Spielsitzungen entfernen, indem Sie auf das Mülleimer-Symbol in der Zeile drücken. Sie können ein unvollendetes Spiel auswählen, um das Spiel dort fortzusetzen, wo die Spieler das ausgewählte Spiel verlassen haben.</p><h3>Nach dem Start eines neuen L-Spiels</h3><p>2 Spieler haben jeweils ein L-Teil. Nach dem Bewegen eines L-Teils kann ein Spieler eines der neutralen Teile bewegen. Das Ziel eines Zuges wird mit einem schwarzen Zugrahmen um das aktuelle L-Teil angezeigt. Auf dem ausgewählten neutralen Teil ist ein Zugrahmen entweder blau oder rot nach Spieler 1 oder 2.</p><p>Ein Zugrahmen wird durch Drücken der gelben Zugtasten auf dem Spieltisch bewegt. Wenn sich der Zugrahmen an der richtigen Stelle für den L-Zug befindet, drücken Sie die Taste \'Zug fertig\'. Wenn der Zug akzeptiert wurde, wird das Teil an die ausgewählte Position bewegt. Dann wird der Zug um ein neutrales Teil bewegt. Sie können ein ausgewähltes neutrales Teil ändern, wenn Sie dies tun möchten. Wenn die Taste \'Zug fertig\' 2 Mal gedrückt wurde, wechselt die Spielrunde zum gegnerischen Spieler und der Zugrahmen befindet sich um sein/ihr L-Teil.</p><p>Wenn die Android-Anwendung Talkback nicht ausgeführt wird, können Sie den Rahmen auf dem Spielfeld auch mit Fingergesten anstelle der gelben Zugtasten bewegen, wie z.B.:</p><p><b>Wischen nach oben oder unten</b> = der Rahmen bewegt sich nach oben oder unten.</b><p><b>Wischen nach links oder rechts</b> = der Rahmen bewegt sich nach links oder rechts.</p><p><b>2 Mal auf das Spielfeld tippen</b> = der Rahmen bewegt sich wie beim Drücken der Taste \'Wrap\'.</p><p><b>Langes Drücken auf das Spielfeld</b> = der Rahmen bewegt sich wie beim Drücken der Taste \'90º drehen\'.</p><p>Das L-Teil für Spieler 1 ist mit einer weißen Nummer 1 markiert und hat die Farbe Rot. Das gleiche für Spieler 2 ist mit einer weißen Nummer 2 markiert und hat die Farbe Blau. 2 neutrale Teile haben die Farbe Schwarz. Wenn ein Spieler an der Reihe ist, ist der schwarze Rahmen für den L-Zug mit einer schwarzen 1 oder 2 markiert. Wenn ein L-Zug akzeptiert wird, verschwindet der L-Zugrahmen. Ein neutraler Zugrahmen wird um eine neutrale Taste erstellt. Wenn der gesamte Zug abgeschlossen ist (beim zweiten Drücken der Fertig-Taste), wird der L-Zugrahmen um ein anderes L-Teil des Spielers verschoben, der an der Reihe ist. In dieser Version des Spiels wurden verschiedene Fingergesten über dem Spielfeld hinzugefügt, die den gedrückten Zugtasten entsprechen: Wischen nach links wie Drücken der Links-Taste, Wischen nach rechts wie Drücken der Rechts-Taste, Wischen nach oben wie Drücken der Aufwärts-Taste, Wischen nach unten wie Drücken der Abwärts-Taste, langes Drücken wie Drücken der Taste \'90º drehen\' und doppeltes Tippen wie Drücken der Taste \'Wrap\'.</p><h2>Von Wikipedia</h2><p>Aus Wikipedia, der freien Enzyklopädie. L-Spielbrett und Startaufstellung, mit neutralen Stücken als schwarze Scheiben:</p></div>';
 

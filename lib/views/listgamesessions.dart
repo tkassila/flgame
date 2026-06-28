@@ -116,6 +116,7 @@ class _ListGameSessionsState
 
   @override
   Widget build(BuildContext context) {
+    lGameSession.l10n = AppLocalizations.of(context);
     return /* Expanded(child: Column(children: [
        */ RawScrollbar(
         thumbColor: Colors.greenAccent,

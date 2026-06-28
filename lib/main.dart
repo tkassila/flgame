@@ -1019,8 +1019,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonStartGame = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.startGame,
-      hint: 'Start game button',
-      child: Tooltip(message: "Start a new l game after the finished game.",
+      hint: AppLocalizations.of(context)!.startGameButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.startGameTooltip,
         child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonStartGameEnabled ? buttonStartGamePressed : null,
@@ -1032,8 +1032,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonUp = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.up,
-      hint: 'Up button',
-      child: Tooltip(message: "Move L piece frame into the up.",
+      hint: AppLocalizations.of(context)!.upButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.upTooltip,
         child: ElevatedButton.icon(
       style: buttonStyle,
       /*
@@ -1079,8 +1079,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonDown = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.down,
-      hint: 'Down button',
-      child: Tooltip(message: "Move L piece frame into the down.",
+      hint: AppLocalizations.of(context)!.downButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.downTooltip,
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonDownEnabled ? buttonDownPressed : null,
@@ -1093,8 +1093,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonLeft = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.left,
-      hint: 'Left button',
-      child: Tooltip(message: "Move L piece frame into the left.",
+      hint: AppLocalizations.of(context)!.leftButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.leftTooltip,
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonLeftEnabled ? buttonLeftPressed : null,
@@ -1107,8 +1107,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonRight = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.right,
-      hint: 'Right button',
-      child: Tooltip(message: "Move L piece frame into the right.",
+      hint: AppLocalizations.of(context)!.rightButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.rightTooltip,
         child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonRightEnabled ? buttonRightPressed : null,
@@ -1121,8 +1121,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonWrapUp = Semantics(
       readOnly: true,
         label: AppLocalizations.of(context)!.wrap,
-        hint: 'Wrap button',
-        child: Tooltip(message: "Wrap L piece frame in the game board.",
+        hint: AppLocalizations.of(context)!.wrapButtonHint,
+        child: Tooltip(message: AppLocalizations.of(context)!.wrapTooltip,
           child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonWrapUpEnabled ? buttonWrapUpPressed : null,
@@ -1142,8 +1142,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonSwitchNeutral = Semantics(
       readOnly: true,
     label: strNeutral,
-  hint: "$strNeutral button",
-  child: Tooltip(message: "Change move frame into another neutral game piece.",
+  hint: AppLocalizations.of(context)!.neutralButtonHint(strNeutral),
+  child: Tooltip(message: AppLocalizations.of(context)!.neutralTooltip,
     child: ElevatedButton(
       style: buttonStyle,
       onPressed: lGameSession.bButtonSwitchNeutralEnabled ? buttonSwitchNeutralPressed : null,
@@ -1157,8 +1157,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       buttonSwitchNeutralScreenReader = Semantics(
         readOnly: true,
         label: strNeutral,
-        hint: "$strNeutral button",
-        child: Tooltip(message: "Change move frame into another neutral game piece.",
+        hint: AppLocalizations.of(context)!.neutralButtonHint(strNeutral),
+        child: Tooltip(message: AppLocalizations.of(context)!.neutralTooltip,
           child: ElevatedButton(
           style: buttonStyle,
           onPressed: lGameSession.bButtonSwitchNeutralEnabled ? () {} : null,
@@ -1174,8 +1174,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     buttonTurn90Degree = Semantics(
       readOnly: true,
   label: AppLocalizations.of(context)!.turn90,
-  hint: "Turn 90º button",
-  child: Tooltip(message: "Turn l frame 90º in the board and prepare to a next move.",
+  hint: AppLocalizations.of(context)!.turn90ButtonHint,
+  child: Tooltip(message: AppLocalizations.of(context)!.turn90Tooltip,
     child: ElevatedButton.icon(
       style: buttonStyle,
       onPressed: lGameSession.bButtonTurn90DegreeEnabled ? buttonTurn90DegreePressed : null,
@@ -1188,8 +1188,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
      buttonHelp = Semantics(
        readOnly: true,
        label: AppLocalizations.of(context)!.help,
-       hint: "Help button",
-       child: Tooltip(message: "Help pages for this l game.",
+       hint: AppLocalizations.of(context)!.helpButtonHint,
+       child: Tooltip(message: AppLocalizations.of(context)!.helpTooltip,
          child: ElevatedButton(
        style: buttonStyle,
        onPressed: lGameSession.bButtonHelpEnabled ? buttonHelpEnabledPressed : null,
@@ -1201,8 +1201,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
      buttonMoveDone = Semantics(
        readOnly: true,
          label: AppLocalizations.of(context)!.moveDone,
-         hint: "Move Done button",
-         child: Tooltip(message: "When move frame is in the position in a next piece move.",
+         hint: AppLocalizations.of(context)!.moveDoneButtonHint,
+         child: Tooltip(message: AppLocalizations.of(context)!.moveDoneTooltip,
           child: ElevatedButton(
          style: buttonStyle,
        onPressed: lGameSession.bButtonMoveDoneEnabled ? buttonMoveDonePressed : null,
@@ -1216,8 +1216,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
       buttonMoveDoneScreenReader = Semantics(
       readOnly: true,
       label: AppLocalizations.of(context)!.moveDone,
-      hint: "Move Done button",
-      child: Tooltip(message: "Move frame is in the right position and move a L piece or a neutral piece in this position.",
+      hint: AppLocalizations.of(context)!.moveDoneButtonHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.moveDoneScreenReaderTooltip,
         child: ElevatedButton(
         style: buttonStyle,
         onPressed: lGameSession.bButtonMoveDoneEnabled ? (){}
@@ -1238,9 +1238,9 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        */
        Semantics(
            readOnly: true,
-           label: "Message",
-           hint: 'Message label',
-           child: Tooltip(message: "Messages of this game.",
+           label: AppLocalizations.of(context)!.messageLabel,
+           hint: AppLocalizations.of(context)!.messageLabelHint,
+           child: Tooltip(message: AppLocalizations.of(context)!.messageTooltip,
              child: RoundedBackgroundText(
          lGameSession.msg,
          style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp( !ScreenValues.isWeb ? 15 : 3)),
@@ -1250,7 +1250,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        );
      }
      else {
-       textMessage = Tooltip(message: "Messages of this game.",
+       textMessage = Tooltip(message: AppLocalizations.of(context)!.messageTooltip,
            child: Text(lGameSession.msg,
          style: TextStyle(color: Colors.black, fontSize: ScreenUtil().setSp( !ScreenValues.isWeb ? 15 : 3)),
            ),
@@ -1267,8 +1267,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        _buttonSaveEdit = Semantics(
          readOnly: true,
          label: AppLocalizations.of(context)!.saveNames,
-         hint: "Save names button",
-         child: Tooltip(message: "Change and save player's names of this game.",
+         hint: AppLocalizations.of(context)!.saveNamesButtonHint,
+         child: Tooltip(message: AppLocalizations.of(context)!.saveNamesTooltip,
            child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonSaveEditPressed : null,
@@ -1280,8 +1280,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        _buttonReturnFromEdit = Semantics(
          readOnly: true,
          label: AppLocalizations.of(context)!.noSave,
-         hint: "No save button",
-         child: Tooltip(message: "No save for player's names of this game",
+         hint: AppLocalizations.of(context)!.noSaveButtonHint,
+         child: Tooltip(message: AppLocalizations.of(context)!.noSaveTooltip,
            child: ElevatedButton(
          style: buttonStyle,
          onPressed: bEditPlayerNames ? buttonReturnFromEditPressed : null,
@@ -1291,7 +1291,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        );
 
        _textFieldName1Controller.text = lGameSession.name1;
-       _textFieldName1 = Tooltip(message: "A player's name of this session game",
+       _textFieldName1 = Tooltip(message: AppLocalizations.of(context)!.playerNameTooltip,
            child: TextField(
          controller: _textFieldName1Controller,
          decoration: InputDecoration(
@@ -1321,13 +1321,13 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
        if (widget.bScreenReaderIsUsed) {
          _textFieldName1 = Semantics( readOnly: false,
-             label: AppLocalizations.of(context)!.player1, hint: 'Player 1 text field',
+             label: AppLocalizations.of(context)!.player1, hint: AppLocalizations.of(context)!.player1TextFieldHint,
              child: _textFieldName1);
        }
 
        _textFieldName2Controller.text = lGameSession.name2;
 
-       _textFieldName2 = Tooltip(message: "A player's name of this session game",
+       _textFieldName2 = Tooltip(message: AppLocalizations.of(context)!.playerNameTooltip,
            child: TextField(
          controller: _textFieldName2Controller,
          decoration: InputDecoration(
@@ -1357,7 +1357,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
        if (widget.bScreenReaderIsUsed) {
          _textFieldName2 = Semantics( readOnly: false,
-       label: AppLocalizations.of(context)!.player2, hint: 'Player 2 text field',
+       label: AppLocalizations.of(context)!.player2, hint: AppLocalizations.of(context)!.player2TextFieldHint,
        child: _textFieldName2);
        }
 
@@ -1378,23 +1378,27 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
 
     _buttonSaveSession = Semantics(
       readOnly: true,
-      label: "Save game data",
-      hint: "Save game data for this web session",
-      child: Tooltip(message: "Save game data for this web session.",
+      label: AppLocalizations.of(context)!.saveGameDataLabel,
+      hint: AppLocalizations.of(context)!.saveGameDataHint,
+      child: Tooltip(message: AppLocalizations.of(context)!.saveGameDataTooltip,
         child: ElevatedButton(
           style: buttonStyle,
           onPressed: true ? (){}
               : null,
           onLongPress: saveSession,
-          child: const Text('Save game data'),
+          child: Text(AppLocalizations.of(context)!.saveGameDataLabel),
         ),
       ),
     );
 
      _buttonsRow0 = Row(children: [
-      buttonStartGame!,
+       Expanded(
+       child: buttonStartGame!,
+       ),
       SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
-      buttonMoveDone!,
+       Expanded(
+         child: buttonMoveDone!,
+       ),
     ],
     );
 
@@ -1416,7 +1420,9 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     _buttonsRow3 = Row(children: [
       buttonWrapUp!,
       SizedBox(height: buttonRowBetweenHeight, width: buttonBetweenWidth,),
-      buttonSwitchNeutral!,
+      Expanded(
+        child: buttonSwitchNeutral!,
+      )
     ],
     );
 
@@ -1869,7 +1875,10 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
   void didChangeDependencies()
   {
     super.didChangeDependencies();
-   // thisContext = context;
+    // Rebuild the board when locale or other dependencies change
+    lGameSession.l10n = AppLocalizations.of(context);
+    lGameSession.refreshMessage();
+    _buildBoard = buildGameBoard();
   }
 
   Widget? initBoard(){
@@ -1909,6 +1918,10 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
        // ScreenValues.notifier = _notifier;
         bGameIsFormat = false;
       }
+    else {
+      // Refresh localized elements in the board on every build
+      _buildBoard = buildGameBoard();
+    }
 
     String strPlayer = _getPlayerName();
     String homeTitle = widget.title;
@@ -1976,9 +1989,9 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
               if (lGameSession.bIsRemoteGame) Row(children: [
                 Semantics(
                   readOnly: true,
-                  label: 'Remote game',
-                  hint: 'Remote game',
-                  child: Tooltip(message: "Remote game",
+                  label: AppLocalizations.of(context)!.remoteGameLabel,
+                  hint: AppLocalizations.of(context)!.remoteGameHint,
+                  child: Tooltip(message: AppLocalizations.of(context)!.remoteGameTooltip,
                 child: Icon(Icons.group,),)),
                 SizedBox(width: 10,),
               ]),

@@ -106,6 +106,7 @@ class _OldGamesPageState extends State<OldGamesPage> {
 
   @override
   Widget build(BuildContext context) {
+    lGameSession.l10n = AppLocalizations.of(context);
     parameterValues = ParameterValues.of(context);
     final mediaQueryData = MediaQuery.of(context);
     if (mediaQueryData.accessibleNavigation) {
@@ -260,8 +261,8 @@ class _OldGamesPageState extends State<OldGamesPage> {
                     thumbVisibility: true,
                     trackVisibility: true,
                     // thumbColor: Colors.black,
-                    child: ListGameSessions(strDeleteTitle: strDeleteTitle,
-                        strDeleteAsk: strDeleteAsk,
+                    child: ListGameSessions(strDeleteTitle: AppLocalizations.of(context)!.deleteOldGame,
+                        strDeleteAsk: AppLocalizations.of(context)!.deleteOldGameQuery,
                         listDataSessions: widget.listDataSessions!,
                         lGameSessionRemoveFunctionCallback:
                         widget.lGameSessionRemoveFunctionCallback,

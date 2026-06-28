@@ -560,6 +560,240 @@ abstract class AppLocalizations {
   /// **'Delete an old game'**
   String get deleteGameButtonHint;
 
+  /// No description provided for @startGameButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start game button'**
+  String get startGameButtonHint;
+
+  /// No description provided for @startGameTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new l game after the finished game.'**
+  String get startGameTooltip;
+
+  /// No description provided for @upButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Up button'**
+  String get upButtonHint;
+
+  /// No description provided for @upTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move L piece frame into the up.'**
+  String get upTooltip;
+
+  /// No description provided for @downButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Down button'**
+  String get downButtonHint;
+
+  /// No description provided for @downTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move L piece frame into the down.'**
+  String get downTooltip;
+
+  /// No description provided for @leftButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Left button'**
+  String get leftButtonHint;
+
+  /// No description provided for @leftTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move L piece frame into the left.'**
+  String get leftTooltip;
+
+  /// No description provided for @rightButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Right button'**
+  String get rightButtonHint;
+
+  /// No description provided for @rightTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move L piece frame into the right.'**
+  String get rightTooltip;
+
+  /// No description provided for @wrapButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap button'**
+  String get wrapButtonHint;
+
+  /// No description provided for @wrapTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap L piece frame in the game board.'**
+  String get wrapTooltip;
+
+  /// No description provided for @neutralButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{neutral} button'**
+  String neutralButtonHint(String neutral);
+
+  /// No description provided for @neutralTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change move frame into another neutral game piece.'**
+  String get neutralTooltip;
+
+  /// No description provided for @turn90ButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn 90º button'**
+  String get turn90ButtonHint;
+
+  /// No description provided for @turn90Tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn l frame 90º in the board and prepare to a next move.'**
+  String get turn90Tooltip;
+
+  /// No description provided for @helpButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Help button'**
+  String get helpButtonHint;
+
+  /// No description provided for @helpTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Help pages for this l game.'**
+  String get helpTooltip;
+
+  /// No description provided for @moveDoneButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Move Done button'**
+  String get moveDoneButtonHint;
+
+  /// No description provided for @moveDoneTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'When move frame is in the position in a next piece move.'**
+  String get moveDoneTooltip;
+
+  /// No description provided for @moveDoneScreenReaderTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move frame is in the right position and move a L piece or a neutral piece in this position.'**
+  String get moveDoneScreenReaderTooltip;
+
+  /// No description provided for @messageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageLabel;
+
+  /// No description provided for @messageLabelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message label'**
+  String get messageLabelHint;
+
+  /// No description provided for @messageTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages of this game.'**
+  String get messageTooltip;
+
+  /// No description provided for @saveNamesButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save names button'**
+  String get saveNamesButtonHint;
+
+  /// No description provided for @saveNamesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change and save player\'s names of this game.'**
+  String get saveNamesTooltip;
+
+  /// No description provided for @noSaveButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No save button'**
+  String get noSaveButtonHint;
+
+  /// No description provided for @noSaveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'No save for player\'s names of this game'**
+  String get noSaveTooltip;
+
+  /// No description provided for @playerNameTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'A player\'s name of this session game'**
+  String get playerNameTooltip;
+
+  /// No description provided for @player1TextFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Player 1 text field'**
+  String get player1TextFieldHint;
+
+  /// No description provided for @player2TextFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Player 2 text field'**
+  String get player2TextFieldHint;
+
+  /// No description provided for @saveGameDataLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save game data'**
+  String get saveGameDataLabel;
+
+  /// No description provided for @saveGameDataHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Save game data for this web session'**
+  String get saveGameDataHint;
+
+  /// No description provided for @saveGameDataTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Save game data for this web session.'**
+  String get saveGameDataTooltip;
+
+  /// No description provided for @remoteGameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote game'**
+  String get remoteGameLabel;
+
+  /// No description provided for @remoteGameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote game'**
+  String get remoteGameHint;
+
+  /// No description provided for @remoteGameTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote game'**
+  String get remoteGameTooltip;
+
+  /// No description provided for @cancelButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel button'**
+  String get cancelButtonHint;
+
+  /// No description provided for @continueButtonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue button'**
+  String get continueButtonHint;
+
   /// No description provided for @helpContent1.
   ///
   /// In en, this message translates to:
