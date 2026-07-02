@@ -41,13 +41,14 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..remoteUserId1 = (fields[21] as num?)?.toInt()
       ..remoteUserId2 = (fields[22] as num?)?.toInt()
       ..remoteGameId = (fields[23] as num?)?.toInt()
-      ..remoteGameStartedAt = fields[24] as String?;
+      ..remoteGameStartedAt = fields[24] as String?
+      ..userSelectedLanguage = fields[25] as String?;
   }
 
   @override
   void write(BinaryWriter writer, LGameSessionData obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(26)
       ..writeByte(0)
       ..write(obj.name1)
       ..writeByte(1)
@@ -97,7 +98,9 @@ class LGameSessionDataAdapter extends TypeAdapter<LGameSessionData> {
       ..writeByte(23)
       ..write(obj.remoteGameId)
       ..writeByte(24)
-      ..write(obj.remoteGameStartedAt);
+      ..write(obj.remoteGameStartedAt)
+      ..writeByte(25)
+      ..write(obj.userSelectedLanguage);
   }
 
   @override

@@ -72,6 +72,13 @@ void main() async {
   await di<LGameDataService>().checkInit();
  // FlutterNativeSplash.remove();
   await initializeDateFormatting(null, null);
+  LGameSessionData? active = di<LGameDataService>().getActiveGame();
+  if (active != null) {
+    String? strLocale = active.userSelectedLanguage;
+    if (strLocale != null) {
+       localeNotifier.value = Locale(strLocale);
+    }
+  }
   runApp(const MyApp());
 }
 
@@ -125,6 +132,7 @@ class MyApp extends StatelessWidget {
     ScreenValues.screenValues.padding_left =  padding_left;
     ScreenValues.screenValues.padding_right = padding_right;
     */
+
     return ValueListenableBuilder<Locale>(
       valueListenable: localeNotifier,
       builder: (context, locale, child) {
@@ -1905,6 +1913,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
   @override
   Widget build(BuildContext context) {
     lGameSession.l10n = AppLocalizations.of(context);
+    lGameSession.setLanguage(Intl.defaultLocale!);
     /*
     EdgeInsets systemGestureInsets =
         MediaQuery.of(context).systemGestureInsets;

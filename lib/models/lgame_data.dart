@@ -1,6 +1,8 @@
 // import 'package:audioplayers/audioplayers.dart';
 
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:collection/collection.dart';
@@ -309,6 +311,10 @@ class LGameSessionData extends HiveObject {
   @HiveField(24)
   @JsonKey(name: 'remoteGameStartedAt')
   String? remoteGameStartedAt;
+
+  @HiveField(25)
+  @JsonKey(name: 'userSelectedLanguage')
+  String? userSelectedLanguage;
 }
 
 @HiveType(typeId: 1) //typeId should be unique for each model
@@ -369,6 +375,8 @@ class LGameSession {
   }
 
   AppLocalizations? l10n;
+  String strLocale = "en_EN";
+
 
   ButtonPressed currentButtonPressed = ButtonPressed.up;
   ButtonPressed getButtonPressed() {
@@ -380,6 +388,11 @@ class LGameSession {
   DateTime? calculatedTime;
   bool bisRemoteGameAndAnotherPlayersTurn = false;
   bool bIsRemoteGame = false;
+
+  void setLanguage(String pStrLocale)
+  {
+    strLocale = pStrLocale;
+  }
 
   void setListBoardPiecesUpdated(bool bValue)
   {
@@ -736,6 +749,7 @@ class LGameSession {
     data.oldIPlayerNeutral2PieceInBeginningMove = iPlayerNeutral2PieceInBeginningMove;
     data.modifiedAt = modifiedAt;
     data.msg = msg;
+    data.userSelectedLanguage = strLocale;
 
     return data;
   }
@@ -796,6 +810,7 @@ class LGameSession {
     iPlayerNeutral1PieceInBeginningMove = data.oldIPlayerNeutral1PieceInBeginningMove;
     iPlayerNeutral2PieceInBeginningMove = data.oldIPlayerNeutral2PieceInBeginningMove;
     modifiedAt = data.modifiedAt;
+    strLocale = data.userSelectedLanguage == null ? "en_EN" : data.userSelectedLanguage!;
     msg = data.msg == null ? "" : data.msg!;
     if (bGameIsOver) {
       disAbleButtonsForGameOver();
