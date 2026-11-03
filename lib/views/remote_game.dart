@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../l10n/app_localizations.dart';
+import 'utils/ImageOptimizer.dart';
 
 class RemoteGamesRoute extends StatefulWidget {
   // final NavigatorState parentNavigator;
@@ -18,6 +19,16 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/L_Game_start_position.svg.png',
+      logicalWidth: 150,
+    );
   }
 
   final bool _visible = true;
@@ -94,10 +105,12 @@ class _RemoteGamesRouteState extends State<RemoteGamesRoute>
                 child: Text(AppLocalizations.of(context)!.lGameTitle,
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
-              Image( width: 150,
+              ImageOptimizer.assetWidget(
+                context,
+                'assets/L_Game_start_position.svg.png',
+                width: 150,
                 height: 150,
-                image:
-              AssetImage('assets/L_Game_start_position.svg.png', ),
+                fit: BoxFit.contain,
               ),
               Center(
                 child: Text(AppLocalizations.of(context)!.copyright,

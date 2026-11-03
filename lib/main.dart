@@ -2,6 +2,7 @@
 import 'package:flgame/ParameterValues.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter/foundation.dart' show ValueNotifier;
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -40,6 +41,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // ... existing imports ...
 var localPlatform = const LocalPlatform();
 
+const platform = MethodChannel('com.metait.flgame/accessibility');
+bool _isTalkBackEnabledAtLaunch = false;
+
 enum MenuButtonSelected {
   oldUnFinishedGames,
   editPlayerNames,
@@ -58,6 +62,13 @@ void main() async {
     Loggerdef.logger.i("start: time 0");
   }
   WidgetsFlutterBinding.ensureInitialized();
+  if (!ScreenValues.isWeb && localPlatform.isAndroid) {
+    try {
+      _isTalkBackEnabledAtLaunch = await platform.invokeMethod<bool>('isTalkBackEnabled') ?? false;
+    } catch (e) {
+      _isTalkBackEnabledAtLaunch = false;
+    }
+  }
   Intl.defaultLocale = 'fi_FI';
 //  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   /*
@@ -94,14 +105,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     parameterValues = ParameterValues.of(context);
     final mediaQueryData = MediaQuery.of(context);
-    bool bScreenReaderIsUsed = false;
-    if (mediaQueryData.accessibleNavigation) {
-      bScreenReaderIsUsed = true;
+
+    // Käytetään käynnistyksessä mitattua TalkBack-tilaa Androidilla,
+    // muilla alustoilla (kuten iOS/Web) tukeudutaan Flutterin omaan tunnistukseen.
+    bool bScreenReaderIsUsed = _isTalkBackEnabledAtLaunch;
+    if (ScreenValues.isWeb || !localPlatform.isAndroid) {
+      bScreenReaderIsUsed = SemanticsBinding.instance.accessibilityFeatures.accessibleNavigation;
+    }
+
+    if (bScreenReaderIsUsed) {
       if (Loggerdef.isLoggerOn) {
-        Loggerdef.logger.i("bScreenReaderIsUsed = true");
+        Loggerdef.logger.i("bScreenReaderIsUsed = true (TalkBack detected)");
       }
-    } else {
-      bScreenReaderIsUsed = false;
     }
 
 // Device width
@@ -920,7 +935,9 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
     lGameSession.setCallBeep(this);
      */
     lGameSession.initState();
-    getLastDataSession();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getLastDataSession();
+    });
    //   _buildBoard = buildGameBoard();
   }
 
@@ -1958,9 +1975,8 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
      */
     // double newHeight = height - padding.top - padding.bottom;
     double newHeight = availableHeight - padding.top - padding.bottom;
-    Color? playerColor = lGameSession.playerTurn == null ? null :
-    (lGameSession.playerTurn == GamePlayerTurn.player1 ?
-    player1Color : player2Color);
+    Color playerColor = lGameSession.playerTurn == GamePlayerTurn.player2 ?
+    player2Color : player1Color;
 
     if (Loggerdef.isLoggerOn) {
       Loggerdef.endTime = DateTime.now();
@@ -2007,7 +2023,7 @@ di<LGameDataService>().setActiveGame(lGameSession.getGamePositionsForSaveGame())
               Container(
               padding: EdgeInsets.all(!ScreenValues.isWeb ? 6.0 : 2.0),
               decoration: BoxDecoration(
-                color: playerColor!,
+                color: playerColor,
                 borderRadius: BorderRadius.all(
                   Radius.circular(!ScreenValues.isWeb ? 15.0 : 5.0),
                 ),

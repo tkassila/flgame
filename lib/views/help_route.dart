@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flgame/ParameterValues.dart';
 import '../../l10n/app_localizations.dart';
+import 'utils/ImageOptimizer.dart';
 
 class BorderedContainer extends StatelessWidget {
   final Widget child;
@@ -268,45 +269,46 @@ class HelpPageWeb extends StatelessWidget {
           primary: false,
           child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
             Html(style: htmlStyle, data: l10n.helpContent1),
-            const Image(
+            ImageOptimizer.assetWidget(
+              context,
+              'assets/L_Game_start_position.svg.png',
               width: 150,
               height: 150,
-              image: AssetImage(
-                'assets/L_Game_start_position.svg.png',
-              ),
+              fit: BoxFit.contain,
             ),
             Html(style: htmlStyle, data: l10n.helpContent2),
             Html(style: htmlStyle, data: l10n.helpContent4),
             Column(
               spacing: 0.0,
               children:  [
-                const Padding(
-                  padding: EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
-                  child: Image(
+                Padding(
+                  padding: const EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
+                  child: ImageOptimizer.assetWidget(
+                    context,
+                    'assets/L_Game_start_position.svg.png',
                     width: 150,
                     height: 150,
-                    image: AssetImage(
-                      'assets/L_Game_start_position.svg.png',
-                    ),),
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 Text(l10n.startPositionLGame, style: textStyleHtml,),
                 const SizedBox(height: 20.0,),
-                Image(
-                  width: width -30.0,
-                  image: const AssetImage(
-                    'assets/560px-L_Game_mate_positions.svg.png.webp',
-                  ),
+                ImageOptimizer.assetWidget(
+                  context,
+                  'assets/560px-L_Game_mate_positions.svg.png.webp',
+                  width: width - 30.0,
+                  fit: BoxFit.contain,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
                   child: Text(l10n.losePositionsDescription, style: textStyleHtml,),
                 ),
 
-                Image(
-                  width: width -30.0,
-                  image: const AssetImage(
-                    'assets/560px-L_Game_all_final_positions.svg.png.webp',
-                  ),
+                ImageOptimizer.assetWidget(
+                  context,
+                  'assets/560px-L_Game_all_final_positions.svg.png.webp',
+                  width: width - 30.0,
+                  fit: BoxFit.contain,
                 ),
                 Text(l10n.allPossibleFinalPositions,
                   style: textStyleHtml,),
@@ -357,12 +359,12 @@ class HelpPage1 extends StatelessWidget {
         primary: false,
         child: Container(color: Colors.white, child: Column( spacing: 0.0, children: [
           Html(style: htmlStyle, data: l10n.helpContent1),
-          const Image(
+          ImageOptimizer.assetWidget(
+            context,
+            'assets/L_Game_start_position.svg.png',
             width: 150,
             height: 150,
-            image: AssetImage(
-              'assets/L_Game_start_position.svg.png',
-            ),
+            fit: BoxFit.contain,
           ),
           Html(style: htmlStyle, data: l10n.helpContent2),
         ],
@@ -412,33 +414,34 @@ class HelpPage4 extends StatelessWidget {
     Column(
         spacing: 0.0,
         children:  [
-             const Padding(
-               padding: EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
-               child: Image(
-              width: 150,
-              height: 150,
-            image: AssetImage(
-            'assets/L_Game_start_position.svg.png',
-        ),),
-        ),
+             Padding(
+               padding: const EdgeInsets.only(top: 17.0, left: 17.0, right: 17.0, ),
+               child: ImageOptimizer.assetWidget(
+                 context,
+                 'assets/L_Game_start_position.svg.png',
+                 width: 150,
+                 height: 150,
+                 fit: BoxFit.contain,
+               ),
+             ),
           Text(AppLocalizations.of(context)!.startPositionLGame, style: textStyleHtml,),
           const SizedBox(height: 20.0,),
-         Image(
-             width: width -30.0,
-            image: const AssetImage(
-              'assets/560px-L_Game_mate_positions.svg.png.webp',
-            ),
+          ImageOptimizer.assetWidget(
+            context,
+            'assets/560px-L_Game_mate_positions.svg.png.webp',
+            width: width - 30.0,
+            fit: BoxFit.contain,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 30.0, left: 17.0, right: 17.0, bottom: 20.0),
             child: Text(AppLocalizations.of(context)!.losePositionsDescription, style: textStyleHtml,),
-                ),
+          ),
 
-       Image(
-        width: width -30.0,
-            image: const AssetImage(
-              'assets/560px-L_Game_all_final_positions.svg.png.webp',
-            ),
+          ImageOptimizer.assetWidget(
+            context,
+            'assets/560px-L_Game_all_final_positions.svg.png.webp',
+            width: width - 30.0,
+            fit: BoxFit.contain,
           ),
           Text(AppLocalizations.of(context)!.allPossibleFinalPositions,
             style: textStyleHtml,),
@@ -474,6 +477,27 @@ class HelpRoute extends StatefulWidget {
 }
 
 class _HtmlViewExampleState extends State<HelpRoute> {
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final double width = MediaQuery.of(context).size.width;
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/L_Game_start_position.svg.png',
+      logicalWidth: 150,
+    );
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/560px-L_Game_mate_positions.svg.png.webp',
+      logicalWidth: width - 30.0,
+    );
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/560px-L_Game_all_final_positions.svg.png.webp',
+      logicalWidth: width - 30.0,
+    );
+  }
 
   Future<Null> _fetchPartner() async {
     print('Please Wait');

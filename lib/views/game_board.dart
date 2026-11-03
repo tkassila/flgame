@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import '../ParameterValues.dart';
 import '../models/lgame_data.dart';
 
@@ -128,15 +129,17 @@ class _LGameBoardState extends State<LGameBoard> {
   static int lastGestureOccurTime = 0;
   static int oneTab_lastGestureOccurTime = 0;
   final int lastGestureOccurTime_intervalMs = 500;
+  int _buildCounter = 0;
 
   late List<Container> _listBoardSquares;
-  final List<Widget> _listScreenReader = List<Widget>.empty(growable: true);
-  late List<Container?> _listBoardPieces = List.empty(growable: true);
-  late List<Container?> _listMoveBorderSquares = List.empty(growable: true);
-  late List<Container?> _list2BaseSquares = List.empty(growable: true);
-  late List<Widget?> _list3FrameSquares = List.empty(growable: true);
+  late final List<Signal<String>> _boardPieceSignals;
+  late final List<Signal<String>> _moveCellSignals;
+  late final List<Signal<String>> _screenReaderSignals;
 
-  StackGridContainer? _stackMoveBorderSquares;
+  late List<Widget> _list2BaseSquares;
+  late List<Widget> _list3FrameSquares;
+  late List<Widget> _listScreenReaderSquares;
+
   StackGridContainer? _stackMoveSquares;
   StackGridContainer? _stackBoardSquares;
   StackGridContainer? _stackScreenReader;
@@ -144,9 +147,7 @@ class _LGameBoardState extends State<LGameBoard> {
 
   late List<Border?> _listMoveBorders;
   BorderInnerSquarePosition? innerSquarePosition;
-  late List<Widget?> _listMoveSquares = List<Widget?>.empty(growable: true);
   List<String> _iArrScreenReaderSquareText = [];
-  List<Widget> _listScreenReaderSquares = [];
 
   final Color player1Color = Colors.redAccent;
   final Color player2Color = Colors.blueAccent;
@@ -168,7 +169,111 @@ class _LGameBoardState extends State<LGameBoard> {
       return _getBoardSquaresContainer(index);
     });
 
-    _stackBoardSquares = StackGridContainer(listContainers: _listBoardSquares);
+    _boardPieceSignals = List.generate(
+      16,
+      (index) => signal<String>(""),
+    );
+    _moveCellSignals = List.generate(
+      16,
+      (index) => signal<String>(""),
+    );
+    _screenReaderSignals = List.generate(
+      16,
+      (index) => signal<String>(""),
+    );
+
+    _list2BaseSquares = List.generate(16, (index) {
+      return SignalBuilder(
+        builder: (context) {
+          final _ = _boardPieceSignals[index].value;
+
+          Color? bgColor = _getBoardPieceColor(index);
+          if (bgColor == Colors.transparent) return _listBoardSquares[index];
+
+          Widget? child = _getTextChild(index, true);
+          BoxDecoration? deco;
+
+          if (bgColor == Colors.black) {
+            deco = const BoxDecoration(color: Colors.black, shape: BoxShape.circle);
+            bgColor = null;
+          }
+
+          if (widget.lGameSession.iArrPlayer1Pieces?.contains(index) ?? false) {
+            if (!_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer1Pieces)) child = null;
+          } else if (widget.lGameSession.iArrPlayer2Pieces?.contains(index) ?? false) {
+            if (!_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer2Pieces)) child = null;
+          } else {
+            child = null;
+          }
+
+          Container ret = Container(
+            color: bgColor,
+            width: ScreenValues.containerWidth,
+            height: ScreenValues.containerWidth,
+            decoration: deco,
+            child: child,
+          );
+
+          if (bgColor == null)
+            {
+               ret = Container(
+                 width: ScreenValues.containerWidth - 20,
+                 height: ScreenValues.containerWidth - 20,
+                 decoration: BoxDecoration(
+                   color: Colors.orange[200],
+                   border: Border.all(color: Colors.black, width: 0),
+                 ),
+                 child: ret,
+               );
+            }
+          return ret;
+        },
+      );
+    });
+    _stackBoardPieces = StackGridContainer(listContainers: _list2BaseSquares);
+
+    _list3FrameSquares = List.generate(16, (index) {
+      return SignalBuilder(
+        builder: (context) {
+          final _ = _moveCellSignals[index].value;
+
+          Widget? moveContainer = _getMoveContainer(index);
+          Widget? borderContainer = _getBorderMoveContainer(index);
+
+          if (moveContainer != null && borderContainer != null) {
+            return Stack(children: [
+              moveContainer,
+              borderContainer,
+            ]);
+          } else if (moveContainer != null) {
+            return moveContainer;
+          } else if (borderContainer != null) {
+            return borderContainer;
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      );
+    });
+    _stackMoveSquares = StackGridContainer(listContainers: _list3FrameSquares);
+
+    _listScreenReaderSquares = List.generate(16, (index) {
+      return SignalBuilder(
+        builder: (context) {
+          final _ = _screenReaderSignals[index].value;
+          if (!widget.bScreenReaderIsUsed) return const SizedBox.shrink();
+          return _getScreenReaderSquare(index);
+        },
+      );
+    });
+    _stackScreenReader = StackGridContainer(listContainers: _listScreenReaderSquares);
+
+    listBoardStack = [
+      ChildRepaintBoundary(child: _stackBoardPieces!),
+      ChildRepaintBoundary(child: _stackMoveSquares!),
+      _stackScreenReader!,
+    ];
+
     _listMoveBorders = List.generate(16, (index) => null);
 
     _buildGameBoard();
@@ -906,104 +1011,54 @@ class _LGameBoardState extends State<LGameBoard> {
   }
   */
   void _buildGameBoard() {
-    setState(() {
-      // Background Grid - Only build if necessary (here built in initState)
+    _buildCounter++;
 
-      // Board Pieces
-      if (_listBoardPieces.isEmpty || widget.lGameSession.getButtonPressed() == ButtonPressed.moveDone
-          || widget.lGameSession.getButtonPressed() == ButtonPressed.newGame) {
-        _listBoardPieces = List.generate(16, (index) {
-          Color? bgColor = _getBoardPieceColor(index);
-          if (bgColor == Colors.transparent) return null;
-
-          Widget? child = _getTextChild(index, true);
-          BoxDecoration? deco;
-
-          if (bgColor == Colors.black) {
-            deco = const BoxDecoration(color: Colors.black, shape: BoxShape.circle);
-            bgColor = null;
-          }
-
-          if (widget.lGameSession.iArrPlayer1Pieces?.contains(index) ?? false) {
-            if (!_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer1Pieces)) child = null;
-          } else if (widget.lGameSession.iArrPlayer2Pieces?.contains(index) ?? false) {
-            if (!_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer2Pieces)) child = null;
-          } else {
-            child = null;
-          }
-
-          Container ret = Container(
-            color: bgColor,
-            width: ScreenValues.containerWidth,
-            height: ScreenValues.containerWidth,
-            decoration: deco,
-            child: child,
-          );
-
-          if (bgColor == null)
-            {
-               ret = Container(
-                 width: ScreenValues.containerWidth - 20,
-                 height: ScreenValues.containerWidth - 20,
-                 decoration: BoxDecoration(
-                   color: Colors.orange[200],
-                   border: Border.all(color: Colors.black, width: 0),
-                 ),
-                 child: ret,
-               );
-            }
-          return ret;
-        });
-
-        _list2BaseSquares = _listBoardSquares.toList(growable: true);
-        for (int i = 0; i < _listBoardPieces.length; i++) {
-          if (_listBoardPieces[i] != null) {
-            _list2BaseSquares[i] = _listBoardPieces[i];
-          }
-        }
-        _stackBoardPieces = StackGridContainer(listContainers: _list2BaseSquares);
+    // 1. Calculate borders first so we have _listMoveBorders and innerSquarePosition
+    _listMoveBorders = List.generate(16, (index) => null);
+    for (int index = 0; index < 16; index++) {
+      if (widget.lGameSession.iArrPlayerMovePieces?.contains(index) ?? false) {
+        Color boxDecorationColor = _getBoxDecorationColor();
+        _listMoveBorders[index] = getMoveDecorationBorder(index, boxDecorationColor);
       }
+    }
+    innerSquarePosition = _getInnerSquareBorder();
 
-      // Move Squares
-      _listMoveBorders = List.generate(16, (index) => null);
-      _listMoveSquares = List.generate(16, (index) => _getMoveContainer(index)
-          /* getNewOrOldMoveSquares(index) */);
+    // 2. Update board piece signals
+    for (int index = 0; index < 16; index++) {
+      String boardKey = '${widget.lGameSession.iArrPlayer1Pieces?.contains(index)}'
+          '-${widget.lGameSession.iArrPlayer2Pieces?.contains(index)}'
+          '-${index == widget.lGameSession.iPlayerNeutral1Piece}'
+          '-${index == widget.lGameSession.iPlayerNeutral2Piece}'
+          '-${_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer1Pieces)}'
+          '-${_indexInTheMiddleOfLPiece(index, widget.lGameSession.iArrPlayer2Pieces)}';
+      _boardPieceSignals[index].value = boardKey;
+    }
 
-      _stackMoveSquares = StackGridContainer(listContainers: _listMoveSquares);
+    // 3. Update move cell signals
+    for (int index = 0; index < 16; index++) {
+      bool isInMove = widget.lGameSession.iArrPlayerMovePieces?.contains(index) ?? false;
+      String moveKey = '$isInMove'
+          '-${widget.lGameSession.iPlayerMove}'
+          '-${widget.lGameSession.playerTurn}'
+          '-${widget.lGameSession.inMovingPiece}'
+          '-${widget.lGameSession.iActiveNeutral}'
+          '-${innerSquarePosition?.iInnerSquareBorder == index}'
+          '-${innerSquarePosition?.innerCornerPosition}'
+          '-${_listMoveBorders[index]}'
+          '-$_buildCounter';
 
-      // Move Border Squares
-      innerSquarePosition = _getInnerSquareBorder();
-      _listMoveBorderSquares = List.generate(16, (index) =>
-          _getBorderMoveContainer(index)
-          /* getNewOrOldMoveBorderSquares(index) */);
+      _moveCellSignals[index].value = moveKey;
+    }
 
-      _list3FrameSquares = _listMoveSquares.toList(growable: true);
-      for (int i = 0; i < _listMoveBorderSquares.length; i++) {
-        if (_listMoveBorderSquares[i] != null) {
-          _list3FrameSquares[i] = Stack(children: [
-            _listMoveSquares[i] as Widget,
-            _listMoveBorderSquares[i] as Widget
-          ]);
-        }
-      }
-
-      _stackMoveBorderSquares = StackGridContainer(listContainers: _listMoveBorderSquares);
-      _stackMoveSquares = StackGridContainer(listContainers: _list3FrameSquares);
-
-      listBoardStack.clear();
-     // listBoardStack.add(/* ChildRepaintBoundary(child: */ _stackBoardSquares! /* ) */);
-      // listBoardStack.add(RepaintBoundary(child: _stackBoardPieces!));
-      listBoardStack.add(ChildRepaintBoundary(child: _stackBoardPieces!));
-      listBoardStack.add(ChildRepaintBoundary(child: _stackMoveSquares!));
-//      listBoardStack.add(/* ChildRepaintBoundary(child: */ _stackMoveBorderSquares!/* ) */);
-
-      if (widget.bScreenReaderIsUsed) {
-        _iArrScreenReaderSquareText = List.generate(16, (index) => _getChangeScreenReaderText(index, true));
-        _listScreenReaderSquares = List.generate(16, (index) => _getScreenReaderSquare(index));
-        _stackScreenReader = StackGridContainer(listContainers: _listScreenReaderSquares);
-        listBoardStack.add(_stackScreenReader!);
-      }
-    });
+    // 4. Update screen reader text and signals
+    if (widget.bScreenReaderIsUsed) {
+      _iArrScreenReaderSquareText = List.generate(16, (index) => _getChangeScreenReaderText(index, true));
+    }
+    for (int index = 0; index < 16; index++) {
+      String screenReaderKey = '${widget.bScreenReaderIsUsed}'
+          '-${widget.bScreenReaderIsUsed ? _iArrScreenReaderSquareText[index] : ""}';
+      _screenReaderSignals[index].value = screenReaderKey;
+    }
   }
 
   @override

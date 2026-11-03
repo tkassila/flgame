@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../l10n/app_localizations.dart';
 
 import '../ParameterValues.dart';
+import 'utils/ImageOptimizer.dart';
 
 class LoadingScreen extends StatefulWidget {
   // final NavigatorState parentNavigator;
@@ -27,6 +28,28 @@ class _LoadingScreenState extends State<LoadingScreen>
   }
 
   bool _visible = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final double splashWidth = ScreenValues.isWeb ? 300.0 : 500.0;
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/L_Game_start_position.svg.png',
+      logicalWidth: splashWidth,
+    );
+    final double helpImageWidth = MediaQuery.of(context).size.width - 30.0;
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/560px-L_Game_mate_positions.svg.png.webp',
+      logicalWidth: helpImageWidth,
+    );
+    ImageOptimizer.precacheAsset(
+      context,
+      'assets/560px-L_Game_all_final_positions.svg.png.webp',
+      logicalWidth: helpImageWidth,
+    );
+  }
 
   @override
   void dispose() {
@@ -95,13 +118,13 @@ class _LoadingScreenState extends State<LoadingScreen>
             AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
                 duration: Duration(milliseconds: timerAnimationMsecs),
-            child: Image(
-            height: ScreenValues.isWeb ? 300 : 500,
-            width: ScreenValues.isWeb ? 300 : 500,
-            image: AssetImage(
-              'assets/L_Game_start_position.svg.png',
-            ),
-                        ),
+                child: ImageOptimizer.assetWidget(
+                  context,
+                  'assets/L_Game_start_position.svg.png',
+                  height: ScreenValues.isWeb ? 300 : 500,
+                  width: ScreenValues.isWeb ? 300 : 500,
+                  fit: BoxFit.contain,
+                ),
             ),
           ],
         ),

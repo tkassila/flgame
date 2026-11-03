@@ -16,6 +16,7 @@ migrate_working_dir/
 *.iml
 *.ipr
 *.iws
+.env
 .idea/
 android/key.properties
  
@@ -33,6 +34,7 @@ android/key.properties
 .pub-cache/
 .pub/
 /build/
+/coverage/
 
 # Symbolication related
 app.*.symbols

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flgame/ParameterValues.dart';
 import '../l10n/app_localizations.dart';
+import 'utils/ImageOptimizer.dart';
 
 final TextStyle textStyle = TextStyle(fontSize: ScreenUtil().setSp(!ScreenValues.isWeb ? 20 : 3),
     color: Colors.orangeAccent, backgroundColor: Colors.black);
@@ -61,10 +62,12 @@ class AboutRoute extends StatelessWidget {
                 child: Text(AppLocalizations.of(context)!.lGameTitle,
                     style: TextStyle(fontSize: 37, color: Colors.black)),
               ),
-              Image(width: 150,
+              ImageOptimizer.assetWidget(
+                context,
+                'assets/L_Game_start_position.svg.png',
+                width: 150,
                 height: 150,
-                image:
-              AssetImage('assets/L_Game_start_position.svg.png', ),
+                fit: BoxFit.contain,
               ),
               Center(
                 child: Text(AppLocalizations.of(context)!.copyright,
