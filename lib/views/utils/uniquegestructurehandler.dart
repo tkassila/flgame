@@ -3,7 +3,7 @@
 // Posted by Egor, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-03-20, License - CC BY-SA 4.0
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/gestures.dart';
 
 class UniversalTapHandler extends RawGestureDetector {

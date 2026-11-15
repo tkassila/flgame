@@ -1,7 +1,7 @@
 // import 'dart:ffi';
 
 import 'package:flgame/models/lgame_data.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import './utils/util_dialog.dart';
 import 'package:flgame/ParameterValues.dart';
